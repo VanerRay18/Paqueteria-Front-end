@@ -1,0 +1,198 @@
+<div class="container  ">
+  <div class="titulos col-auto col-lg-8  row  mt-4 md-3">
+    <h1>Alta de trabajadores</h1>
+  </div>
+  <!-- DATOS PERSONALES -->
+  <form [formGroup]="datosPersonalesForm" (ngSubmit)="guardarDatosPersonales()">
+    <h4>Datos generales</h4>
+    <div class="grid">
+
+      <div class="foto-container">
+        <div class="preview"
+          [ngStyle]="{ 'background-image': 'url(' + fotoPreview + ')' }"></div>
+
+        <label for="foto" class="foto-label">
+          <i class="icon">ℹ️</i> Fotografía de la persona
+        </label>
+        <input type="file" id="foto" (change)="onFotoSelected($event)" hidden />
+      </div>
+
+      <div class="group">
+        <label>Nombre completo del trabajador:</label>
+        <input type="text" formControlName="nombreCompleto" />
+
+        <label>RFC:</label>
+        <input type="text" formControlName="rfc" />
+
+        <label>Curp:</label>
+        <input type="text" formControlName="curp" />
+
+        <label>Fecha de nacimiento:</label>
+        <input type="date" formControlName="fechaNacimiento" />
+
+        <label>Tipo de seguro:</label>
+        <select formControlName="tipoSeguro">
+          <option value>Seleccione</option>
+          <option value="IMSS">IMSS</option>
+          <option value="ISSSTE">ISSSTE</option>
+        </select>
+
+        <label>Teléfono:</label>
+        <input type="tel" formControlName="telefono" />
+      </div>
+
+      <div class="group">
+        <label>Fecha de inicio laboral:</label>
+        <input type="date" formControlName="fechaInicio" />
+
+        <label>Puesto laboral:</label>
+        <input type="text" formControlName="puestoLaboral" />
+
+        <label>Tipo de contratación:</label>
+        <div class="checkbox-group">
+          <label><input type="radio" value="Honorarios"
+              formControlName="tipoContratacion" /> Honorarios</label>
+          <label><input type="radio" value="Individual"
+              formControlName="tipoContratacion" /> Contratación
+            individual</label>
+        </div>
+
+        <label>Horario laboral:</label>
+        <input type="text" formControlName="horario" />
+
+      </div>
+
+    </div>
+    <div class="col-auto d-flex justify-content-end mt-auto">
+      <button type="submit" class="btn  btn-sm">Guardar sección</button>
+    </div>
+
+  </form>
+
+  <!-- DIRECCIÓN DEL TRABAJADOR -->
+  <form [formGroup]="direccionForm" (ngSubmit)="guardarDireccion()">
+    <h4>Dirección del trabajador</h4>
+    <div class="grid-3">
+      <input type="text" formControlName="codigoPostal"
+        placeholder="Código Postal" />
+      <input type="text" formControlName="municipio" placeholder="Municipio" />
+      <input type="text" formControlName="estado" placeholder="Estado" />
+      <input type="text" formControlName="colonia" placeholder="Colonia" />
+      <input type="text" formControlName="calle" placeholder="Calle" />
+      <input type="text" formControlName="numInterior"
+        placeholder="No. Interior" />
+      <input type="text" formControlName="numExterior"
+        placeholder="No. Exterior" />
+    </div>
+    <div class="col-auto d-flex justify-content-end mt-auto">
+      <button type="submit" class="btn  btn-sm">Guardar sección</button>
+    </div>
+  </form>
+
+  <!-- DATOS DEL EMPLEO -->
+  <form [formGroup]="empleoForm" (ngSubmit)="guardarEmpleo()">
+    <h4>Documentacion y material entregado</h4>
+    <div >
+      <div class="row justify-content-center ">
+        <div class="col-lg-6 col-md-12">
+          <div class="draggable card col-lg-6 col-auto">
+            <h5>Documentacion entregada:</h5>
+            <div class="assigned-roles">
+              <div
+                *ngFor="let Documento of assignedDocumentos"
+                draggable="true"
+                (dragstart)="onDragStart($event, Documento)"
+                class="custom-checkbox draggable-role assigned-role">
+                <input type="checkbox" checked disabled /> {{ Documento.name }}
+              </div>
+              <!-- Área de drop para asignar roles -->
+              <div
+                class="drop-area"
+                (dragover)="onDragOver($event)"
+                (drop)="onDrop($event, 'assigned')">
+                <p>Arrastra aquí para asignar docuemtacion</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-12">
+          <div class="draggable card col-lg-6 col-auto ">
+            <h5>Documentacion Faltante:</h5>
+            <div class="all-roles">
+              <div
+                *ngFor="let Documento of allDocumentos"
+                draggable="true"
+                (dragstart)="onDragStart($event, Documento)"
+                class="custom-checkbox draggable-role">
+                <input type="checkbox" disabled /> {{ Documento.name }}
+              </div>
+              <!-- Área de drop para quitar roles -->
+              <div
+                class="drop-area"
+                (dragover)="onDragOver($event)"
+                (drop)="onDrop($event, 'all')">
+                <p>Arrastra aquí para quitar docuemtacion</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <label>Material entregado al trabajador:</label>
+      <div class="checkbox-group">
+        <label><input type="checkbox" formControlName="materialEpps" />
+          Epps</label>
+        <label><input type="checkbox" formControlName="materialGorra" />
+          Gorra</label>
+        <label><input type="checkbox" formControlName="materialPlayera" />
+          Playera polo</label>
+      </div>
+
+    </div>
+    <div class="col-auto d-flex justify-content-end mt-auto">
+      <button type="submit" class="btn  btn-sm">Guardar sección</button>
+    </div>
+  </form>
+
+  <!-- DATOS DE PAGO -->
+  <form [formGroup]="pagoForm" (ngSubmit)="guardarPago()">
+    <h4>Datos de pago</h4>
+    <div class="grid-3">
+      <input type="text" formControlName="clabe"
+        placeholder="Clave interbancaria" />
+      <input type="text" formControlName="tarjeta"
+        placeholder="Número de tarjeta" />
+      <input type="text" formControlName="banco" placeholder="Banco" />
+    </div>
+    <div class="col-auto d-flex justify-content-end mt-auto">
+      <button type="submit" class="btn  btn-sm">Guardar sección</button>
+    </div>
+  </form>
+
+  <!-- CONTACTO DE EMERGENCIA -->
+  <form [formGroup]="emergenciaForm" (ngSubmit)="guardarEmergencia()">
+    <h4>Contacto de emergencia</h4>
+    <div class="grid-2">
+      <input type="tel" formControlName="telefono" placeholder="Teléfono" />
+      <input type="text" formControlName="nombre" placeholder="Nombre" />
+    </div>
+    <div class="col-auto d-flex justify-content-end mt-auto">
+      <button type="submit" class="btn  btn-sm">Guardar sección</button>
+    </div>
+  </form>
+
+  <!-- TELEFONOS DE BERMED -->
+  <form [formGroup]="bermedForm" (ngSubmit)="guardarBermed()">
+    <h4>Teléfonos de BERMED</h4>
+    <div class="grid-3">
+      <input type="text" formControlName="modelo"
+        placeholder="Modelo del teléfono" />
+      <input type="text" formControlName="plan" placeholder="Tipo de plan" />
+      <input type="text" formControlName="telefono"
+        placeholder="No. Teléfono" />
+    </div>
+    <div class="col-auto d-flex justify-content-end mt-auto">
+      <button type="submit" class="btn  btn-sm">Guardar sección</button>
+    </div>
+  </form>
+</div>

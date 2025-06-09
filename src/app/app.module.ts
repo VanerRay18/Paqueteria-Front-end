@@ -18,6 +18,8 @@ import { TokenInterceptor } from './core/interceptor/token.interceptor';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AdminRoutingModule } from './modules/pages/administration/admin-routing.module';
 import { AdministrationModule } from './modules/pages/administration/administration.module';
+import { RecursosHumanosModule } from './modules/pages/recursos-humanos/recursos-humanos.module';
+import { PaqueteriaModule } from './modules/pages/paqueteria/paqueteria.module';
 
 
 @NgModule({
@@ -37,7 +39,9 @@ import { AdministrationModule } from './modules/pages/administration/administrat
     ExtrasRoutingModule,
     LayoutModule,
     ReactiveFormsModule,
-    AdminRoutingModule
+    AdminRoutingModule,
+    RecursosHumanosModule,
+    PaqueteriaModule
   ],
   providers: [
     {

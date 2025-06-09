@@ -3,20 +3,15 @@ import { RouterModule, Routes } from '@angular/router';
 import { LayoutComponent } from './modules/layout/layout.component';
 import { LoginComponent } from './core/auth/login/login.component';
 import { LoggedGuard } from './core/guards/logged.guard';
-import { UsersComponent } from './modules/pages/administration/users/users.component';
-import { HomeModule } from './modules/pages/home/home.module';
-import { AdministrationModule } from './modules/pages/administration/administration.module';
-import { UserCRUDComponent } from './modules/pages/administration/user-crud/user-crud.component';
-import { RolesCRUDComponent } from './modules/pages/administration/roles-crud/roles-crud.component';
-import { ModulesCRUDComponent } from './modules/pages/administration/modules-crud/modules-crud.component';
-import { EndopointCRUDComponent } from './modules/pages/administration/endopoint-crud/endopoint-crud.component';
 import { TestComponent } from './modules/pages/extras/test/test.component';
+import { CRUDEmployeeComponent } from './modules/pages/recursos-humanos/crudemployee/crudemployee.component';
+import { NewEmployeeComponent } from './modules/pages/recursos-humanos/new-employee/new-employee.component';
 
 
 
 const routes: Routes = [
   {path:'',redirectTo:'/login',pathMatch:'full'},
-  { path: 'Test', component: TestComponent },
+  { path: 'Test', component: NewEmployeeComponent},
   {path: 'login',
     component: LoginComponent,
   },
