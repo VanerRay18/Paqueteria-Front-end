@@ -1,0 +1,138 @@
+<div class="table-container">
+
+
+  <div *ngIf="isLoading" style="margin-block: 200px;">
+
+    <div  class="spinner-overlay" >
+      <div class="spinner"></div>
+    </div>
+  </div>
+
+   <ng-container *ngIf="!isLoading && data && data.length > 0">
+  <div class="table-responsive table-sm" [ngStyle]="{'max-height': maxHeight}"  >
+    <table class="table">
+      <thead>
+        <tr class="table-light">
+          <th *ngFor="let header of headers; let i = index"
+            (click)="sortData(displayedColums[i])" class="sortable-header">
+            {{ header }}
+            <i class="fa-solid fa-bars-staggered" ></i>
+            <span *ngIf="sortedColumn === displayedColums[i]">
+              <i *ngIf="sortDirection === 'asc'" class="fa-solid fa-arrow-up"></i>
+              <i *ngIf="sortDirection === 'desc'" class="fa-solid fa-arrow-down"></i>
+            </span>
+          </th>
+
+        </tr>
+      </thead>
+
+      <tbody class="table-body">
+        <tr *ngFor="let row of paginatedData | filter: searchTerm : displayedColums ; let i = index">
+          <!-- Ciclo para mostrar cada columna -->
+          <td *ngFor="let key of displayedColums">
+            <!-- Si la columna es 'rango_fechas', se muestra el valor y el ícono solo si accidente == 1 -->
+            <ng-container *ngIf="key === 'rango_fechas'">
+              {{ row[key] }}
+              <!-- Mostrar ícono si accidente == 1 -->
+              <i *ngIf="row.accidente == 1"
+                class="fa-solid fa-triangle-exclamation"
+                style="color: rgb(255, 145, 0);"></i>
+            </ng-container>
+
+            <ng-container *ngIf="key === 'folio'">
+              <i
+                *ngIf="bola && row.nueva == 1"
+                class="fa-solid fa-circle"
+                [ngStyle]="{
+                  color: row.observaciones === 2 ? 'red' : 'rgb(255, 145, 0)',
+                  fontSize: '10px'
+                }">
+              </i>
+            </ng-container>
+
+
+            <!-- Para las demás columnas, mostrar normalmente -->
+            <ng-container *ngIf="key !== 'rango_fechas'">
+              {{ row[key] }}
+            </ng-container>
+          </td>
+
+          <!-- Acciones de editar, eliminar, PDF -->
+
+          <!-- Nueva columna Detalles -->
+          <td *ngIf="showDetailsColumn">
+            <button class="btn btn-info btn-sm" (click)="showDetails(row)">
+              Ver Detalles
+            </button>
+          </td>
+
+          <!-- Nueva columna Checkbox Activo -->
+          <td *ngIf="showActiveCheckbox">
+            <input type="checkbox" [checked]="row.activo === 1" (change)="toggleCheckbox(row) " (click)="info($event,row)">
+          </td>
+
+          <!-- Nueva columna Checkbox Verificado -->
+          <td *ngIf="showVerifiedCheckbox">
+            <input type="checkbox" [checked]="row.verificado === 1" (change)="toggleCheckbox(row)">
+          </td>
+
+          <!-- Acciones de editar, eliminar, PDF -->
+         <td *ngIf="showActionsEdit || showActionsDeleted || showActionsPdf">
+
+
+            <button class="edit" *ngIf="showActionsEdit" (click)="onEdit(row)">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+            <button class="delete" *ngIf="showActionsDeleted" (click)="onDelete(row)">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+            <button class="pdf" *ngIf="showActionsPdf" (click)="onPDF(row)">
+              <i class="fa-solid fa-file-pdf"></i>
+            </button>
+
+
+          </td>
+        </tr>
+      </tbody>
+
+      <tfoot>
+        <tr>
+          <td [attr.colspan]="headers.length">
+            <div class="pagination-controls">
+              <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">Anterior</button>
+              <span>Página {{ currentPage }}</span>
+              <button (click)="onPageChange(currentPage + 1)" [disabled]="currentPage * itemsPerPage >= data.length">Siguiente</button>
+            </div>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+    </ng-container>
+</div>
+
+
+  <!-- Paginación -->
+  <!-- <div class="pagination">
+    <button
+      [disabled]="currentPage === 1"
+      (click)="onPageChange(currentPage - 1)">
+      Anterior
+    </button>
+    <span>Página {{ currentPage }} de {{ totalPages }}</span>
+    <button
+      [disabled]="currentPage === totalPages"
+      (click)="onPageChange(currentPage + 1)">
+      Siguiente
+    </button>
+  </div>
+</div> -->
+
+<!-- Ejemplo de cuando no no quiera usar la columna de acciones -->
+<!-- <app-reusable-table  -->
+<!-- [headers]="headers" -->
+<!-- [data]="data" -->
+<!-- [itemsPerPage]="10" -->
+<!-- [displayedColumns]="displayedColumns" -->
+<!-- [showActions]="false">  --> <!-- Aquí omites las acciones -->
+<!-- </app-reusable-table> -->

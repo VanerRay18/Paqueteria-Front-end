@@ -1,0 +1,35 @@
+<div class="cont col-auto row  mt-4 ms-4">
+  <div class="titulos ">
+    <h1>Modulos</h1>
+    <h5>Listado de modulos en el sistema</h5>
+  </div>
+  <div class="card d-flex col-auto col-lg-10">
+    <div class="row">
+      <div class="form-floating col-auto col-lg-3 mt-4">
+        <input type="text" class=" buscar form-control" id="busqueda"
+          placeholder="Buscar"
+          [(ngModel)]="searchTerm" name="busqueda">
+        <label for="User">&nbsp;&nbsp;&nbsp;<i class="fa-solid fa-magnifying-glass"></i>
+          Buscar</label>
+      </div>
+      <div class="col-auto mt-3">
+        <button type="button" (click)="navigateToDashboard()"
+          class="botones btn"><i class="fa-solid fa-user-plus"></i> Crear
+          Modulo</button>
+      </div>
+    </div>
+    <div class="col-auto mt-4 justify-content-center align-items-center ">
+      <app-tables
+        [headers]="headers"
+        [data]="data"
+        [displayedColums]="displayedColumns"
+        [showActionsEdit]=true
+        (edit)="onEdit($event)"
+        [showActionsDeleted]=true
+        [maxHeight]="'400px'"
+        (delete)="onDelete($event)"
+        [showActionsPdf]=false>
+      </app-tables>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,27 @@
+<div class="cont col-auto row  mt-4 ms-4">
+  <div class="titulos ">
+    <h1>Resgistros</h1>
+    <h5>Listado de movimentos dentro del sistema</h5>
+  </div>
+  <div class="card d-flex  ">
+    <div class="form-floating col-auto mt-4">
+      <input type="text" class=" buscar form-control" id="busqueda"
+        placeholder="Buscar"
+        [(ngModel)]="searchTerm" name="busqueda">
+      <label for="User"><i class="fa-solid fa-magnifying-glass"></i>  Buscar</label>
+    </div>
+    <div class="col-auto mt-4 justify-content-center align-items-center ">
+      <app-tables
+        [headers]="headers"
+        [data]="data"
+        [displayedColums]="displayedColumns"
+        [searchTerm]="searchTerm"
+        [maxHeight]="'600px'"
+        [itemsPerPage]="20"
+        [showActionsEdit]=false
+        [showActionsDeleted]=false
+        [showActionsPdf]=false>
+      </app-tables>
+    </div>
+  </div>
+</div>

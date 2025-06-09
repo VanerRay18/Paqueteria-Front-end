@@ -1,0 +1,8 @@
+
+
+  .global-background {
+    background-color: #F1F5F9;
+    width: 100%;
+    height: 100vh; /* Asegura que ocupe el 100% de la altura de la pantalla */
+
+  }

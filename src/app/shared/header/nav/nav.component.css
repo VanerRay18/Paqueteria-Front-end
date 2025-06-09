@@ -1,0 +1,275 @@
+.alert-time {
+  text-align: right; /* Alinea el texto de la fecha hacia la izquierda */
+  color: #858585;
+  font-size: 12px;
+}
+
+.navbar{
+  background-color:#8a1538;
+  position: sticky;
+  top: 0;
+}
+
+.centerIconDAD:hover{
+color:rgb(184, 184, 184);
+}
+.icons{
+
+    margin-right: 8px; /* Ajusta el valor según el espacio que necesites */
+
+
+  font-size: 1.2em; /* Ajusta el tamaño del icono si es necesario */
+}
+.active-custom {
+  color: #FFD700; /* Cambia el color del texto a dorado */
+  background-color: #bb9f0063; /* Mantén el fondo verde o el color que prefieras */
+  border-radius: 23px; /* Bordes redondeados, ajusta el valor según lo que prefieras */
+  border: 2px solid #FFD700; /* Borde dorado */
+
+
+}
+.generalHover:hover{
+color: #FFD700;
+}
+.centerIcon{
+  display: flex; /* Asegura que el enlace también use flexbox */
+  align-items: center; /* Centra el texto dentro del enlace */
+}
+
+/* Estilo de la marca (logo o nombre del sistema) */
+.navbar-brand {
+  color: white; /* blanco */
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* Estilo del botón de hamburguesa (offcanvas) */
+.navbar-toggler {
+  border-color: #8a1538;
+}
+
+/* Color del icono del botón de hamburguesa */
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba%28255, 255, 255, 0.5%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+/* Estilo del offcanvas */
+.offcanvas {
+  background-color: #8a1538;;
+  width: 280px;
+}
+
+/* Título del offcanvas */
+.offcanvas-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: white; /* Color Morena */ /* blanco */
+}
+
+/* Botón de cerrar el offcanvas */
+.btn-close {
+  filter: invert(1);
+}
+
+/* Estilo de los elementos del menú (links) */
+.nav-link {
+
+  color: white; /* blanco */
+  font-weight: 500;
+}
+
+.nav-link.active {
+
+  font-weight: bold;
+  color: #8a1538;
+  background-color: #8a1538;
+}
+
+
+
+/* Dropdown menú */
+.dropdown-menu {
+  background-color: #8a1538;
+}
+
+.dropdown-item {
+  color: #8a1538;
+}
+
+.dropdown-item:hover {
+  background-color: #8a1538;
+  color: #8a1538;
+}
+
+/* Estilo del formulario de búsqueda */
+.form-control {
+  border: 1px solid #8a1538;
+  border-radius: 5px;
+}
+
+.form-control:focus {
+  border-color: #8a1538;
+  box-shadow: none;
+}
+.img{
+  margin-left: 10px;
+  margin-top: -10px;
+  width: 220px;
+}
+
+.navbar-toggler{
+  color: #8a1538;
+
+  margin-left: 10px;
+  font-size: 22px;
+}
+.navbar-brand{
+  margin-top: 30px;
+}
+.btn-outline-success {
+  color: #8a1538;
+  border-color: #8a1538;
+}
+
+.btn-outline-success:hover {
+  background-color: #8a1538;
+  color: white; /* blanco */
+}
+
+
+
+
+
+
+
+
+
+.notification {
+  position: relative;
+  display: inline-block;
+  padding: 8px;
+
+}
+
+.notification .fa-bell {
+  font-size: 22px;
+  cursor: pointer;
+
+  color: white;
+}
+
+.notification .badge {
+  cursor: pointer;
+  position: absolute;
+  align-items: center;
+  background-color: #f0dd38;
+  top: -3px;
+  right: -12px;
+max-width: 32px;
+  border-radius: 100%;
+  color: rgb(0, 0, 0);
+  font-size: 13px;
+}
+.bell{
+  font-size: 24px;
+  cursor: pointer;
+
+  color: white;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.459); /* Negro semitransparente */
+  z-index: 999; /* Debe estar por debajo del dropdown */
+}
+/* Dropdown de notificaciones */
+.notification-dropdown {
+  position: absolute;
+  margin-left: 28px;
+
+  top: 62px;
+  left: 0;
+  transform: translateX(-20px);
+  width: 300px;
+  background-color: rgba(255, 255, 255, 0);
+  border-radius: 15px;
+  border: 1px solid #ffffff00;
+  z-index: 1000;
+  padding: 10px;
+  max-height: 800px;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+::-webkit-scrollbar {
+  width: 10px; /* Ancho del scrollbar */
+}
+
+/* Personaliza el track (fondo del scroll) */
+::-webkit-scrollbar-track {
+  background-color: #0000007c; /* Fondo del track */
+  border-radius: 10px;
+}
+
+/* Personaliza el thumb (el "deslizador" del scroll) */
+::-webkit-scrollbar-thumb {
+  background-color: #ffffffbb; /* Color del deslizador */
+  border-radius: 10px;
+  border: 5px solid transparent; /* Hace que se vea un borde alrededor del deslizador */
+}
+
+/* Hover para el thumb */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555; /* Color del deslizador al pasar el mouse */
+}
+.notification-item {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  background: white;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+  max-height: inherit;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.notification-item:hover {
+  transform: scale(1.03);
+  background-color: #f9f9f9;
+}
+
+
+.notification-content {
+  flex: 1;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column; /* Hace que el título y mensaje queden en columnas */
+}
+
+.notification-content strong {
+  font-weight: bold;
+  margin-bottom: 3px; /* Espacio entre título y mensaje */
+  display: block;
+}
+
+
+
+.fa-check {
+  cursor: pointer;
+  font-size: 20px;
+  margin-left: 10px;
+  color: green;
+}
+
+.iconNoti{
+  font-size: 23px;
+  margin-right: 9px;
+}

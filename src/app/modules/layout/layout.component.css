@@ -1,0 +1,30 @@
+/* Asegúrate de aplicar estos estilos al contenedor principal */
+html, body {
+    height: 100%; /* Necesario para que el contenedor principal se expanda */
+    margin: 0; /* Elimina márgenes por defecto */
+  }
+
+  .app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Hace que el contenedor ocupe al menos la altura de la ventana */
+  }
+
+  .content {
+    flex: 1; /* Permite que el contenido tome todo el espacio disponible */
+  }
+
+  footer {
+    display: block;
+    height: 100px; /* Altura fija del footer */
+    background: #ff1919a8;
+    backdrop-filter: blur(10px);
+  }
+
+  footer > p {
+    text-align: center;
+    color: #474747;
+    font-family: sans-serif;
+    font-size: 0.8rem;
+    user-select: none;
+  }

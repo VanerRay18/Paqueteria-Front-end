@@ -1,0 +1,39 @@
+
+<div class="login-container">
+  <div class="login-card">
+    <div class="logo">
+      <img src="assets/logo.png" alt="Escudo del Estado de Hidalgo" />
+    </div>
+    <h2>Iniciar sesión</h2>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="usuario">Usuario</label>
+        <input id="usuario" formControlName="user" type="text" class="form-control"
+          placeholder="Ingrese su usuario" />
+        <div *ngIf="loginForm.get('user')?.invalid && loginForm.get('user')?.touched" class="error">
+          Usuario es requerido
+        </div>
+      </div>
+
+      
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input id="password" formControlName="password" type="password" class="form-control"
+          placeholder="Ingrese su contraseña" />
+        <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="error">
+          Contraseña es requerida 6 digitos min.
+        </div>
+      </div>
+      <button type="submit" id="loginButton" class="btn-login btn-primary" [disabled]="loginForm.invalid">
+        <ng-container *ngIf="!isLoading; else loadingTemplate">Iniciar sesión</ng-container>
+        <ng-template #loadingTemplate>
+            <div class="loader"></div>
+        </ng-template>
+    </button>
+    
+
+
+
+    </form>
+  </div>
+</div>

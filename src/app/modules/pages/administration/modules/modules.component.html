@@ -1,0 +1,108 @@
+<div class="cont col-auto row  mt-4 ms-4">
+  <div class="titulos ">
+    <h1>Crear o modificar un nuevo Modulo</h1>
+    <h5>Formulario de registro de un modulo</h5>
+  </div>
+
+  <div
+    class="card d-flex flex-column mt-1">
+    <form [formGroup]="roleForm" class="m-3 mt-4">
+      <div class="row ">
+        <div class="col-auto col-lg-2">
+          <label for="name" class="form-label">Nombre del modulo:</label>
+          <input formControlName="name" type="text" class="form-control"
+            placeholder="Ingrese el nombre "
+            aria-label="First name" required>
+        </div>
+        <div class="col-auto col-lg-5">
+          <label for="description" class="form-label">Descripcion:</label>
+          <input formControlName="description" type="text" class="form-control"
+            placeholder="Ingrese la descripcion "
+            aria-label="description" required>
+        </div>
+        <div class="col-auto col-lg-3">
+          <label for="path" class="form-label">Path:</label>
+          <input formControlName="path" type="text" class="form-control"
+            placeholder="pages/papa/hijo"
+            aria-label="path" required>
+        </div>
+        <div class="col-auto ms-3">
+          <div class="question">
+            <label>¿El Modulo es Papa?</label>
+            <br>
+            <label class="option">
+              <input type="radio" name="activate"
+                (change)="onActivateChange(false)" /> Sí
+            </label>
+            <label class="option">
+              <input type="radio" name="activate"
+                (change)="onActivateChange(true)" /> No
+            </label>
+          </div>
+        </div>
+
+        <div *ngIf="isModulePapa" class="col-auto col-lg-3">
+          <label for="dropdown" class="form-label">¿Quien es su Modulo Padre?</label>
+          <select id="dropdown" class="form-select"
+            formControlName="selectedOption">
+            <option value disabled selected>Seleccione una opción</option>
+            <option value="opcion1">Opción 1</option>
+            <option value="opcion2">Opción 2</option>
+            <option value="opcion3">Opción 3</option>
+            <!-- Agrega más opciones según sea necesario -->
+          </select>
+        </div>
+
+      </div>
+    </form>
+    <div class="row justify-content-center ">
+      <div class="col-lg-6 col-md-12">
+        <div class="draggable card col-lg-6 col-auto">
+          <h5>EndPonits asignados:</h5>
+          <div class="assigned-roles">
+            <div
+              *ngFor="let role of assignedRoles"
+              draggable="true"
+              (dragstart)="onDragStart($event, role)"
+              class="custom-checkbox draggable-role assigned-role">
+              <input type="checkbox" checked disabled /> {{ role }}
+            </div>
+            <!-- Área de drop para asignar roles -->
+            <div
+              class="drop-area"
+              (dragover)="onDragOver($event)"
+              (drop)="onDrop($event, 'assigned')">
+              <p>Arrastra aquí para asignar EndPonits</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 col-md-12">
+        <div class="draggable card col-lg-6 col-auto ">
+          <h5>Todos los EndPonits:</h5>
+          <div class="all-roles">
+            <div
+              *ngFor="let role of allRoles"
+              draggable="true"
+              (dragstart)="onDragStart($event, role)"
+              class="custom-checkbox draggable-role">
+              <input type="checkbox" disabled /> {{ role }}
+            </div>
+            <!-- Área de drop para quitar roles -->
+            <div
+              class="drop-area"
+              (dragover)="onDragOver($event)"
+              (drop)="onDrop($event, 'all')">
+              <p>Arrastra aquí para quitar EndPonits</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="boton-container col-auto m-3">
+      <button type="submit" class="btn  btn-sm">Guardar</button>
+    </div>
+
+  </div>
+</div>

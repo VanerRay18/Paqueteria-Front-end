@@ -1,0 +1,142 @@
+h1{
+  font-weight: bold;
+}
+
+h5{
+  color: rgb(122, 122, 122);
+}
+
+.row{
+  margin: 0;
+}
+
+.card{
+  background-color: #ffffff;
+  border-radius: 10px;
+  width: 98%;
+
+}
+
+.card input {
+  margin-bottom: 15px;
+}
+
+.draggable {
+  border: 1px solid #ccc;
+  padding: 16px;
+  margin: 8px;
+
+}
+
+h2 {
+  margin-top: 0;
+  color: rgb(122, 122, 122);
+}
+
+.assigned-roles, .all-roles {
+  min-height: 200px;
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+.draggable-role {
+  display: flex;
+  align-items: center;
+  margin: 4px 0;
+  cursor: grab;
+}
+
+.draggable-role input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+.drop-area {
+  border: 2px dashed #ccc;
+  padding: 8px;
+  text-align: center;
+  color: #888;
+  margin-top: 10px;
+}
+
+
+.custom-checkbox input[type="checkbox"] {
+    appearance: none;
+    position: relative;
+    display: inline-block;
+    align-items: center;
+    width: 20px;
+    height: 20px;
+    background-color: #e9ecef;
+
+    border-radius: 4px;
+
+  }
+
+  /* Estilos cuando está marcado */
+  .custom-checkbox input[type="checkbox"]:checked {
+    background-color: #8a1538;
+    border-color: #8a1538;
+  }
+
+  /* Icono de verificación */
+  .custom-checkbox input[type="checkbox"]:checked::before {
+    position: absolute;
+    align-items: center;
+    display: flex;
+    font-weight: bold;
+    top: 50%; /* Centrado vertical */
+    left: 50%; /* Centrado horizontal */
+    transform: translate(-50%, -50%); /* Para centrar en ambos ejes */
+    content: ""; /* Crea un contenido vacío */
+    width: 8px; /* Tamaño del círculo */
+    height: 8px; /* Tamaño del círculo */
+    background-color: white; /* Color del círculo */
+    border-radius: 50%; /* Hace que el círculo sea redondo */
+
+  }
+
+  .option {
+    margin-right: 10px; /* Ajusta el valor según el espacio que desees */
+  }
+
+  .question {
+    text-align: left;
+    margin-left: 0;
+    padding-left: 0;
+  }
+
+  .boton-container {
+    align-self: flex-end; /* Alinea el botón a la izquierda */
+  }
+
+  button {
+    padding: 10px 20px;
+    background-color: #ffffff;
+    color: #621132;
+    border-color: #621132;
+    font-weight: bold;
+    height: 38px;
+    border-radius: 15px;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  button:hover {
+    background-color: #621132; /* Fondo marrón en hover */
+    color: #ffffff; /* Texto blanco en hover */
+    border-color: #621132; /* Borde marrón en hover */
+  }
+
+  button:active {
+    background-color: #3d0b1e; /* Fondo más oscuro para active */
+    color: #ffffff; /* Texto blanco en active */
+    border-color: #3d0b1e; /* Borde oscuro en active */
+    outline: none; /* Sin borde adicional */
+  }
+
+  .titulos {
+    margin-bottom: 20px; /* Ajusta el valor según el espacio deseado */
+  }
+
+  .is-invalid {
+    border-color: red;
+  }

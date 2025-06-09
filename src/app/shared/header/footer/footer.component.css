@@ -1,0 +1,18 @@
+footer {
+
+	height: 61px;
+    background-color:#8a1538;
+	
+}
+
+.img-container {
+    width: 100%; /* Ocupa todo el ancho de la pantalla */
+    overflow: hidden; /* Oculta cualquier contenido que exceda el ancho del contenedor */
+}
+
+.img {
+    width: auto; /* Mantiene el tamaño original de la imagen */
+    height: 100%; /* Asegura que la imagen se ajuste al alto del contenedor */
+    object-fit: cover; /* Cubre el contenedor manteniendo la proporción de la imagen */
+    display: block; /* Evita espacio extra debajo de la imagen */
+}

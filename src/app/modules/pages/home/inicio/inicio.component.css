@@ -1,0 +1,138 @@
+/* Estilos generales */
+.inicio-container {
+  text-align: center;
+  padding: 40px;
+  background-color: #8a1538; /* Fondo Morena */
+  color: white;
+  background-size: cover;
+  height: 100vh;
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra el contenido horizontalmente */
+}
+
+.welcome-section {
+  margin-bottom: 50px;
+}
+
+.welcome-section h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.welcome-section p {
+  font-size: 1.25rem;
+  margin-bottom: 20px;
+}
+
+.btn-primary {
+  background-color: #ffffff;
+  color: #8a1538;
+  border: none;
+  font-size: 1.2rem;
+  padding: 10px 20px;
+  border-radius: 5px;
+}
+
+.btn-primary:hover {
+  background-color: #b22450;
+  color: white;
+}
+
+.features-section {
+  background-color: #f1f1f1;
+  padding: 50px;
+  color: #8a1538;
+  border-radius: 20px;
+  box-sizing: border-box; /* Asegura que el padding no rompa el ancho */
+}
+
+.features-section h2 {
+  font-weight: bold;
+  margin-bottom: 30px;
+  font-size: 2rem;
+}
+
+.feature-box {
+  cursor: pointer;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 10px;
+}
+
+.feature-box h3 {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.feature-box p {
+  font-size: 1rem;
+}
+
+/* Consultas de medios para pantallas pequeñas */
+@media only screen and (max-width: 768px) {
+  .inicio-container {
+      padding: 20px;
+  }
+
+  .welcome-section h1 {
+      font-size: 2rem; /* Reduce el tamaño de la fuente */
+  }
+
+  .welcome-section p {
+      font-size: 1rem; /* Reduce el tamaño de la fuente */
+  }
+
+  .features-section {
+      padding: 20px; /* Reduce el padding */
+  }
+
+  .feature-box {
+      padding: 15px; /* Reduce el padding en las cajas */
+      margin: 15px 0; /* Espacio más pequeño entre cajas */
+  }
+
+  .feature-box h3 {
+      font-size: 1.25rem; /* Reduce el tamaño del título */
+  }
+
+  .feature-box p {
+      font-size: 0.9rem; /* Reduce el tamaño del texto */
+  }
+}
+
+/* Consultas para pantallas muy pequeñas (teléfonos) */
+@media only screen and (max-width: 480px) {
+  .inicio-container {
+      padding: 10px;
+  }
+
+  .welcome-section h1 {
+      font-size: 1.75rem; /* Tamaño más pequeño */
+  }
+
+  .welcome-section p {
+      font-size: 0.9rem;
+  }
+
+  .features-section {
+      padding: 10px;
+  }
+
+  .feature-box {
+      padding: 10px;
+      margin: 10px 0;
+  }
+
+  .feature-box h3 {
+      font-size: 1.1rem;
+  }
+
+  .feature-box p {
+      font-size: 0.8rem;
+  }
+}

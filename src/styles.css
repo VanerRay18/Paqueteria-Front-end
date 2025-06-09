@@ -1,0 +1,12 @@
+@import '~bootstrap/dist/css/bootstrap.min.css';
+
+
+html, body {
+  height: 100%;
+  margin: 0;
+  background-color: #F1F5F9; /* Cambia este color por el que desees */
+}
+
+.global-background {
+  background-color: #F1F5F9;
+}

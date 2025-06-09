@@ -1,0 +1,92 @@
+<div class="cont col-auto row mt-4 ms-4">
+  <div class="titulos">
+    <h1>Crear o modificar un nuevo rol</h1>
+    <h5>Formulario de registro de un rol</h5>
+  </div>
+  <div class="card d-flex flex-column mt-1">
+    <form class="m-3 mt-5" [formGroup]="roleForm" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-auto col-lg-2">
+          <label for="name" class="form-label">Nombre de rol:</label>
+          <input formControlName="name" type="text" class="form-control"
+            placeholder="Ingrese el nombre "
+            aria-label="First name" required>
+        </div>
+        <div class="col-auto col-lg-6">
+          <label for="lastName" class="form-label">Descripción:</label>
+          <input formControlName="lastName" type="text" class="form-control"
+            placeholder="Ingrese los apellidos "
+            aria-label="lastName" required>
+        </div>
+        <div class="col-auto">
+          <label for="Permission" class="form-label">Permisos del
+            usuario</label>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch"
+              id="edit" formControlName="edit">
+            <label class="form-check-label" for="edit">Editar</label>
+          </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch"
+              id="delete" formControlName="delete">
+            <label class="form-check-label" for="delete">Eliminar</label>
+          </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch"
+              id="add" formControlName="add">
+            <label class="form-check-label" for="add">Agregar</label>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-6 col-md-12">
+        <div class="draggable card col-lg-6 col-auto">
+          <h5>Módulos asignados:</h5>
+          <div class="assigned-roles">
+            <div
+              *ngFor="let modulo of assignedModules"
+              draggable="true"
+              (dragstart)="onDragStartM($event, modulo)"
+              class="custom-checkbox draggable-role assigned-role">
+              <input type="checkbox" checked disabled /> {{ modulo }}
+            </div>
+            <!-- Área de drop para asignar roles -->
+            <div
+              class="drop-area"
+              (dragover)="onDragOverM($event)"
+              (drop)="onDropM($event, 'assigned')">
+              <p>Arrastra aquí para asignar módulos</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 col-md-12">
+        <div class="draggable card col-lg-6 col-auto">
+          <h5>Todos los módulos:</h5>
+          <div class="all-roles">
+            <div
+              *ngFor="let modulo of allModules"
+              draggable="true"
+              (dragstart)="onDragStartM($event, modulo)"
+              class="custom-checkbox draggable-role">
+              <input type="checkbox" disabled /> {{ modulo }}
+            </div>
+            <!-- Área de drop para quitar roles -->
+            <div
+              class="drop-area"
+              (dragover)="onDragOverM($event)"
+              (drop)="onDropM($event, 'all')">
+              <p>Arrastra aquí para quitar módulos</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="boton-container col-auto m-3">
+      <button type="submit" class="btn  btn-sm">Guardar</button>
+    </div>
+  </div>
+</div>

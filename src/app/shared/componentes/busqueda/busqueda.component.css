@@ -1,0 +1,165 @@
+h1 {
+    font-weight: bold;
+  }
+
+  h5 {
+    color: rgb(122, 122, 122);
+  }
+  .card {
+    max-width: 700px;
+    border: 10%; /* Esta propiedad no afecta el redondeo; probablemente querías usar border-width */
+    border-radius: 10px; /* Ajusta el valor según el grado de redondeo deseado */
+    margin-bottom: 27px;
+  }
+
+
+  .row {
+    margin: 0;
+  }
+
+  .Busq {
+    background-color: #ffffff;
+    width: 100%; /* Por defecto, ocupa el 90% en pantallas pequeñas */
+    margin: auto; /* Centra el elemento */
+    padding: 10px; /* Espacio interior */
+  /*  border: 1px solid #ccc;  Borde para visualización */
+  }
+
+  @media (min-width: 768px) {
+    .Busq {
+      width: 78%; /* Cambia el ancho a 70% en pantallas de 768px o más */
+      margin: 10px; /* Centra el elemento */
+      padding: 5px; /* Espacio interior */
+    }
+
+  }
+
+  @media (min-width: 992px) {
+    .form-control {
+      flex-grow: 1; /* Hacer que los inputs crezcan */
+      min-width: 200px; /* Asegurarse de que no sean demasiado pequeños */
+    }
+
+    .btn-success {
+      padding-left: 30px;
+      padding-right: 30px;
+    }
+
+  }
+
+  .search-container {
+    display: flex;
+    flex-direction: row; /* Mantiene todos los elementos en una fila */
+    align-items: center; /* Alinea verticalmente los elementos */
+    margin-right: 20px;
+    margin-bottom: 20px; /* Espacio debajo del contenedor */
+  }
+
+  .RFC {
+    max-width: 200px;
+    margin-right: 20px;
+    flex-grow: 1; /* Permite que el input de RFC crezca */
+  }
+
+  .Nombre {
+    max-width: 400px;
+    flex-grow: 1; /* Permite que el input de Nombre crezca */
+  }
+  .buton{
+    margin-top: auto;
+
+    margin-bottom: 6px;
+  }
+  .input-container {
+    display: flex;
+    flex-direction: column; /* Asegura que la etiqueta y el input estén apilados */
+    width: 100%; /* Asegúrate de que ocupe el 100% del contenedor */
+  }
+
+  .text {
+    margin-bottom: 5px; /* Espaciado entre la etiqueta y el input */
+    font-family: "Montserrat", sans-serif;
+  }
+
+  input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 2px; /* Espacio entre inputs */
+  }
+
+  button {
+    border-radius: .5em;
+
+    height: 50%; /* Ajusta la altura del botón */
+    cursor: pointer;
+  }
+
+  .btn {
+    margin-top: 0; /* Asegúrate de que no haya margen superior que desplace el botón */
+    align-self: flex-start; /* Alinea el botón al inicio del contenedor */
+  }
+
+  .dropdown {
+    border-radius: 0 0 10px 10px; /* Quitar bordes superiores y redondear inferiores */
+    position: absolute; /* Permite colocar el dropdown debajo del input */
+    top: 90%; /* Coloca el dropdown justo debajo del input */
+    left: 0; /* Alinea el dropdown al lado izquierdo del input */
+    right: 0; /* Asegúrate de que el dropdown ocupe todo el ancho del input */
+    background-color: white; /* Color de fondo del dropdown */
+    border: 1px solid #ccc; /* Añade un borde */
+    border-top: none; /* Quita el borde superior */
+    z-index: 1000; /* Asegúrate de que el dropdown esté por encima de otros elementos */
+    overflow-y: auto;
+    max-height: 200px;
+    margin: 0; /* Asegúrate de que no haya margen */
+  }
+
+  .dropdown ul {
+    list-style: none; /* Elimina los puntos de la lista */
+    padding: 0; /* Elimina el padding */
+    margin: 1; /* Elimina el margin */
+  }
+  .busqueda{
+    margin-top: 8px;
+    height: 40px;
+    width: 80px;
+
+  }
+  .dropdown li {
+    padding: 8px 25px; /* Espaciado interno para las sugerencias */
+    cursor: pointer; /* Cambia el cursor al pasar sobre las sugerencias */
+  }
+
+  .dropdown li:hover {
+    background-color: #f0f0f0; /* Resalta la sugerencia al pasar el mouse */
+  }
+
+  ng-container {
+    width: 100vw;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .nav-tabs {
+
+    width: 100%;
+    color: #621132;
+    cursor: pointer;
+  }
+
+  .guardar{
+    margin-top: 30px;
+    min-height: 40px;
+  }
+  .botones {
+    background-color: #ffffff;
+    color: #621132;
+    border-color: #621132;
+    font-weight: bold;
+    height: 38px;
+    border-radius: 15px;
+  }
+  .botones:hover {
+    background-color: #d4d4d4;
+  }

@@ -1,0 +1,34 @@
+<div class=" card  ">
+    <h5 style="margin-top: .5% " class="ms-3"><i class="fa-solid fa-magnifying-glass"></i>  Busqueda <button  class="botones btn" (click)="clean()"><i class="fa-solid fa-eraser"></i></button></h5>
+
+    <div class="search-container d-flex flex-column flex-md-row align-items-start ms-3">
+      <div class="RFC input-container">
+        <label class="text">RFC</label>
+        <input [(ngModel)]="rfcSearchTerm" (input)="filterRFC() "style="text-transform: uppercase;"
+          type="text" placeholder="Buscar por RFC..." />
+        <div *ngIf="rfcSuggestions.length > 0" class="dropdown">
+          <ul>
+            <li *ngFor="let item of rfcSuggestions" (click)="selectRFC(item)">
+              {{ item.rfc }} - {{ item.nombre }}
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="Nombre input-container">
+        <label class="text"> Nombre</label>
+        <input [(ngModel)]="nombreSearchTerm"
+          (input)="filterNombre()" type="text" style="text-transform: uppercase;"
+          placeholder="Buscar por Nombre..." />
+        <ul *ngIf="nombreSuggestions.length > 0" class="dropdown">
+          <li *ngFor="let item of nombreSuggestions"
+            (click)="selectNombre(item)">
+            {{ item.nombre }} - {{ item.rfc }}
+          </li>
+        </ul>
+      </div>
+      <!-- <div class="input-container buton">
+        <button class="btn btn-primary btn-sm btn-block busqueda"
+          (click)="buscar(srl_emp)">Buscar</button>
+      </div> -->
+    </div>
+  </div>

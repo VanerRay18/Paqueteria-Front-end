@@ -1,0 +1,45 @@
+.card{
+  background-color: #ffffff;
+  width: 95%;
+}
+
+.botones{
+  background-color: #ffffff;
+  color: #621132;
+  border-color: #621132;
+  border-radius: 15px;
+}
+
+h1 {
+  font-weight: bold;
+}
+
+h5{
+  color: rgb(122, 122, 122);
+}
+.row{
+  margin: 0;
+}
+@media (min-width: 992px) {
+  .form-control {
+    flex-grow: 1; /* Hacer que los inputs crezcan */
+    min-width: 200px; /* Asegurarse de que no sean demasiado pequeños */
+  }
+
+  .row {
+    gap: 10px; /* Reducir el espacio entre los elementos */
+    align-items: center; /* Alinear verticalmente los elementos */
+  }
+
+  .btn-success {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+  .card {
+    padding: 15px;
+    width: 100%;
+  }
+}
+
+
+

@@ -1,0 +1,85 @@
+<nav class="navbar fixed-top">
+  <div class="col-auto">
+    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
+      data-bs-target="#offcanvasNavbar"
+      aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <img src="assets/logo_nav.png" class="img">
+
+    <i class="fa-solid fa-bell position-relative  ms-lg-3 bell"
+      (click)="toggleNotifications()">
+      <span
+        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary "
+        style="font-size:12px">
+        {{this.numNoti}}
+      </span>
+    </i>
+
+    <div *ngIf="showNotifications" class="overlay"
+      (click)="toggleNotifications()"></div>
+
+    <!-- Dropdown de notificaciones -->
+    <div *ngIf="showNotifications" class="notification-dropdown ">
+      <div class="notification-item "
+        *ngFor="let notification of notifications; let i = index">
+        <i class="{{notification.icon}} iconNoti"></i>
+        <div class="notification-content">
+          <strong>{{ notification.title }}</strong>
+          <span>{{ notification.message }}</span>
+          <div class="alert-time ">
+            <p ><strong>{{ notification.timeAgo }}</strong></p>
+          </div>
+        </div>
+        <i class="fa-solid fa-check" (click)="visto(i, notification.id)"></i>
+      </div>
+    </div>
+
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar"
+      aria-labelledby="offcanvasNavbarLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menú</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
+          aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <ul class="navbar-nav justify-content-start flex-grow-1 pe-3">
+          <li *ngFor="let node of menuItems" class="nav-item">
+            <!-- Enlace para módulos sin hijos -->
+            <div class="nav-link centerIconDAD"
+              [ngClass]="{'dropdown': node.children.length > 0}">
+              <a *ngIf="node.children.length === 0"
+                class="nav-link centerIconDAD" [routerLink]="node.config">
+                <i class="{{node.icon}} icons"></i>{{ node.moduleName }}
+              </a>
+            </div>
+            <!-- Enlace para módulos con hijos -->
+            <button *ngIf="node.children.length > 0"
+              class="nav-link dropdown-toggle centerIconDAD" type="button"
+              data-bs-toggle="collapse"
+              [attr.data-bs-target]="'#collapse-' + node.moduleId"
+              aria-expanded="false"
+              [attr.aria-controls]="'collapse-' + node.children">
+              <i class="{{node.icon}} icons"></i> {{ node.moduleName }}
+            </button>
+
+            <!-- Submenú para módulos con hijos -->
+            <div class="collapse" [id]="'collapse-' + node.moduleId">
+              <ul class="nav flex-column ms-3">
+                <li *ngFor="let subNode of node.children" class="nav-item"
+                  [ngClass]="{'active-custom': currentRoute === ('/' + subNode.config)}">
+                  <a class="nav-link generalHover" [routerLink]="subNode.config"
+                    (click)="handleChildClick(subNode.config)"
+                    data-bs-dismiss="offcanvas">
+                    <i class="{{subNode.icon}} icons"></i> {{ subNode.moduleName
+                    }}
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>

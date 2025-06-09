@@ -1,0 +1,155 @@
+.empty {
+  background-color: red !important;
+}
+
+button {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.edit {
+  color: #0FA958;
+}
+
+.delete {
+  color: #F24E1E;
+}
+
+.pdf {
+  color: #621132;
+}
+
+
+
+table {
+  font-size: 14px;
+  border-collapse: separate; /* Mantener 'separate' para bordes redondeados */
+  border-spacing: 0; /* Sin espacio entre celdas */
+  background-color: #fff; /* Fondo blanco de la tabla */
+}
+
+th, td {
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid #e0e0e0; /* Líneas sutiles entre las filas */
+  white-space: nowrap;
+}
+
+th {
+  background-color: #f9f9f9;
+  font-weight: bold;
+  color: #333;
+}
+
+td {
+  background-color: #fff; /* Fondo blanco para las celdas con datos */
+  color: #555;
+}
+
+tr:nth-child(even) td {
+  background-color: #fff; /* Mantener fondo blanco en todas las filas */
+}
+
+tr:hover td {
+  background-color: #eaeaea; /* Fondo gris claro al hacer hover */
+}
+
+/* Bordes redondeados en las esquinas de la tabla */
+table tr:first-child th:first-child {
+  border-top-left-radius: 12px;
+}
+
+table tr:first-child th:last-child {
+  border-top-right-radius: 12px;
+}
+
+table tr:last-child td:first-child {
+  border-bottom-left-radius: 12px;
+}
+
+table tr:last-child td:last-child {
+  border-bottom-right-radius: 12px;
+}
+
+
+
+.table-responsive {
+  max-height: inherit;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+thead {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 2;
+}
+
+tbody.table-body {
+
+  overflow-y: auto;
+}
+
+.pagination {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.sortable-header {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+.sortable-header i {
+  margin-left: 5px;
+}
+
+tfoot {
+  position: sticky;
+  bottom: 0;
+  background-color: white; /* Color de fondo para el pie de página */
+  z-index: 2; /* Asegura que el pie de página esté encima del cuerpo */
+}
+
+.btn{
+  background-color: #ffffff;
+  color: #621132;
+  border-color: #621132;
+  font-weight: bold;
+  height: 38px;
+  border-radius: 15px;
+}
+
+.btn:hover {
+  background-color: #d4d4d4;
+}
+
+.spinner-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #621132; /* Color del spinner */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

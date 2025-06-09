@@ -1,0 +1,43 @@
+<div class="cont col-auto row  mt-4 ms-4">
+  <div class="titulos ">
+    <h1>Crear o modificar un nuevo EndPoint</h1>
+    <h5>Formulario de registro de un EndPoint</h5>
+  </div>
+  <div
+    class="card d-flex flex-column mt-1">
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="m-5">
+      <div class="row">
+        <div class="col-auto col-lg-2">
+          <label for="name" class="form-label">Nombre:</label>
+          <input formControlName="name" type="text" class="form-control"
+            placeholder="Ingrese el nombre" aria-label="First name" required>
+        </div>
+        <div class="col-auto col-lg-3">
+          <label for="url" class="form-label">Url:</label>
+          <input formControlName="url" type="text" class="form-control"
+            placeholder="/licMedicas/licMedicaLogs" aria-label="Url" required>
+        </div>
+        <div class="col-auto">
+          <label for="metodo" class="form-label">Método:</label>
+          <input formControlName="metodo" type="text" class="form-control"
+            placeholder="GET/POST/PATCH" aria-label="metodo" required>
+        </div>
+        <div class="col-auto col-lg-5">
+          <label for="obj" class="form-label">Objetivo:</label>
+          <input formControlName="obj" type="text" class="form-control"
+            placeholder="Traer todas las licencias" aria-label="obj" required>
+        </div>
+        <div class="col-auto col-lg-3">
+          <label for="heders" class="form-label">Headers:</label>
+          <input formControlName="heders" type="text" class="form-control"
+            placeholder="srl_emp/ No necesita" aria-label="heders" required>
+        </div>
+
+        <div class="d-flex justify-content-end mt-3">
+          <button type="submit" class="btn btn-sm">Guardar</button>
+        </div>
+      </div>
+    </form>
+
+  </div>
+</div>
