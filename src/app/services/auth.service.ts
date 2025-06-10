@@ -41,10 +41,8 @@ export class AuthService {
   //   return this.http.post<any>(`${environment.baseService}${'/login'}`, {headers});
   // }
 
-  getModulesByRole(rolId: any,extras:any): Observable<ApiResponse> {
-    let headers = new HttpHeaders({'rolId': rolId, 'extras':extras})
-    return this.http.get<ApiResponse>(`${environment.baseService}${'/user/roleByModule'}`,
-      {headers}
+  getModulesByRole(): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/users/moduleByUser'}`,
     );
   }
 
@@ -57,57 +55,16 @@ export class AuthService {
     return this.http.get<any>(`${environment.baseService}${'/roles'}`);
   }
 
-  getModulesByUser(): Observable<ApiResponse> {
-    return this.http.get<any>(`${environment.baseService}${'/users/modules-by-user'}`);
-  }
-
-  GetCredentialsByUser(): Observable<ApiResponse> {
-    return this.http.get<any>(`${environment.baseService}${'/credentialsByUser'}`);
-  }
-
-  // Método para establecer el estado de logueo
-  setLoggedIn(value: boolean): void {
-    this.loggedIn = value;
-  }
-
-  // Método para establecer el rol del usuario
-  setUserRole(role: string): void {
-    this.userRole = role;
-  }
-
-  // Método para establecer los módulos del usuario
-  setUserModules(modules: number[]): void {
-    this.userModules = modules;
-  }
-
-  // Método para verificar si el usuario está logueado
-  isLoggedIn(): boolean {
-    return this.loggedIn;
-  }
-
-  // Método para obtener el rol del usuario
-  getUserRole(): string | null {
-    return this.userRole;
-  }
-
-  // Método para obtener los módulos del usuario
-  getUserModules(): number[] {
-    return this.userModules;
-  }
 
   // Método para verificar si el rol coincide con los permisos requeridos
-  hasAccessToModule(moduleId: number): boolean {
-    return this.userModules.includes(moduleId);
-  }
 
 
     getNotifications(userId: any): Observable<ApiResponse> {
       let headers = new HttpHeaders({'userId': userId})
       return this.http.get<ApiResponse>(`${environment.baseService}${'/notifications'}`,
         {headers}
-      );    
+      );
     }
-
 
     changeStatus(notificationId: any, status: any): Observable<ApiResponse> {//Cambia el estado de la nomina
       let headers = new HttpHeaders({'notificationId': notificationId, 'status': status})

@@ -1,46 +1,40 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
+import { RHService } from 'src/app/services/rh.service';
+import { ApiResponse } from 'src/app/models/ApiResponse';
 
 @Component({
   selector: 'app-new-employee',
   templateUrl: './new-employee.component.html',
   styleUrls: ['./new-employee.component.css']
 })
-export class NewEmployeeComponent implements OnInit{
+export class NewEmployeeComponent implements OnInit {
 
- datosPersonalesForm!: FormGroup;
+  datosPersonalesForm!: FormGroup;
   direccionForm!: FormGroup;
-  empleoForm!: FormGroup;
   pagoForm!: FormGroup;
   emergenciaForm!: FormGroup;
   bermedForm!: FormGroup;
   fotoPreview: string = 'assets/default-user.png'; // Ruta de tu ícono por defecto
   draggedDocumentos: { id: number, name: string } | null = null;
-  allDocumentos: { id: number, name: string }[] = [
-    { id: 1, name: 'INE' },
-    { id: 2, name: 'Comprobante de domicilio' },
-    { id: 3, name: 'Licencia' },
-    { id: 4, name: 'Tarjeta de circulación' },
-    { id: 5, name: 'Contrato' }
-  ];
-
-  assignedDocumentos: { id: number, name: string }[] = [
-    { id: 1, name: 'INE' },
-    { id: 3, name: 'Licencia' }
-  ];
-
-  Documentos: number[] = [1, 3];
-
+  allDocumentos: { id: number, name: string }[] = [];
+  assignedDocumentos: { id: number, name: string }[] = [];
+  Documentos: number[] = [];
+  draggedUniforms: { id: number, name: string } | null = null;
+  allUniforms: { id: number, name: string }[] = [];
+  assignedUniforms: { id: number, name: string }[] = [];
+  uniforms: number[] = [];
+  data: any ;
+  catDocuments: any[] = [];
+  catEmployeeUniforms: any[] = [];
+  catJobs: any[] = [];
+  catSeguros: any[] = [];
 
   constructor(private fb: FormBuilder,
-    private cdr: ChangeDetectorRef
-  ) {}
-
-  ngOnInit() {
-    this.cdr.detectChanges();
-    console.log(this.assignedDocumentos)
-
+    private cdr: ChangeDetectorRef,
+    private rh: RHService
+  ) {
     this.datosPersonalesForm = this.fb.group({
       foto: [null],
       nombreCompleto: [''],
@@ -48,7 +42,12 @@ export class NewEmployeeComponent implements OnInit{
       curp: [''],
       fechaNacimiento: [''],
       tipoSeguro: [''],
-      telefono: ['']
+      telefono: [''],
+      horarioEnt: [''],
+      horarioSal: [''],
+      fechaInicio: [''],
+      puestoLaboral: [''],
+      tipoContratacion: [''],
     });
 
     this.direccionForm = this.fb.group({
@@ -61,21 +60,6 @@ export class NewEmployeeComponent implements OnInit{
       numExterior: ['']
     });
 
-    this.empleoForm = this.fb.group({
-      fechaInicio: [''],
-      puestoLaboral: [''],
-      tipoContratacion: [''],
-      entregaIne: [false],
-      faltaDomicilio: [false],
-      faltaLicencia: [false],
-      faltaTarjeta: [false],
-      faltaContrato: [false],
-      materialEpps: [false],
-      materialGorra: [false],
-      materialPlayera: [false],
-      horario: ['']
-    });
-
     this.pagoForm = this.fb.group({
       clabe: [''],
       tarjeta: [''],
@@ -83,16 +67,76 @@ export class NewEmployeeComponent implements OnInit{
     });
 
     this.emergenciaForm = this.fb.group({
-      telefono: [''],
-      nombre: ['']
+      contactos: this.fb.array([this.crearContacto()])
     });
 
     this.bermedForm = this.fb.group({
-      modelo: [''],
-      plan: [''],
-      telefono: ['']
+      telefonos: this.fb.array([this.crearBermed()])
+    });
+   }
+
+  ngOnInit() {
+    this.cdr.detectChanges();
+    console.log(this.assignedDocumentos)
+this.getData();
+
+  }
+
+  getData() {
+    this.rh.getCatalogos().subscribe((response: ApiResponse) => {
+      this.data = response.data;
+      this.allDocumentos = response.data.catDocuments;
+      this.allUniforms = response.data.catEmployeeUniforms;
+      this.catJobs = response.data.catJobs;
+      this.catSeguros = response.data.seguros;
+      console.log('Datos obtenidos:', this.data);
+    },
+      (error) => {
+        // console.error('Error al obtener los datos:', error);
+        console.error('Ocurrio un error', error);
+      });
+  }
+
+  crearContacto(): FormGroup {
+    return this.fb.group({
+      telefono: ['', Validators.required],
+      nombre: ['', Validators.required],
+      parentesco: ['', Validators.required]
     });
   }
+
+  crearBermed(): FormGroup {
+    return this.fb.group({
+      modelo: ['', Validators.required],
+      plan: ['', Validators.required],
+      telefono: ['', Validators.required]
+    });
+  }
+
+  get contactos(): FormArray {
+    return this.emergenciaForm.get('contactos') as FormArray;
+  }
+
+  get telefonos(): FormArray {
+    return this.bermedForm.get('telefonos') as FormArray;
+  }
+
+  agregarContacto() {
+    this.contactos.push(this.crearContacto());
+  }
+
+  agregarBermed() {
+    this.telefonos.push(this.crearBermed());
+  }
+
+  eliminarContacto(index: number) {
+    this.contactos.removeAt(index);
+  }
+
+  eliminarBermed(index: number) {
+    this.telefonos.removeAt(index);
+  }
+
 
   // Métodos para enviar cada formulario
   guardarDatosPersonales() {
@@ -104,7 +148,7 @@ export class NewEmployeeComponent implements OnInit{
   }
 
   guardarEmpleo() {
-    console.log(this.empleoForm.value);
+
   }
 
   guardarPago() {
@@ -128,6 +172,33 @@ export class NewEmployeeComponent implements OnInit{
       reader.readAsDataURL(file);
     }
   }
+  // Drag functions for uniforms
+  onDragStartUniform(event: DragEvent, Uniform: { id: number, name: string }) {
+    this.draggedUniforms = Uniform;
+    event.dataTransfer?.setData('text/plain', Uniform.name);
+  }
+  onDropUniform(event: DragEvent, target: 'assigned' | 'all') {
+    event.preventDefault();
+    const Uniform = this.draggedUniforms;
+    if (Uniform) {
+      if (target === 'assigned') {
+        if (!this.assignedUniforms.some(r => r.id === Uniform.id)) {
+          this.assignedUniforms.push(Uniform);
+          this.uniforms.push(Uniform.id); // Agrega el ID al arreglo uniforms
+          this.allUniforms = this.allUniforms.filter(r => r.id !== Uniform.id);
+        }
+      } else {
+        this.assignedUniforms = this.assignedUniforms.filter(r => r.id !== Uniform.id);
+        this.uniforms = this.uniforms.filter(id => id !== Uniform.id); // Remueve el ID del arreglo uniforms
+        this.allUniforms.push(Uniform);
+      }
+      this.draggedUniforms = null;
+    }
+  }
+  onDragOverUniform(event: DragEvent) {
+    event.preventDefault();
+  }
+  // Drag functions for documentos
 
   onDragStart(event: DragEvent, Documento: { id: number, name: string }) {
     this.draggedDocumentos = Documento;

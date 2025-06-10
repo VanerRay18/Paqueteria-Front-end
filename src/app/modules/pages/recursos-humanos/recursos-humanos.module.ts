@@ -9,6 +9,7 @@ import { NewCarComponent } from './new-car/new-car.component';
 import { SharedModule } from "../../../shared/shared.module";
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
+import { RHRoutingModule } from './rh-routing.module';
 
 
 
@@ -25,7 +26,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     CommonModule,
     SharedModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RHRoutingModule
 ]
 })
 export class RecursosHumanosModule { }

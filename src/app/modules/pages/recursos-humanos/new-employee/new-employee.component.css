@@ -71,7 +71,7 @@
   }
 
   .grid-3 {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr 1fr 1fr 0.2fr ;
   }
   @media (max-width: 768px) {
     .grid-3 {
@@ -144,33 +144,84 @@
 }
 
 .draggable {
-  border: 1px solid #ccc;
+  background-color: #fff;
+  border-radius: 10px;
   padding: 16px;
-  margin: 8px;
-
+  border: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin: 12px auto;
+  width: 95%; /* ocupa casi todo el contenedor */
 }
 
 .assigned-roles, .all-roles {
-  min-height: 200px;
-  border: 1px solid #ccc;
-  padding: 8px;
+  min-height: 220px;
+  padding: 10px;
+  background-color: #fafafa;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  overflow-y: auto;
+  max-height: 300px;
+  text-align: left  !important;
+  justify-content: flex-start;
 }
 
 .draggable-role {
+  background-color: #e3f2fd;
+  padding: 10px 20px;
+  margin: 10px auto;
+  width: 95%; /* ocupa casi todo el contenedor */
+  border-radius: 8px;
+  cursor: grab;
   display: flex;
   align-items: center;
-  margin: 4px 0;
-  cursor: grab;
+  justify-content: flex-start;
+  gap: 1px; /* espacio entre checkbox y texto */
+}
+
+.draggable-role:hover {
+  background-color: #bbdefb;
 }
 
 .draggable-role input[type="checkbox"] {
-  margin-right: 8px;
+  margin-right: 10px;
+  text-align: left !important;
 }
 
 .drop-area {
-  border: 2px dashed #ccc;
-  padding: 8px;
+  border: 2px dashed #90caf9;
+  border-radius: 10px;
+  padding: 16px;
   text-align: center;
-  color: #888;
-  margin-top: 10px;
+  color: #64b5f6;
+  margin-top: 14px;
+  background-color: #e3f2fd;
+  transition: background-color 0.3s ease;
+}
+
+.drop-area:hover {
+  background-color: #bbdefb;
+  color: #1e88e5;
+}
+
+.card {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: white;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-size: 1.2rem; /* o el tamaño que prefieras */
+  cursor: pointer;
+  line-height: 1;
+  color: #dc3545; /* rojo similar al btn-danger */
+}
+
+.icon-btn:hover {
+  opacity: 0.8;
 }

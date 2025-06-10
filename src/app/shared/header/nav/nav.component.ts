@@ -43,29 +43,29 @@ export class NavComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef
   ) {     this.currentRoute = this.router.url;}
   fetchData() {
-    interval(15000)
-      .pipe(
-        startWith(0),
-        switchMap(() => {
-          const userId = localStorage.getItem('userId');
-          return this.authService.getNotifications(userId).pipe(
-            catchError((error) => {
-              console.error('Error al obtener notificaciones:', error);
-              return of(null); // Retorna un valor vacío para no detener el intervalo
-            })
-          );
-        })
-      )
-      .subscribe((response) => {
-        if (response && response.data) {
-          this.notifications = response.data.map((noti: any) => ({
-            ...noti,
-            timeAgo: this.calculateTimeAgo(noti.fecha),
-          }));
-          this.numNoti = response.message ?? 0;
-          this.cdr.detectChanges();
-        }
-      });
+    // interval(15000)
+    //   .pipe(
+    //     startWith(0),
+    //     switchMap(() => {
+    //       const userId = localStorage.getItem('userId');
+    //       return this.authService.getNotifications(userId).pipe(
+    //         catchError((error) => {
+    //           console.error('Error al obtener notificaciones:', error);
+    //           return of(null); // Retorna un valor vacío para no detener el intervalo
+    //         })
+    //       );
+    //     })
+    //   )
+    //   .subscribe((response) => {
+    //     if (response && response.data) {
+    //       this.notifications = response.data.map((noti: any) => ({
+    //         ...noti,
+    //         timeAgo: this.calculateTimeAgo(noti.fecha),
+    //       }));
+    //       this.numNoti = response.message ?? 0;
+    //       this.cdr.detectChanges();
+    //     }
+    //   });
   }
 
   calculateTimeAgo(fecha: string): string {
@@ -118,7 +118,7 @@ export class NavComponent implements OnInit, OnDestroy {
     const rolId = localStorage.getItem('rolId');
     const extras = localStorage.getItem('extras')
     if (rolId) {
-      const sub = this.authService.getModulesByRole(rolId,extras).subscribe({
+      const sub = this.authService.getModulesByRole().subscribe({
         next: (result) => {
           const modules: TreeNode[] = result.data
           .filter((item: any) => item.vista === true)

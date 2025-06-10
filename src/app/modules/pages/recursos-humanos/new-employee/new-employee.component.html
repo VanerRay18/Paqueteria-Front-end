@@ -57,8 +57,10 @@
             individual</label>
         </div>
 
-        <label>Horario laboral:</label>
-        <input type="text" formControlName="horario" />
+        <label>Horario de entrada:</label>
+        <input type="text" formControlName="horarioEnt" />
+        <label>Horario de salida:</label>
+        <input type="text" formControlName="horarioSal" />
 
       </div>
 
@@ -90,7 +92,7 @@
   </form>
 
   <!-- DATOS DEL EMPLEO -->
-  <form [formGroup]="empleoForm" (ngSubmit)="guardarEmpleo()">
+  <div class="card ">
     <h4>Documentacion y material entregado</h4>
     <div >
       <div class="row justify-content-center ">
@@ -137,22 +139,55 @@
           </div>
         </div>
       </div>
-
-      <label>Material entregado al trabajador:</label>
-      <div class="checkbox-group">
-        <label><input type="checkbox" formControlName="materialEpps" />
-          Epps</label>
-        <label><input type="checkbox" formControlName="materialGorra" />
-          Gorra</label>
-        <label><input type="checkbox" formControlName="materialPlayera" />
-          Playera polo</label>
+      <div class="row justify-content-center ">
+        <div class="col-lg-6 col-md-12">
+          <div class="draggable card col-lg-6 col-auto">
+            <h5>Material entregada:</h5>
+            <div class="assigned-roles">
+              <div
+                *ngFor="let Uniform of assignedUniforms"
+                draggable="true"
+                (dragstart)="onDragStartUniform($event, Uniform)"
+                class="custom-checkbox draggable-role assigned-role">
+                <input type="checkbox" checked disabled /> {{ Uniform.name }}
+              </div>
+              <!-- Área de drop para asignar roles -->
+              <div
+                class="drop-area"
+                (dragover)="onDragOverUniform($event)"
+                (drop)="onDropUniform($event, 'assigned')">
+                <p>Arrastra aquí para asignar docuemtacion</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-12">
+          <div class="draggable card col-lg-6 col-auto ">
+            <h5>Todo el material:</h5>
+            <div class="all-roles">
+              <div
+                *ngFor="let Uniform of allUniforms"
+                draggable="true"
+                (dragstart)="onDragStartUniform($event, Uniform)"
+                class="custom-checkbox draggable-role">
+                <input type="checkbox" disabled /> {{ Uniform.name }}
+              </div>
+              <!-- Área de drop para quitar roles -->
+              <div
+                class="drop-area"
+                (dragover)="onDragOverUniform($event)"
+                (drop)="onDropUniform($event, 'all')">
+                <p>Arrastra aquí para quitar docuemtacion</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-
     </div>
     <div class="col-auto d-flex justify-content-end mt-auto">
-      <button type="submit" class="btn  btn-sm">Guardar sección</button>
+      <button type="submit" class="btn  btn-sm" onclick="guardarEmpleo()">Guardar sección</button>
     </div>
-  </form>
+  </div>
 
   <!-- DATOS DE PAGO -->
   <form [formGroup]="pagoForm" (ngSubmit)="guardarPago()">
@@ -170,29 +205,41 @@
   </form>
 
   <!-- CONTACTO DE EMERGENCIA -->
-  <form [formGroup]="emergenciaForm" (ngSubmit)="guardarEmergencia()">
-    <h4>Contacto de emergencia</h4>
-    <div class="grid-2">
+<!-- FORMULARIO DE CONTACTO DE EMERGENCIA -->
+<form [formGroup]="emergenciaForm" (ngSubmit)="guardarEmergencia()">
+  <h4>Contacto de emergencia</h4>
+  <div formArrayName="contactos">
+    <div *ngFor="let contacto of contactos.controls; let i = index" [formGroupName]="i" class="grid-3 mb-2">
       <input type="tel" formControlName="telefono" placeholder="Teléfono" />
       <input type="text" formControlName="nombre" placeholder="Nombre" />
+      <input type="text" formControlName="parentesco" placeholder="Parentesco" />
+      <button type="button" (click)="eliminarContacto(i)" class="icon-btn"><i class="fa-solid fa-trash"></i></button>
     </div>
-    <div class="col-auto d-flex justify-content-end mt-auto">
-      <button type="submit" class="btn  btn-sm">Guardar sección</button>
-    </div>
-  </form>
+  </div>
+  <button type="button" class="btn btn-link p-0 mb-2" (click)="agregarContacto()">➕ Agregar contacto</button>
+  <div class="col-auto d-flex justify-content-end mt-auto">
+    <button type="submit" class="btn btn-sm">Guardar sección</button>
+  </div>
+</form>
 
-  <!-- TELEFONOS DE BERMED -->
-  <form [formGroup]="bermedForm" (ngSubmit)="guardarBermed()">
-    <h4>Teléfonos de BERMED</h4>
-    <div class="grid-3">
-      <input type="text" formControlName="modelo"
-        placeholder="Modelo del teléfono" />
+<!-- FORMULARIO DE BERMED -->
+<form [formGroup]="bermedForm" (ngSubmit)="guardarBermed()">
+  <h4>Teléfonos de BERMED</h4>
+  <div formArrayName="telefonos">
+    <div *ngFor="let tel of telefonos.controls; let i = index" [formGroupName]="i" class="grid-3 mb-2">
+      <input type="text" formControlName="modelo" placeholder="Modelo del teléfono" />
       <input type="text" formControlName="plan" placeholder="Tipo de plan" />
-      <input type="text" formControlName="telefono"
-        placeholder="No. Teléfono" />
+      <input type="text" formControlName="telefono" placeholder="No. Teléfono" />
+      <button type="button" (click)="eliminarBermed(i)" class="icon-btn"><i class="fa-solid fa-trash"></i></button>
     </div>
-    <div class="col-auto d-flex justify-content-end mt-auto">
-      <button type="submit" class="btn  btn-sm">Guardar sección</button>
-    </div>
-  </form>
+  </div>
+  <button type="button" class="btn btn-link p-0 mb-2" (click)="agregarBermed()">➕ Agregar teléfono</button>
+  <div class="col-auto d-flex justify-content-end mt-auto">
+    <button type="submit" class="btn btn-sm">Guardar sección</button>
+  </div>
+</form>
+
+  <div class="col-auto d-flex justify-content-end mt-auto">
+    <button type="submit" class="btn  btn-sm" onclick="guardarEmpleo()">Terminar y Guardar todo</button>
+  </div>
 </div>

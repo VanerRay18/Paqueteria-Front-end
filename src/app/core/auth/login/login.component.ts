@@ -91,7 +91,6 @@ export class LoginComponent implements OnInit {
 
 // Verifica la expiración del token
 checkTokenExpiration() {
-  console.log('hola')
   const tokenExpiration = localStorage.getItem('token');
   if (tokenExpiration) {
     const now = new Date().getTime();
