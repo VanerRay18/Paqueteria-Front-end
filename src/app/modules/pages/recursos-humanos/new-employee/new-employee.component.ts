@@ -3,6 +3,8 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
 import { RHService } from 'src/app/services/rh.service';
 import { ApiResponse } from 'src/app/models/ApiResponse';
+import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-new-employee',
@@ -137,12 +139,69 @@ this.getData();
     this.telefonos.removeAt(index);
   }
 
+  separarNombreCompleto(nombreCompleto: string) {
+    const partes = nombreCompleto.trim().split(' ');
+    const name = partes.slice(0, partes.length - 2).join(' ') || '';
+    const firstSurname = partes[partes.length - 2] || '';
+    const secondSurname = partes[partes.length - 1] || '';
+    return { name, firstSurname, secondSurname };
+  }
+  
+  convertirHorario(horaStr: string) {
+    const [hour, minute] = horaStr.split(':').map(Number);
+    return {
+      hour: hour || 0,
+      minute: minute || 0,
+      second: 0,
+      nano: 0
+    };
+  }
 
   // Métodos para enviar cada formulario
   guardarDatosPersonales() {
-    console.log(this.datosPersonalesForm.value);
+    const formValue = this.datosPersonalesForm.value;
+  
+    // Separar nombre completo
+    const { name, firstSurname, secondSurname } = this.separarNombreCompleto(formValue.nombreCompleto);
+  
+    const dto = {
+      name,
+      firstSurname,
+      secondSurname,
+      rfc: formValue.rfc,
+      curp: formValue.curp,
+      nacimiento: new Date(formValue.fechaNacimiento).toISOString(),
+      dateStart: new Date(formValue.fechaInicio).toISOString(),
+      dateFin: new Date().toISOString(), // Puedes cambiar esto si manejas una fecha real
+      active: true,
+      config: {}, // Llena si necesitas algo
+      entrada: this.convertirHorario(formValue.horarioEnt),
+      salida: this.convertirHorario(formValue.horarioSal),
+      catJobId: formValue.puestoLaboral,
+      catEmploymentId: formValue.tipoContratacion,
+      catSeguroId: formValue.tipoSeguro,
+    };
+  
+    this.rh.createEmployee(dto).subscribe({
+      next: (response) => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Datos guardados',
+          text: 'Los datos personales fueron guardados correctamente.',
+        });
+      },
+      error: (err) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Ocurrió un error al guardar los datos.',
+        });
+        console.error(err);
+      }
+    });
   }
-
+  
+  
   guardarDireccion() {
     console.log(this.direccionForm.value);
   }

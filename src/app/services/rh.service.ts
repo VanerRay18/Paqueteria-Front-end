@@ -17,4 +17,9 @@ export class RHService {
     return this.http.get<ApiResponse>(`${environment.baseService}${'/employees/allCatsRH'}`);
   }
 
+  createEmployee(data:any): Observable<ApiResponse> {//Trae la nomina actual
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/employees'}`,data);
+  }
+
+
 }
