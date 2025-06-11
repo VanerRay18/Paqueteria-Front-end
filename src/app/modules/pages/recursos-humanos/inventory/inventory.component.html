@@ -1,1 +1,109 @@
-<p>inventory works!</p>
+<div class="cont col-auto row  mt-4 ms-4">
+  <div class="titulos col-auto col-lg-8">
+    <h1>Inventario</h1>
+  </div>
+
+  <div class="col-auto col-lg-12 mt-4">
+    <ul class="nav nav-tabs d-flex flex-row flex-wrap" role="tablist">
+      <li class="nav-item" *ngFor="let tab of tabs">
+        <a class="nav-link"
+          [class.active]="tab.id === activeTab"
+          (click)="setActiveTab(tab.id)">
+          <i [class]="tab.icon"></i>
+          {{ tab.title }}
+        </a>
+      </li>
+    </ul>
+
+    <div class="tab-content" role="tabpanel">
+      <ng-container *ngIf="activeTab === 'base'">
+        <div class="row card2">
+
+          <div class="form-floating col-auto col-lg-4 m-3 row">
+            <input type="text" class=" buscar form-control" id="busqueda"
+              placeholder="Buscar"
+              [(ngModel)]="searchTerm" name="busqueda">
+            <label for="User">&nbsp;&nbsp;<i
+                class="fa-solid fa-magnifying-glass"></i> Buscar</label>
+          </div>
+          <div class="col-auto col-lg-4 mt-4">
+            <h5>Total de registros: 64</h5>
+          </div>
+          <div class="col-auto col-lg-3 d-flex justify-content-end mt-auto">
+            <a [routerLink]="['/pages/RH/Registrar-Trabajador']">
+              <button type="button" class="btn btn-sm">DAR DE ALTA UN TRABAJADOR</button>
+            </a>
+          </div>
+
+          <div
+            class="col-auto col-lg-12 mt-4 justify-content-center align-items-center"
+            *ngIf="dataB.length > 0">
+            <app-tables
+              [headers]="headersB"
+              [data]="dataB"
+              [displayedColums]="displayedColumnsB"
+              [searchTerm]="searchTerm"
+              [maxHeight]="'630px'"
+              [itemsPerPage]="10"
+              [showActionsEdit]=true
+              (edit)="onEdit($event)"
+              [showActionsDeleted]=true
+              (delete)="onDelete($event)"
+              [showActionsPdf]=false
+              [showActiveCheckbox]=false
+              [showDetailsColumn]=false
+              [isLoading]="isLoading">
+            </app-tables>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="activeTab === 'contrato' ">
+        <div class="row card2">
+
+          <div class="form-floating col-auto col-lg-4 m-3 row">
+            <input type="text" class=" buscar form-control" id="busqueda"
+              placeholder="Buscar"
+              [(ngModel)]="searchTerm" name="busqueda">
+            <label for="User">&nbsp;&nbsp;<i
+                class="fa-solid fa-magnifying-glass"></i> Buscar</label>
+          </div>
+
+          <div class="col-auto col-lg-4 mt-4">
+            <h5>Total de registros: 64</h5>
+          </div>
+
+          <div class="col-auto col-lg-3 d-flex justify-content-end mt-auto">
+            <a [routerLink]="['/pages/RH/Registrar-Trabajador']">
+              <button type="button" class="btn btn-sm">DAR DE ALTA UN TRABAJADOR</button>
+            </a>
+          </div>
+
+          <div
+            class="col-auto col-lg-12 mt-4 justify-content-center align-items-center"
+            *ngIf="dataC.length > 0">
+            <app-tables
+              [headers]="headersC"
+              [data]="dataC"
+              [displayedColums]="displayedColumnsC"
+              [searchTerm]="searchTerm"
+              [maxHeight]="'630px'"
+              [itemsPerPage]="10"
+              [showActionsEdit]=true
+              (edit)="onEdit($event)"
+              [showActionsDeleted]=true
+              (delete)="onDelete($event)"
+              [showActionsPdf]=false
+              [showActiveCheckbox]=false
+              [showDetailsColumn]=true
+              (show)="showDetails($event)"
+              [isLoading]="isLoading">
+            </app-tables>
+          </div>
+        </div>
+      </ng-container>
+
+    </div>
+  </div>
+
+</div>

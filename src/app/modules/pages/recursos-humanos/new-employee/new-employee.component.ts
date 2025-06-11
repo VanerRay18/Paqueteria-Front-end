@@ -4,7 +4,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { RHService } from 'src/app/services/rh.service';
 import { ApiResponse } from 'src/app/models/ApiResponse';
 import Swal from 'sweetalert2';
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-new-employee',
@@ -30,13 +30,43 @@ export class NewEmployeeComponent implements OnInit {
   data: any ;
   catDocuments: any[] = [];
   catEmployeeUniforms: any[] = [];
+  catEmployments: any[] = [];
   catJobs: any[] = [];
   catSeguros: any[] = [];
+  employeeId: any;
 
   constructor(private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
-    private rh: RHService
+    private rh: RHService,
+    private router: Router
   ) {
+
+   }
+
+  ngOnInit() {
+ this.getData();
+ this.forms();
+
+  }
+
+  getData() {
+    this.rh.getCatalogos().subscribe((response: ApiResponse) => {
+      this.data = response.data;
+      this.allDocumentos = response.data.catDocuments;
+      this.allUniforms = response.data.catEmployeeUniforms;
+      this.catJobs = response.data.catJobs;
+      this.catSeguros = response.data.catSeguros;
+      this.catEmployments = response.data.catEmployments;
+      // console.log('Datos obtenidos:', this.data);
+    },
+      (error) => {
+        // console.error('Error al obtener los datos:', error);
+        console.error('Ocurrio un error', error);
+      });
+
+  }
+
+  forms(){
     this.datosPersonalesForm = this.fb.group({
       foto: [null],
       nombreCompleto: [''],
@@ -75,28 +105,6 @@ export class NewEmployeeComponent implements OnInit {
     this.bermedForm = this.fb.group({
       telefonos: this.fb.array([this.crearBermed()])
     });
-   }
-
-  ngOnInit() {
-    this.cdr.detectChanges();
-    console.log(this.assignedDocumentos)
-this.getData();
-
-  }
-
-  getData() {
-    this.rh.getCatalogos().subscribe((response: ApiResponse) => {
-      this.data = response.data;
-      this.allDocumentos = response.data.catDocuments;
-      this.allUniforms = response.data.catEmployeeUniforms;
-      this.catJobs = response.data.catJobs;
-      this.catSeguros = response.data.seguros;
-      console.log('Datos obtenidos:', this.data);
-    },
-      (error) => {
-        // console.error('Error al obtener los datos:', error);
-        console.error('Ocurrio un error', error);
-      });
   }
 
   crearContacto(): FormGroup {
@@ -146,24 +154,18 @@ this.getData();
     const secondSurname = partes[partes.length - 1] || '';
     return { name, firstSurname, secondSurname };
   }
-  
-  convertirHorario(horaStr: string) {
-    const [hour, minute] = horaStr.split(':').map(Number);
-    return {
-      hour: hour || 0,
-      minute: minute || 0,
-      second: 0,
-      nano: 0
-    };
-  }
 
   // Métodos para enviar cada formulario
   guardarDatosPersonales() {
     const formValue = this.datosPersonalesForm.value;
-  
-    // Separar nombre completo
+
     const { name, firstSurname, secondSurname } = this.separarNombreCompleto(formValue.nombreCompleto);
-  
+
+    const formatHorario = (horaStr: string) => {
+      const [hour, minute] = horaStr.split(':');
+      return `${hour.padStart(2, '0')}:${minute.padStart(2, '0')}:00`;
+    };
+
     const dto = {
       name,
       firstSurname,
@@ -172,17 +174,55 @@ this.getData();
       curp: formValue.curp,
       nacimiento: new Date(formValue.fechaNacimiento).toISOString(),
       dateStart: new Date(formValue.fechaInicio).toISOString(),
-      dateFin: new Date().toISOString(), // Puedes cambiar esto si manejas una fecha real
+      dateFin: null,
+      entrada: formatHorario(formValue.horarioEnt),
+      salida: formatHorario(formValue.horarioSal),
       active: true,
-      config: {}, // Llena si necesitas algo
-      entrada: this.convertirHorario(formValue.horarioEnt),
-      salida: this.convertirHorario(formValue.horarioSal),
-      catJobId: formValue.puestoLaboral,
-      catEmploymentId: formValue.tipoContratacion,
-      catSeguroId: formValue.tipoSeguro,
+      phone: formValue.telefono,
+      config: {},
+      catJobId: Number(formValue.puestoLaboral),
+      catEmploymentId: Number(formValue.tipoContratacion),
+      catSeguroId: Number(formValue.tipoSeguro),
     };
-  
+
     this.rh.createEmployee(dto).subscribe({
+      next: (response) => {
+        this.employeeId = response.data; // Guarda el ID del empleado creado
+        Swal.fire({
+          icon: 'success',
+          title: 'Datos guardados',
+          text: 'Los datos personales fueron guardados correctamente.',
+        });
+      },
+      error: (err) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Ocurrió un error al guardar los datos.',
+        });
+        console.error(err);
+      }
+    });
+  }
+
+
+
+  guardarDireccion() {
+    const formValue = this.direccionForm.value;
+
+    const dto = {
+      cp: formValue.codigoPostal,
+      municipio: formValue.municipio,
+      estado: formValue.estado,
+      colonia: formValue.colonia,
+      calle: formValue.calle,
+      interior: formValue.numInterior,
+      exterior: formValue.numExterior,
+    };
+
+    // console.log(dto);
+
+    this.rh.createAdress(dto, this.employeeId).subscribe({
       next: (response) => {
         Swal.fire({
           icon: 'success',
@@ -200,27 +240,150 @@ this.getData();
       }
     });
   }
-  
-  
-  guardarDireccion() {
-    console.log(this.direccionForm.value);
-  }
 
   guardarEmpleo() {
+
+    const documents = this.Documentos;
+    const uniforms = this.uniforms;
+
+    this.rh.SaveDocuments(documents, this.employeeId).subscribe({
+      next: (response) => {
+        console.log(documents);
+        Swal.fire({
+          icon: 'success',
+          title: 'Documentos guardados',
+          text: 'Los documentos fueron guardados correctamente.',
+        });
+      },
+      error: (err) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Ocurrió un error al guardar los documentos.',
+        });
+        console.error(err);
+      }
+    });
+    this.rh.SaveUniforms(uniforms, this.employeeId).subscribe({
+      next: (response) => {
+        console.log(uniforms);
+        Swal.fire({
+          icon: 'success',
+          title: 'Documentos guardados',
+          text: 'Los documentos fueron guardados correctamente.',
+        });
+      },
+      error: (err) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Ocurrió un error al guardar los documentos.',
+        });
+        console.error(err);
+      }
+    });
 
   }
 
   guardarPago() {
-    console.log(this.pagoForm.value);
+    const formValue = this.pagoForm.value;
+    const dto = {
+      clabe: formValue.tarjeta,
+      cuenta: null,
+      banco: formValue.banco,
+      interbancaria: formValue.clabe,
+    };
+
+    // console.log(dto);
+
+    this.rh.SavePay(dto, this.employeeId).subscribe({
+      next: (response) => {
+        console.log(dto);
+        Swal.fire({
+          icon: 'success',
+          title: 'Datos guardados',
+          text: 'Los datos personales fueron guardados correctamente.',
+        });
+      },
+      error: (err) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Ocurrió un error al guardar los datos.',
+        });
+        console.error(err);
+      }
+    });
   }
 
   guardarEmergencia() {
-    console.log(this.emergenciaForm.value);
+    const contactos = this.emergenciaForm.value.contactos;
+
+    contactos.forEach((contacto: { telefono: string; nombre: string; parentesco: string }) => {
+      const dto = {
+        number: contacto.telefono,
+        name: contacto.nombre,
+        relationship: contacto.parentesco,
+      };
+
+      console.log('Guardando contacto:', dto);
+      const employeeId = 10;
+
+      this.rh.SaveEmergency(dto, employeeId).subscribe({
+        next: (response) => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Contacto guardado',
+            text: 'Un contacto de emergencia fue guardado correctamente.',
+          });
+        },
+        error: (err) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Ocurrió un error al guardar un contacto.',
+          });
+          console.error(err);
+        }
+      });
+    });
   }
 
+
   guardarBermed() {
-    console.log(this.bermedForm.value);
+    const bermeds = this.bermedForm.value.telefonos;
+
+    bermeds.forEach((entry: { modelo: string; plan: string; telefono: string }) => {
+      const dto = {
+        modelo: entry.modelo,
+        plan: entry.plan,
+        telefono: entry.telefono,
+      };
+
+      console.log('Guardando bermed:', dto);
+      const employeeId = 10;
+
+      this.rh.SavephoneBermed(dto, employeeId).subscribe({
+        next: (response) => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Telefono guardado',
+            text: 'Un Telefono fue guardado correctamente.',
+          });
+        },
+        error: (err) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Ocurrió un error al guardar el telefono.',
+          });
+          console.error(err);
+        }
+      });
+    });
   }
+
+
   onFotoSelected(event: any): void {
     const file = event.target.files[0];
     if (file) {
@@ -288,6 +451,17 @@ this.getData();
     event.preventDefault();
   }
 
+  saveAll() {
+
+    // Swal.fire({
+    //   icon: 'success',
+    //   title: 'Empleado guardado',
+    //   text: 'El empleado fue guardado correctamente.',
+    // });
+
+    this.router.navigate(['/pages/RH/Trabajadores-Registrados']);
+
+  }
 
 
 }

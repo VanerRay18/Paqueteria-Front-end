@@ -32,9 +32,8 @@
 
         <label>Tipo de seguro:</label>
         <select formControlName="tipoSeguro">
-          <option value>Seleccione</option>
-          <option value="IMSS">IMSS</option>
-          <option value="ISSSTE">ISSSTE</option>
+          <option value="">Seleccione</option>
+          <option *ngFor="let seguro of catSeguros" [value]="seguro.id">{{ seguro.name }}</option>
         </select>
 
         <label>Teléfono:</label>
@@ -46,16 +45,16 @@
         <input type="date" formControlName="fechaInicio" />
 
         <label>Puesto laboral:</label>
-        <input type="text" formControlName="puestoLaboral" />
+        <select formControlName="puestoLaboral">
+          <option value="">Seleccione</option>
+          <option *ngFor="let Employments of catEmployments" [value]="Employments.id">{{ Employments.name }}</option>
+        </select>
 
         <label>Tipo de contratación:</label>
-        <div class="checkbox-group">
-          <label><input type="radio" value="Honorarios"
-              formControlName="tipoContratacion" /> Honorarios</label>
-          <label><input type="radio" value="Individual"
-              formControlName="tipoContratacion" /> Contratación
-            individual</label>
-        </div>
+        <select formControlName="tipoContratacion">
+          <option value="">Seleccione</option>
+          <option *ngFor="let job of catJobs" [value]="job.id">{{ job.name }}</option>
+        </select>
 
         <label>Horario de entrada:</label>
         <input type="text" formControlName="horarioEnt" />
@@ -185,7 +184,7 @@
       </div>
     </div>
     <div class="col-auto d-flex justify-content-end mt-auto">
-      <button type="submit" class="btn  btn-sm" onclick="guardarEmpleo()">Guardar sección</button>
+      <button type="submit" class="btn  btn-sm" (click)="guardarEmpleo()">Guardar sección</button>
     </div>
   </div>
 
@@ -240,6 +239,6 @@
 </form>
 
   <div class="col-auto d-flex justify-content-end mt-auto">
-    <button type="submit" class="btn  btn-sm" onclick="guardarEmpleo()">Terminar y Guardar todo</button>
+    <button type="submit" class="btn  btn-sm" (click)="saveAll()">Terminar y Guardar todo</button>
   </div>
 </div>
