@@ -1,0 +1,220 @@
+.container {
+  padding: 2rem;
+  border-radius: 12px;
+  font-family: Arial, sans-serif;
+  h1{
+    font-weight: bold;
+  }
+
+  h4 {
+
+    margin-bottom: 1rem;
+    color: #5783BC;
+  }
+
+  form {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: white;
+  }
+
+  input,
+  select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 4px;
+    margin-bottom: 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+  }
+
+  .checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 12px;
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+  }
+
+  .grid,
+  .grid-2,
+  .grid-3 {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    .grid {
+      grid-template-columns: 1fr; /* 1 sola columna en pantallas pequeñas */
+    }
+  }
+
+  .foto {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+
+  button {
+    padding: 10px 20px;
+    background-color: #ffffff;
+    color: #3E5F8A;
+    border-color: #3E5F8A;
+    font-weight: bold;
+    height: 38px;
+    border-radius: 15px;
+    margin: 7px;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  button:hover {
+    background-color: #3E5F8A; /* Fondo marrón en hover */
+    color: #ffffff; /* Texto blanco en hover */
+    border-color: #3E5F8A; /* Borde marrón en hover */
+  }
+
+  button:active {
+    background-color: #284F81; /* Fondo más oscuro para active */
+    color: #ffffff; /* Texto blanco en active */
+    border-color: #284F81; /* Borde oscuro en active */
+    outline: none; /* Sin borde adicional */
+  }
+}
+
+.foto-container {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.carousel {
+  position: relative;
+  width: 500px;
+  height: 330px;
+  margin: 0 auto;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #f9f9f9;
+}
+
+.carousel-item {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: all 0.5s ease;
+}
+
+.carousel-item.active {
+  left: 0;
+  opacity: 1;
+}
+
+.carousel-control {
+  all: unset; /* Elimina todos los estilos por defecto del botón */
+  font-size: 2rem; /* Ajusta el tamaño de la flecha */
+  color: #333; /* Cambia según tu diseño */
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  user-select: none;
+}
+
+.carousel-control.prev {
+  left: 10px;
+}
+
+.carousel-control.next {
+  right: 10px;
+}
+
+.carousel-control:focus {
+  outline: none;
+}
+
+.carousel-control:hover {
+  color: #000; /* Cambia si quieres resaltar al pasar el mouse */
+}
+
+.foto-label {
+  display: inline-block;
+  margin-top: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.foto-label {
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.icon {
+  color: #007bff;
+}
+
+
+.card {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: white;
+}
+
+
+.info-icon {
+  color: #007bff;
+  cursor: pointer;
+  position: relative;
+}
+
+.info-icon::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 400;
+  font-family: 'Segoe UI', sans-serif;
+  letter-spacing: 0.4px; /* <- separación entre letras */
+  line-height: 1.4;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease-in-out;
+  z-index: 1000;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+}
+
+
+.info-icon:hover::after {
+  opacity: 1;
+}

@@ -225,3 +225,37 @@
 .icon-btn:hover {
   opacity: 0.8;
 }
+
+.info-icon {
+  color: #007bff;
+  cursor: pointer;
+  position: relative;
+}
+
+.info-icon::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 400;
+  font-family: 'Segoe UI', sans-serif;
+  letter-spacing: 0.4px; /* <- separación entre letras */
+  line-height: 1.4;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease-in-out;
+  z-index: 1000;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+}
+
+
+.info-icon:hover::after {
+  opacity: 1;
+}

@@ -1,1 +1,71 @@
-<p>graphs-assistance works!</p>
+<div class="cont col-auto row  mt-4 ms-4">
+  <div class="titulos ">
+    <h1>Control de asistencias</h1>
+  </div>
+  <div class=" d-flex mt-3">
+    <div class="col-auto col-lg-12">
+
+      <div class="card2">
+        <div class="form-floating col-auto col-lg-5 m-3 row">
+          <input type="text" class=" buscar form-control" id="busqueda"
+            placeholder="Buscar"
+            [(ngModel)]="searchTerm" name="busqueda">
+          <label for="User">&nbsp;&nbsp;<i
+              class="fa-solid fa-magnifying-glass"></i> Buscar</label>
+        </div>
+        <div class="col-auto col-lg-3 d-flex justify-content-end mt-auto">
+          <a [routerLink]="['/pages/RH/Registrar-Trabajador']">
+            <button type="button" class="btn btn-sm">VER TRABAJADORES</button>
+          </a>
+        </div>
+        <div class="col-auto col-lg-2 d-flex justify-content-end mt-auto">
+          <a [routerLink]="['/pages/RH/Registrar-Trabajador']">
+            <button type="button" class="btn btn-sm">DESCARGAR REPORTES</button>
+          </a>
+        </div>
+        <div class="card-person" *ngFor="let persona of personas" style="cursor: default;">
+          <h3>{{ persona.nombre }}</h3>
+
+          <!-- Barra de FALTAS (roja) -->
+          <span class="datos">Faltas<br><strong>{{ persona.faltas }}</strong></span>
+          <div class="barra" (click)="abrirSwalFaltas(persona)">
+            <div
+              class="progreso"
+              [style.width.%]="(persona.faltas / persona.total) * 100"
+              style="background: red; cursor: pointer;">
+            </div>
+          </div>
+
+          <!-- Barra de INASISTENCIAS (verde) -->
+          <span class="datos">Asistencias<br><strong>{{ persona.asistencias }}</strong></span>
+          <div class="barra" (click)="abrirSwalInasistencias(persona)">
+            <div
+              class="progreso"
+              [style.width.%]="(persona.asistencias / persona.total) * 100"
+              style="background: green; cursor: pointer;">
+            </div>
+          </div>
+
+          <span class="datos">Retardos<br><strong>{{ persona.retardos }}</strong></span>
+          <div class="barra" (click)="abrirSwalInasistencias(persona)">
+            <div
+              class="progreso"
+              [style.width.%]="(persona.retardos / persona.total) * 100"
+              style="background: rgb(255, 166, 0); cursor: pointer;">
+            </div>
+          </div>
+
+          <hr>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+            <span (click)="abrirSwalPendientes(persona)" style="color:  #3E5F8A; cursor: pointer; text-decoration: underline;">Pendientes: {{ persona.retardos }}</span>
+            <span (click)="abrirSwalJustificados(persona)" style="color:  #3E5F8A; cursor: pointer; text-decoration: underline;">Justificadas: {{ persona.retardos }}</span>
+          </div>
+
+        </div>
+
+        </div>
+      </div>
+
+
+      </div>
+    </div>

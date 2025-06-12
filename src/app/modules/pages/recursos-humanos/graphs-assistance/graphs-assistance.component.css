@@ -1,0 +1,161 @@
+h1{
+  font-weight: bold;
+}
+
+h5{
+  color: rgb(122, 122, 122);
+}
+
+.row{
+  margin: 0;
+}
+
+.card{
+  background-color: #ffffff;
+  border-radius: 10px;
+  width: 98%;
+
+}
+
+.progress {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+  height: 25px;
+  background-color: #ffffff;
+}
+
+.step {
+  width: 20%;
+  text-align: center;
+  padding: 5px;
+  border-radius: 10px;
+  background-color: #e0e0e0;
+}
+
+.step.active {
+  background-color: #660033;
+  color: white;
+}
+
+.summary {
+  display: flex;
+  justify-content: space-between;
+  background-color: #f2f2f2;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.summary div {
+  text-align: center;
+}
+
+.summary div p {
+  margin: 5px 0;
+}
+
+.boton-container {
+  display: flex; /* Activa flexbox */
+  justify-content: center; /* Centra el contenido horizontalmente */
+  align-items: center; /* Centra el contenido verticalmente */
+
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #ffffff;
+  color: #3E5F8A;
+  border-color: #3E5F8A;
+  font-weight: bold;
+  height: 38px;
+  border-radius: 15px;
+  margin: 7px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+button:hover {
+  background-color: #3E5F8A; /* Fondo marrón en hover */
+  color: #ffffff; /* Texto blanco en hover */
+  border-color: #3E5F8A; /* Borde marrón en hover */
+}
+
+button:active {
+  background-color: #284F81; /* Fondo más oscuro para active */
+  color: #ffffff; /* Texto blanco en active */
+  border-color: #284F81; /* Borde oscuro en active */
+  outline: none; /* Sin borde adicional */
+}
+
+.step-link {
+  text-decoration: none;  /* Elimina el subrayado */
+  color: inherit;         /* Hereda el color del texto original */
+  display: block;         /* Hace que el enlace ocupe todo el espacio del div */
+}
+
+.nav-tabs {
+  z-index: 10;
+  width: 100%;
+  color: #621132;
+  cursor: pointer;
+}
+
+.nav-item {
+  color: #621132;
+}
+
+.nav-link {
+  margin-right: 4px;
+  color: #6D6D6D;
+  font-weight: 600;
+  background-color: #EAEAEA;
+}
+
+.nav-link.active {
+  color: #621132; /* Cambiar el color de la letra cuando está activo */
+}
+
+.card2 {
+  background-color: #ffffff;
+  border-top: none;
+  border-radius:  20px; /* Redondea solo las esquinas especificadas */
+  width: 100%;
+  padding: 15px; /* Agregado para un mejor espaciado interno */
+  flex: 0 0 calc(33.333% - 1rem); /* Tres por fila con espacio */
+  display: flex;
+  flex-wrap: wrap;
+  padding: 1rem;
+  gap: 1rem;
+  justify-content: center;
+}
+
+
+.card-person {
+  margin: 1rem;
+  flex: 0 0 calc(18% - 1rem); /* Tres por fila con espacio */
+  padding: 1rem;
+  border: 2px solid #333;
+  border-radius: 15px;
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+  text-align: center;
+  background: white;
+}
+
+.barra {
+  height: 10px;
+  background: #eee;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 10px 0;
+}
+
+.progreso {
+  height: 100%;
+  transition: width 0.3s;
+}
+
+.datos {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+}
