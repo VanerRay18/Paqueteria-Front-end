@@ -4,6 +4,7 @@ import { PackageTrackingComponent } from './package-tracking/package-tracking.co
 import { PackageTrackingCarComponent } from './package-tracking-car/package-tracking-car.component';
 import { PaqueteriaRoutingModule } from './paqueteria-routing.module';
 import { FormsModule } from '@angular/forms';
+import { PakageTokenComponent } from './pakage-token/pakage-token.component';
 
 
 
@@ -12,7 +13,8 @@ import { FormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
     PackageTrackingComponent,
-    PackageTrackingCarComponent
+    PackageTrackingCarComponent,
+    PakageTokenComponent
   ],
   imports: [
     CommonModule,

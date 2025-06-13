@@ -8,6 +8,20 @@ export interface Module {
   icon: string;
 }
 
+export interface Persona {
+  name: string;
+  employeeid: number;
+  totalregistros: number;
+  asistencias: number;
+  asistenciaBarra: number;
+  faltas: number;
+  faltasBarra: number;
+  retardos: number;
+  retardosBarra: number;
+  justificadas: number;
+  pendientes: number;
+}
+
 export interface VehicleCard {
   placa: string;
   modelo: string;
@@ -304,12 +318,6 @@ export interface historico {
   }>;
 }
 
-export interface Persona {
-  nombre: string;
-  usado: number;
-  liquido: number;
-  restante: number;
-}
 
 export interface Terceros {
   nombre: string;

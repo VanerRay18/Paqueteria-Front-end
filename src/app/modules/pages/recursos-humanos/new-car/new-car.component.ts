@@ -86,19 +86,16 @@ export class NewCarComponent implements OnInit {
   guardarDatosPersonales() {
     const formValue = this.carForm.value;
 
-    // const dto = {
-    //   rfc: formValue.rfc,
-    //   curp: formValue.curp,
-    //   nacimiento: new Date(formValue.fechaNacimiento).toISOString(),
-    //   dateStart: new Date(formValue.fechaInicio).toISOString(),
-    //   dateFin: null,
-    //   active: true,
-    //   phone: formValue.telefono,
-    //   config: {},
-    //   catJobId: Number(formValue.puestoLaboral),
-    //   catEmploymentId: Number(formValue.tipoContratacion),
-    //   catSeguroId: Number(formValue.tipoSeguro),
-    // };
+    const dto = {
+      placa: formValue.placa,
+      marca: formValue.marca,
+      modelo: formValue.modelo,
+      vin: formValue.serie,                         // <- "serie" del formulario va a "vin"
+      anio: Number(formValue.vigencia),             // <- Usa "vigencia" si ahí tienes el año, o cambia por el campo correcto
+      color: formValue.color || '',                 // <- Este campo no está en el form, pero puedes completarlo aquí
+      employeeId: Number(formValue.responsable),    // <- "responsable" es el ID del empleado
+      active: formValue.estado.activo               // <- Obtienes el booleano desde el grupo "estado"
+    };
 
     // this.rh.createEmployee(dto).subscribe({
     //   next: (response) => {

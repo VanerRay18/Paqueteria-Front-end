@@ -1,5 +1,8 @@
+import { RHService } from 'src/app/services/rh.service';
 import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-check-assistance',
@@ -10,7 +13,7 @@ export class CheckAssistanceComponent {
 
   constructor(
     private fb: FormBuilder,
-    
+    private rh: RHService
   ) {
 
    }
@@ -26,7 +29,46 @@ export class CheckAssistanceComponent {
       const next = input.nextElementSibling;
       if (next) next.focus();
     }
+
+    // Verificar si todos los campos ya están llenos
+    const tokenCompleto = this.token.join('');
+    if (tokenCompleto.length === 6 && !this.token.includes('')) {
+      this.enviarToken(); // Enviar automáticamente
+    }
   }
+
+  enviarToken() {
+    const tokenCompleto = this.token.join('').toUpperCase(); // opcional: toUpperCase()
+
+    this.rh.validateToken(tokenCompleto).subscribe({
+      next: (response) => {
+        if (response.success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Asistencia registrada',
+            text: response.message || 'Asistencia registrada correctamente.', // muestra "Registro tardío, favor de presentar su justificante"
+            confirmButtonText: 'Aceptar'
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Ocurrió un error',
+            text: response.message || 'Algo salió mal.',
+            confirmButtonText: 'Aceptar'
+          });
+        }
+      },
+      error: (err) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Ocurrió un error',
+          text: err.error?.message || 'No se pudo registrar la asistencia',
+          confirmButtonText: 'Aceptar'
+        });
+      }
+    });
+  }
+
 
   onBackspace(event: any, index: number) {
     const input = event.target;

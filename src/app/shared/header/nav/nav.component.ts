@@ -120,16 +120,17 @@ export class NavComponent implements OnInit, OnDestroy {
     if (rolId) {
       const sub = this.authService.getModulesByRole().subscribe({
         next: (result) => {
+          // console.log('Módulos obtenidos:', result);
           const modules: TreeNode[] = result.data
           .filter((item: any) => item.vista === true)
           .map((item: any) => ({
-            moduleId: item.moduleId,
-            moduleName: item.moduleName,
+            moduleId: item.moduleid,
+            moduleName: item.modulename,
             description: item.description,
-            config: item.config.trim(), // Eliminamos espacios en blanco
-            parentId: item.parentId,
+            config: typeof item.config === 'string' ? item.config.trim() : '',
+            parentId: item.parentid,
             icon: item.icon,
-            parentName: item.parentName,
+            parentName: item.parentname,
             vista: item.vista,
             children: []
           }));

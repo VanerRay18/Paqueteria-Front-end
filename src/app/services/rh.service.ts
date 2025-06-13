@@ -21,8 +21,16 @@ export class RHService {
     return this.http.get<ApiResponse>(`${environment.baseService}${'/employees/allCatsRH'}`);
   }
 
-  createEmployee(data:any): Observable<ApiResponse> {//Trae la nomina actual
-    return this.http.post<ApiResponse>(`${environment.baseService}${'/employees'}`,data);
+  getAttencendance(): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/attendances'}`);
+  }
+
+
+  getAttencendanceById(employeeId: any, typeId: any, desde: any, hasta: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({'employeeId': employeeId, 'typeId': typeId, 'desde': desde, 'hasta': hasta});
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/attendances/employeeId'}`,
+      {headers}
+    );
   }
 
   createAdress(data:any, employeeId: any): Observable<ApiResponse> {
@@ -31,6 +39,19 @@ export class RHService {
       {headers}
     );
   }
+
+  createEmployee(data:any): Observable<ApiResponse> {//Trae la nomina actual
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/employees'}`,data);
+  }
+
+  validateToken(token: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({'token': token});
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/attendances/checkAttendance'}`, null,
+      {headers}
+    );
+  }
+
+
 
   SaveDocuments(data:any, employeeId: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({'employeeId': employeeId});
