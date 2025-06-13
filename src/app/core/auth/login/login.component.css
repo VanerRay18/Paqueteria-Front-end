@@ -22,10 +22,11 @@ body {
 
 /* Card de login moderna */
 .login-card {
-  background-color: white;
+  background-color: #F7F7F7;
+  margin-top: 30px;
   padding: 40px 30px;
   border-radius: 16px;
-  box-shadow: 0px 12px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 12px 30px rgba(19, 53, 224, 0.402);
   width: 100%;
   max-width: 400px;
   text-align: center;
@@ -33,7 +34,7 @@ body {
 
 /* Logo */
 .logo img {
-  width: 80px;
+  width: 210px;
   margin-bottom: 24px;
 }
 
@@ -129,7 +130,7 @@ input:focus {
   }
 
   .logo img {
-    width: 60px;
+    width: 170px;
   }
 }
 .input-wrapper {

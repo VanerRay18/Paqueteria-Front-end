@@ -5,7 +5,7 @@
 }
 
 .navbar{
-  background-color:#8a1538;
+  background-color:#1e3a8a;
   position: sticky;
   top: 0;
 }
@@ -45,7 +45,7 @@ color: #FFD700;
 
 /* Estilo del botón de hamburguesa (offcanvas) */
 .navbar-toggler {
-  border-color: #8a1538;
+  border-color: #1e3a8a;
 }
 
 /* Color del icono del botón de hamburguesa */
@@ -55,7 +55,7 @@ color: #FFD700;
 
 /* Estilo del offcanvas */
 .offcanvas {
-  background-color: #8a1538;;
+  background-color: #1e3a8a;;
   width: 280px;
 }
 
@@ -81,44 +81,44 @@ color: #FFD700;
 .nav-link.active {
 
   font-weight: bold;
-  color: #8a1538;
-  background-color: #8a1538;
+  color: #1e3a8a;
+  background-color: #1e3a8a;
 }
 
 
 
 /* Dropdown menú */
 .dropdown-menu {
-  background-color: #8a1538;
+  background-color: #1e3a8a;
 }
 
 .dropdown-item {
-  color: #8a1538;
+  color: #1e3a8a;
 }
 
 .dropdown-item:hover {
-  background-color: #8a1538;
-  color: #8a1538;
+  background-color: #1e3a8a;
+  color: #1e3a8a;
 }
 
 /* Estilo del formulario de búsqueda */
 .form-control {
-  border: 1px solid #8a1538;
+  border: 1px solid #1e3a8a;
   border-radius: 5px;
 }
 
 .form-control:focus {
-  border-color: #8a1538;
+  border-color: #1e3a8a;
   box-shadow: none;
 }
 .img{
   margin-left: 10px;
   margin-top: -10px;
-  width: 220px;
+  width: 150px;
 }
 
 .navbar-toggler{
-  color: #8a1538;
+  color: #1e3a8a;
 
   margin-left: 10px;
   font-size: 22px;
@@ -127,12 +127,12 @@ color: #FFD700;
   margin-top: 30px;
 }
 .btn-outline-success {
-  color: #8a1538;
-  border-color: #8a1538;
+  color: #1e3a8a;
+  border-color: #1e3a8a;
 }
 
 .btn-outline-success:hover {
-  background-color: #8a1538;
+  background-color: #1e3a8a;
   color: white; /* blanco */
 }
 
