@@ -1,114 +1,169 @@
+/* Estilo base */
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #F1F5F9; /* Color Morena */
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-  .login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    width: 100%;  /* Asegura que ocupen también el 100% del ancho */
-    background-color:#F1F5F9;
-    display: flex; /* Centrar horizontalmente */
-    align-items: center;     /* Centrar verticalmente */
-    height: 100vh;
-  }
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #dbeafe, #3b82f6); /* degradado azul */
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-  .login-card {
-    background-color: white;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-    width: 350px;
-    text-align: center;
-    justify-content: center;
-  }
+/* Contenedor general centrado */
+.login-container {
+  width: 100%;
+  max-width: 100vw;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-  .logo img {
-    width: 80px;
-    margin-bottom: 20px;
-  }
+/* Card de login moderna */
+.login-card {
+  background-color: white;
+  padding: 40px 30px;
+  border-radius: 16px;
+  box-shadow: 0px 12px 30px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
 
-  h2 {
-    color: #8a1538; /* Color Morena */
-    margin-bottom: 20px;
-  }
+/* Logo */
+.logo img {
+  width: 80px;
+  margin-bottom: 24px;
+}
 
-  .form-group {
-    margin-bottom: 15px;
-    text-align: left;
-  }
+/* Título */
+h2 {
+  font-size: 24px;
+  color: #1e3a8a; /* Azul oscuro */
+  margin-bottom: 20px;
+}
 
-  label {
-    font-weight: bold;
-    display: block;
-    margin-bottom: 5px;
-  }
+/* Formularios */
+.form-group {
+  margin-bottom: 18px;
+  text-align: left;
+}
 
-  input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
+label {
+  font-weight: 600;
+  color: #1e40af;
+  display: block;
+  margin-bottom: 6px;
+}
 
-  input:focus {
-    border-color: #8a1538;
-  }
+input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border 0.3s ease;
+}
 
-  .btn-login {
-    background-color: #8a1538; /* Color Morena */
-    color: white;
-    border: none;
-    padding: 10px;
-    width: 100%;
-    border-radius: 5px;
-    cursor: pointer;
-  }
+input:focus {
+  border-color: #2563eb;
+  outline: none;
+}
 
-  .btn-login:disabled {
-    background-color: #ddd;
-    cursor: not-allowed;
-  }
+/* Botón login */
+.btn-login {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+  font-size: 15px;
+}
 
-  .error {
-    color: red;
-    font-size: 12px;
-  }
+.btn-login:hover:not(:disabled) {
+  background-color: #1d4ed8;
+}
 
-  .error-message {
-    margin-top: 10px;
-    color: red;
-  }
-  .loader {
-    width: 20px; /* Ajusta el tamaño según tus necesidades */
-    height: 20px; /* Asegúrate de que tenga un tamaño */
-    border-radius: 50%;
-    border: 4px solid #8a1538; /* Cambia el color según tu preferencia */
-    border-top: 4px solid transparent; /* Para un efecto de animación */
-    animation: spin 1s linear infinite; /* Efecto de giro */
+.btn-login:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* Loader */
+.loader {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 4px solid #60a5fa;
+  border-top: 4px solid transparent;
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-.btn-login {
-  display: flex; /* Usar flexbox para alinear el contenido */
-  align-items: center; /* Centrar verticalmente */
-  justify-content: center; /* Centrar horizontalmente */
-  background-color: #8a1538; /* Color Morena */
-  color: white;
-  border: none;
-  padding: 10px;
-  width: 100%;
-  border-radius: 5px;
-  cursor: pointer;
+/* Errores */
+.error {
+  color: #dc2626;
+  font-size: 13px;
+}
+
+/* Adaptabilidad en móviles */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 30px 20px;
+    border-radius: 12px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  .logo img {
+    width: 60px;
+  }
+}
+.input-wrapper {
+  position: relative;
+}
+
+.input-wrapper i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #3b82f6;
+  font-size: 16px;
+}
+
+.input-wrapper input {
+  padding-left: 38px !important; /* deja espacio para el ícono */
+  border: 1px solid #cbd5e1;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-wrapper input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* Mejora para pantallas pequeñas */
+@media (max-width: 480px) {
+  .input-wrapper i {
+    left: 10px;
+    font-size: 14px;
+  }
+
+  .input-wrapper input {
+    padding-left: 34px !important;
+  }
 }

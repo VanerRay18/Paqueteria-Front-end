@@ -1,28 +1,49 @@
-<div class="inicio-container">
-    <div class="welcome-section">
-      <h1>Sistemas de Recursos Humanos de la SEPH</h1>
-      <p>Bienvenido a la plataforma de gestión de la Secretaría de Educación Pública de Hidalgo.</p>
-      <!-- <button class="btn btn-primary" (click)="navigateToDashboard()">Ingresar</button> -->
-    </div>
+<div class="p-6">
+  <h2 class="text-3xl font-bold mb-4">¡Hola, Administrador!</h2>
 
-    <div class="features-section">
-      <h2>Nuestras Funcionalidades</h2>
-      <div class="row">
-        <div class="col-auto feature-box" (click)="navigateToDashboard()">
-          <h3>Licencias Médicas</h3>
-          <p>Gestiona las licencias de manera eficiente y accesible.</p>
-          <!-- <img src="ruta/de/tu/imagen.jpg" alt="Descripción de la imagen" width="300" height="200"> -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Empresas -->
+    <div class="space-y-4">
+      <h3 class="text-xl text-blue-600 font-semibold">EMPRESAS</h3>
+      <div *ngFor="let empresa of empresas" 
+           class="border p-4 rounded-lg shadow cursor-pointer hover:shadow-lg"
+           (click)="irAEmpresa(empresa.ruta)">
+        <h3 class="text-center font-semibold text-lg mb-2">{{ empresa.nombre }}</h3>
+        <div class="w-full h-4 bg-gray-200 rounded-full">
+          <div 
+            class="h-full rounded-full" 
+            [ngClass]="getColor(empresa)" 
+            [style.width.%]="getPorcentaje(empresa)">
+          </div>
         </div>
-        <div class="col-auto feature-box" (click)="navigateToDashboard()">
-          <h3>Administración</h3>
-          <p>Administra la información de los usuarios, Roles, Modulos y Endpoints del sistema de forma sencilla.</p>
-              <!-- <img src="ruta/de/tu/imagen.jpg" alt="Descripción de la imagen" width="300" height="200"> -->
-        </div>
-        <div class="col-auto feature-box" (click)="navigateToDashboard()">
-          <h3>Registros de Logs</h3>
-          <p>Genera y revisa reportes detallados de la operación del sistema.</p>
-          <!-- <img src="ruta/de/tu/imagen.jpg" alt="Descripción de la imagen" width="300" height="200"> -->
+        <div class="flex justify-between text-xs mt-1">
+          <span>Paquetes entregados {{ empresa.entregados }}</span>
+          <span>Faltantes {{ empresa.faltantes }}</span>
         </div>
       </div>
     </div>
+
+    <!-- Asistencias y alertas -->
+    <div class="space-y-4">
+      <!-- Asistencias -->
+      <div class="bg-white shadow-md p-4 rounded-lg">
+        <h4 class="text-blue-600 text-lg font-semibold">Asistencias del personal</h4>
+        <p class="mb-2">Ver las asistencias y faltas del personal</p>
+        <button class="bg-blue-500 text-white px-4 py-2 rounded" (click)="irAsistencias()">IR</button>
+      </div>
+
+      <!-- Alertas -->
+      <div class="bg-white shadow-md p-4 rounded-lg">
+        <h4 class="text-blue-600 text-lg font-semibold mb-2">ALERTAS</h4>
+        <div *ngFor="let alerta of alertas" class="border-b py-2 flex items-start gap-2">
+          <span class="w-2 h-2 bg-red-500 rounded-full mt-1"></span>
+          <div>
+            <p class="text-sm font-semibold text-gray-600">Hace {{ alerta.dias }} días</p>
+            <p class="text-sm text-gray-700">{{ alerta.mensaje }}</p>
+          </div>
+        </div>
+        <button class="mt-4 border border-blue-400 text-blue-600 px-4 py-1 rounded">VER TODAS</button>
+      </div>
+    </div>
   </div>
+</div>

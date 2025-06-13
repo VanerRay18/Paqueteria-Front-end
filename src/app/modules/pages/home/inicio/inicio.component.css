@@ -136,3 +136,8 @@
       font-size: 0.8rem;
   }
 }
+
+.bg-green-500 { background-color: #22c55e; }
+.bg-yellow-400 { background-color: #facc15; }
+.bg-red-600 { background-color: #dc2626; }
+
