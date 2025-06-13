@@ -1,0 +1,61 @@
+h1{
+  font-weight: bold;
+}
+
+h5{
+  color: rgb(122, 122, 122);
+}
+
+.row{
+  margin: 0;
+}
+
+.card{
+  background-color: #ffffff;
+  border-radius: 10px;
+  width: 98%;
+  display: flex;
+  justify-content: center;
+
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.icono-usuario img {
+  width: 250px;
+  height: 250px;
+  margin-bottom: 25px;
+}
+
+.mensaje {
+  font-size: 40px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 35px;
+}
+
+.token-inputs {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.token-box {
+  width: 60px;
+  height: 70px;
+  font-size: 32px;
+  text-align: center;
+  border-radius: 20px;
+  border: 6px solid #3e5c90;
+  background-color: #f7faff;
+  color: #2e2e2e;
+  font-weight: bold;
+  outline: none;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.token-box:focus {
+  border-color: #f7aa00;
+  background-color: #fffbe6;
+}

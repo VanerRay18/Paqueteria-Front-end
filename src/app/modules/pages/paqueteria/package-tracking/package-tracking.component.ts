@@ -6,5 +6,12 @@ import { Component } from '@angular/core';
   styleUrls: ['./package-tracking.component.css']
 })
 export class PackageTrackingComponent {
-
+  paquetes = [
+    { codigo: 'JMX00238139845087145' },
+    { codigo: 'JMX00238139845087145' },
+    { codigo: 'JMX00238139845087145' },
+    { codigo: 'JMX00238139845087145' },
+    { codigo: 'JMX00238139845087145' },
+    { codigo: 'JMX00238139845087145' }
+  ];
 }

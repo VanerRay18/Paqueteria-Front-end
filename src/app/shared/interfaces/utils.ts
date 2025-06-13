@@ -8,6 +8,16 @@ export interface Module {
   icon: string;
 }
 
+export interface VehicleCard {
+  placa: string;
+  modelo: string;
+  conductor: string;
+  estado: 'En Ruta' | 'En Bodega' | 'Entregado'; // puedes ampliar
+  entregados: number;
+  faltantes: number;
+  imagen: string; // ruta de la imagen del vehículo
+}
+
 export interface Oficio {
   oficioId: number;
   oficio: string;

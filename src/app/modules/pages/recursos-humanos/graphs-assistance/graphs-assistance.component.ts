@@ -45,18 +45,130 @@ export class GraphsAssistanceComponent {
 
 
   abrirSwalPendientes(persona: Persona) {
-    Swal.fire({
-      title: `Pendientes de ${persona.nombre}`,
-      text: `Aquí iría el detalle de las faltas pendientes.`,
-      icon: 'warning'
+Swal.fire({
+      title: `<strong>Justificantes pendientes de ${persona.nombre}</strong>`,
+      html: `
+              <div style="margin-top: 20px; text-align: right;">
+          <button id="btnReporte" style="background-color: #3E5F8A; color: white; padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer;">
+            Generar reporte
+          </button>
+        </div>
+        <br>
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <thead>
+              <tr style="background-color: #f2f2f2;">
+                <th style="border: 1px solid #ccc; padding: 8px;">#</th>
+                <th style="border: 1px solid #ccc; padding: 8px;">Fecha</th>
+                <th style="border: 1px solid #ccc; padding: 8px;">Hora</th>
+                <th style="border: 1px solid #ccc; padding: 8px;">Motivo</th>
+                <th style="border: 1px solid #ccc; padding: 8px;">Justificada</th>
+                <th style="border: 1px solid #ccc; padding: 8px;">Comentario</th>
+                <th style="border: 1px solid #ccc; padding: 8px;">E/S</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="border: 1px solid #ccc; padding: 8px;">1</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">01/05/2025</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">00:00</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">Inasistencia</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">No</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">Sin aviso</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">Entrada</td>
+              </tr>
+              <tr>
+                <td style="border: 1px solid #ccc; padding: 8px;">2</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">08/05/2025</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">10:00</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">Tardanza</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">Sí</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">Retardo justificado por médico</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">Salida</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      `,
+      width: 700,
+      showConfirmButton: false,
+      showCloseButton: true,
+      customClass: {
+        popup: 'swal-wide'
+      },
+      didOpen: () => {
+        const btn = document.getElementById('btnReporte');
+        if (btn) {
+          btn.addEventListener('click', () => {
+            // Aquí colocas la lógica para generar el reporte
+            Swal.fire('Reporte generado', 'Tu archivo ha sido descargado.', 'success');
+          });
+        }
+      }
     });
   }
 
   abrirSwalJustificados(persona: Persona) {
-    Swal.fire({
-      title: `Justificados de ${persona.nombre}`,
-      text: `Aquí iría el detalle de las inasistencias justificadas.`,
-      icon: 'info'
+Swal.fire({
+      title: `<strong>Justificantes de ${persona.nombre}</strong>`,
+      html: `
+              <div style="margin-top: 20px; text-align: right;">
+          <button id="btnReporte" style="background-color: #3E5F8A; color: white; padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer;">
+            Generar reporte
+          </button>
+        </div>
+        <br>
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <thead>
+              <tr style="background-color: #f2f2f2;">
+                <th style="border: 1px solid #ccc; padding: 8px;">#</th>
+                <th style="border: 1px solid #ccc; padding: 8px;">Fecha</th>
+                <th style="border: 1px solid #ccc; padding: 8px;">Hora</th>
+                <th style="border: 1px solid #ccc; padding: 8px;">Motivo</th>
+                <th style="border: 1px solid #ccc; padding: 8px;">Justificada</th>
+                <th style="border: 1px solid #ccc; padding: 8px;">Comentario</th>
+                <th style="border: 1px solid #ccc; padding: 8px;">E/S</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="border: 1px solid #ccc; padding: 8px;">1</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">01/05/2025</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">00:00</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">Inasistencia</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">No</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">Sin aviso</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">Entrada</td>
+              </tr>
+              <tr>
+                <td style="border: 1px solid #ccc; padding: 8px;">2</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">08/05/2025</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">10:00</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">Tardanza</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">Sí</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">Retardo justificado por médico</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">Salida</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      `,
+      width: 700,
+      showConfirmButton: false,
+      showCloseButton: true,
+      customClass: {
+        popup: 'swal-wide'
+      },
+      didOpen: () => {
+        const btn = document.getElementById('btnReporte');
+        if (btn) {
+          btn.addEventListener('click', () => {
+            // Aquí colocas la lógica para generar el reporte
+            Swal.fire('Reporte generado', 'Tu archivo ha sido descargado.', 'success');
+          });
+        }
+      }
     });
   }
 
@@ -127,41 +239,49 @@ export class GraphsAssistanceComponent {
 
 
   abrirSwalInasistencias(persona: Persona) {
-    Swal.fire({
-      title: `Inasistencias de ${persona.nombre}`,
-      text: `Tiene ${persona.asistencias} inasistencias.`,
-      icon: 'success'
-    });
-  }
-
-  mostrarDetalle(persona: Persona) {
-    const restante = persona.liquido - persona.usado;
-    const porcentaje = ((persona.usado / persona.liquido) * 100).toFixed(0);
-
-    Swal.fire({
-      title: `<h2 style="font-weight: bold; margin-bottom: 20px;">${persona.nombre}</h2>`,
+Swal.fire({
+      title: `<strong>Asistencias de ${persona.nombre}</strong>`,
       html: `
-        <div style="text-align: center;">
-          <!-- Barra principal -->
-          <div style="display: flex; justify-content: space-around; margin-bottom: 10px; font-size: 12px;">
-            <div>Usado</div>
-            <div>Líquido</div>
-            <div>Restante</div>
-          </div>
-          <div style="display: flex; justify-content: space-around; margin-bottom: 20px; font-weight: bold;">
-            <div>${persona.usado}</div>
-            <div>${persona.liquido}</div>
-            <div>${restante}</div>
-          </div>
-          <div style="height: 20px; background: #ddd; border-radius: 10px; overflow: hidden; margin-bottom: 20px;">
-            <div style="width: ${porcentaje}%; background: #621132; height: 100%;"></div>
-          </div>
-
-          <!-- Tabla de terceros -->
-          <div style="text-align: left;">
-            <p style="margin: 10px 0;"><strong>Terceros a los que está inscrito</strong> &nbsp;&nbsp;&nbsp;&nbsp; <strong style="float: right;">Total: 5</strong></p>
-            ${this.generarTercerosHTML()}
-          </div>
+              <div style="margin-top: 20px; text-align: right;">
+          <button id="btnReporte" style="background-color: #3E5F8A; color: white; padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer;">
+            Generar reporte
+          </button>
+        </div>
+        <br>
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <thead>
+              <tr style="background-color: #f2f2f2;">
+                <th style="border: 1px solid #ccc; padding: 8px;">#</th>
+                <th style="border: 1px solid #ccc; padding: 8px;">Fecha</th>
+                <th style="border: 1px solid #ccc; padding: 8px;">Hora</th>
+                <th style="border: 1px solid #ccc; padding: 8px;">Motivo</th>
+                <th style="border: 1px solid #ccc; padding: 8px;">Justificada</th>
+                <th style="border: 1px solid #ccc; padding: 8px;">Comentario</th>
+                <th style="border: 1px solid #ccc; padding: 8px;">E/S</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="border: 1px solid #ccc; padding: 8px;">1</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">01/05/2025</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">00:00</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">Inasistencia</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">No</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">Sin aviso</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">Entrada</td>
+              </tr>
+              <tr>
+                <td style="border: 1px solid #ccc; padding: 8px;">2</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">08/05/2025</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">10:00</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">Tardanza</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">Sí</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">Retardo justificado por médico</td>
+                <td style="border: 1px solid #ccc; padding: 8px;">Salida</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       `,
       width: 700,
@@ -169,39 +289,18 @@ export class GraphsAssistanceComponent {
       showCloseButton: true,
       customClass: {
         popup: 'swal-wide'
+      },
+      didOpen: () => {
+        const btn = document.getElementById('btnReporte');
+        if (btn) {
+          btn.addEventListener('click', () => {
+            // Aquí colocas la lógica para generar el reporte
+            Swal.fire('Reporte generado', 'Tu archivo ha sido descargado.', 'success');
+          });
+        }
       }
     });
   }
 
-  generarTercerosHTML(): string {
-    const terceros = [
-      { nombre: 'ISSTE', deuda: 200000, abonado: 40000, quincena: '2Q 05/08', abonos: 1 },
-      { nombre: 'ISSTE', deuda: 200000, abonado: 120000, quincena: '2Q 05/08', abonos: 3 },
-      { nombre: 'ISSTE', deuda: 200000, abonado: 160000, quincena: '2Q 05/08', abonos: 4 },
-      { nombre: 'ISSTE', deuda: 200000, abonado: 60000, quincena: '2Q 05/08', abonos: 1 },
-      { nombre: 'ISSTE', deuda: 200000, abonado: 40000, quincena: '2Q 05/08', abonos: 1 }
-    ];
-
-    return terceros.map(t => {
-      const porcentaje = ((t.abonado / t.deuda) * 100).toFixed(0);
-      const color =
-        +porcentaje > 80 ? '#0FA958' :
-        +porcentaje > 50 ? '#FF6C11' : '#DC3E3E';
-
-      return `
-        <div style="margin-bottom: 15px;">
-          <strong>${t.nombre}</strong><br>
-          <small>Quincena de término: ${t.quincena}</small>
-          <div style="height: 10px; background: #ddd; border-radius: 5px; overflow: hidden; margin: 4px 0;">
-            <div style="width: ${porcentaje}%; background: ${color}; height: 100%;"></div>
-          </div>
-          <div style="font-size: 12px;">
-            Total de la deuda: <strong>$${t.deuda.toLocaleString()}</strong> &nbsp;&nbsp;
-            Abonado: <strong style="color: green;">$${t.abonado.toLocaleString()}</strong> &nbsp;&nbsp;
-            <span style="float: right;">Abonos: ${t.abonos}</span>
-          </div>
-        </div>
-      `;
-    }).join('');
-  }
+ 
 }

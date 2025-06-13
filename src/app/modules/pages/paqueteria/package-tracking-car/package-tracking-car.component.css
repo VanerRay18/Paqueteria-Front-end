@@ -1,0 +1,94 @@
+h1{
+  font-weight: bold;
+}
+
+h5{
+  color: rgb(122, 122, 122);
+}
+
+.row{
+  margin: 0;
+}
+
+.card{
+  background-color: #ffffff;
+  border-radius: 10px;
+  width: 98%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+
+.vehicle-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+.vehicle-card {
+  width: 360px;
+  border: 2px solid #000;
+  border-radius: 20px;
+  padding: 20px;
+  background: #fff;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.vehicle-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.vehicle-img {
+  width: 70px;
+}
+
+.vehicle-info {
+  flex-grow: 1;
+  margin-left: 16px;
+}
+
+.vehicle-model {
+  font-weight: bold;
+}
+
+.vehicle-status {
+  border-radius: 15px;
+  padding: 5px 10px;
+  text-align: center;
+  box-shadow: 0 0 5px #00cc66;
+}
+
+.vehicle-status.en-ruta {
+  color: #00cc66;
+}
+
+.progress-bar-container {
+  margin-top: 20px;
+}
+
+.progress-bar-bg {
+  background-color: #eee;
+  border-radius: 15px;
+  height: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  background-color: #a00000;
+  height: 100%;
+  border-radius: 15px 0 0 15px;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-top: 5px;
+}
+

@@ -21,6 +21,8 @@ import { AdministrationModule } from './modules/pages/administration/administrat
 import { RecursosHumanosModule } from './modules/pages/recursos-humanos/recursos-humanos.module';
 import { PaqueteriaModule } from './modules/pages/paqueteria/paqueteria.module';
 import { RHRoutingModule } from './modules/pages/recursos-humanos/rh-routing.module';
+import { PaqueteriaRoutingModule } from './modules/pages/paqueteria/paqueteria-routing.module';
+
 
 
 @NgModule({
@@ -43,7 +45,8 @@ import { RHRoutingModule } from './modules/pages/recursos-humanos/rh-routing.mod
     AdminRoutingModule,
     RecursosHumanosModule,
     PaqueteriaModule,
-    RHRoutingModule
+    RHRoutingModule,
+    PaqueteriaRoutingModule
   ],
   providers: [
     {

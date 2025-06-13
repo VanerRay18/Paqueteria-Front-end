@@ -7,7 +7,7 @@ import { TestComponent } from './modules/pages/extras/test/test.component';
 import { CRUDEmployeeComponent } from './modules/pages/recursos-humanos/crudemployee/crudemployee.component';
 import { NewEmployeeComponent } from './modules/pages/recursos-humanos/new-employee/new-employee.component';
 import { RecursosHumanosModule } from './modules/pages/recursos-humanos/recursos-humanos.module';
-
+import { PaqueteriaModule } from './modules/pages/paqueteria/paqueteria.module';
 
 
 const routes: Routes = [
@@ -47,6 +47,13 @@ const routes: Routes = [
         loadChildren:() =>
           import('./modules/pages/recursos-humanos/recursos-humanos.module').then(
             (m) => m.RecursosHumanosModule
+          ),
+      },
+      {
+        path:'Paqueteria',
+        loadChildren:() =>
+          import('./modules/pages/paqueteria/paqueteria.module').then(
+            (m) => m.PaqueteriaModule
           ),
       }
     ],
