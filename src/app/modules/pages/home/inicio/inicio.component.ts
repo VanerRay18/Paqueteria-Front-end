@@ -13,25 +13,29 @@ export class InicioComponent {
       nombre: 'DHL',
       entregados: 48,
       faltantes: 12,
-      ruta: '/empresa/dhl'
+      porcentaje: 70,
+      ruta: 'pages/Paqueteria/Registro-seguimiento'
     },
     {
       nombre: 'J&T',
       entregados: 22,
       faltantes: 38,
-      ruta: '/empresa/jyt'
+      porcentaje: 40,
+      ruta: 'pages/Paqueteria/Registro-seguimiento'
     },
     {
       nombre: 'Mercado Libre',
       entregados: 40,
+      porcentaje: 80,
       faltantes: 20,
-      ruta: '/empresa/mercado-libre'
+      ruta: 'pages/Paqueteria/Registro-seguimiento'
     },
     {
       nombre: 'AMAZON',
       entregados: 8,
       faltantes: 52,
-      ruta: '/empresa/amazon'
+      porcentaje: 10,
+      ruta: 'pages/Paqueteria/Registro-seguimiento'
     }
   ];
 
@@ -59,14 +63,13 @@ export class InicioComponent {
   }
 
   irAsistencias() {
-    this.router.navigate(['/asistencias']);
+    this.router.navigate(['pages/RH/Control-Asistencias']);
   }
   getPorcentaje(empresa: any): number {
   return (empresa.entregados / (empresa.entregados + empresa.faltantes)) * 100;
 }
 
-getColor(empresa: any): string {
-  const porcentaje = this.getPorcentaje(empresa);
+getColorFromPorcentaje(porcentaje: number): string {
   if (porcentaje > 70) return 'bg-green-500';
   if (porcentaje > 40) return 'bg-yellow-400';
   return 'bg-red-600';

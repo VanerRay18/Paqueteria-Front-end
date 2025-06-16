@@ -1,143 +1,149 @@
-/* Estilos generales */
-.inicio-container {
-  text-align: center;
-  padding: 40px;
-  background-color: #8a1538; /* Fondo Morena */
-  color: white;
-  background-size: cover;
-  height: 100vh;
-  width: auto;
+.dashboard-container {
+  padding: 2rem;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.dashboard-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  border: 1px solid #eee;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  color: #1e3a8a;
+  margin-bottom: 1rem;
+}
+
+.alert-title {
+  color: #b91c1c;
+}
+
+.card-empresas {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Centra el contenido horizontalmente */
+  gap: 1rem;
 }
 
-.welcome-section {
-  margin-bottom: 50px;
-}
-
-.welcome-section h1 {
-  font-size: 3rem;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
-
-.welcome-section p {
-  font-size: 1.25rem;
-  margin-bottom: 20px;
-}
-
-.btn-primary {
-  background-color: #ffffff;
-  color: #8a1538;
-  border: none;
-  font-size: 1.2rem;
-  padding: 10px 20px;
-  border-radius: 5px;
-}
-
-.btn-primary:hover {
-  background-color: #b22450;
-  color: white;
-}
-
-.features-section {
-  background-color: #f1f1f1;
-  padding: 50px;
-  color: #8a1538;
-  border-radius: 20px;
-  box-sizing: border-box; /* Asegura que el padding no rompa el ancho */
-}
-
-.features-section h2 {
-  font-weight: bold;
-  margin-bottom: 30px;
-  font-size: 2rem;
-}
-
-.feature-box {
+.empresa-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
   cursor: pointer;
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin: 10px;
+  transition: box-shadow 0.3s;
 }
 
-.feature-box h3 {
-  font-size: 1.5rem;
-  font-weight: bold;
+.empresa-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-.feature-box p {
-  font-size: 1rem;
+.empresa-nombre {
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
 }
 
-/* Consultas de medios para pantallas pequeñas */
-@media only screen and (max-width: 768px) {
-  .inicio-container {
-      padding: 20px;
-  }
-
-  .welcome-section h1 {
-      font-size: 2rem; /* Reduce el tamaño de la fuente */
-  }
-
-  .welcome-section p {
-      font-size: 1rem; /* Reduce el tamaño de la fuente */
-  }
-
-  .features-section {
-      padding: 20px; /* Reduce el padding */
-  }
-
-  .feature-box {
-      padding: 15px; /* Reduce el padding en las cajas */
-      margin: 15px 0; /* Espacio más pequeño entre cajas */
-  }
-
-  .feature-box h3 {
-      font-size: 1.25rem; /* Reduce el tamaño del título */
-  }
-
-  .feature-box p {
-      font-size: 0.9rem; /* Reduce el tamaño del texto */
-  }
+.progress-bar {
+  background: #e5e7eb;
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
 }
 
-/* Consultas para pantallas muy pequeñas (teléfonos) */
-@media only screen and (max-width: 480px) {
-  .inicio-container {
-      padding: 10px;
-  }
-
-  .welcome-section h1 {
-      font-size: 1.75rem; /* Tamaño más pequeño */
-  }
-
-  .welcome-section p {
-      font-size: 0.9rem;
-  }
-
-  .features-section {
-      padding: 10px;
-  }
-
-  .feature-box {
-      padding: 10px;
-      margin: 10px 0;
-  }
-
-  .feature-box h3 {
-      font-size: 1.1rem;
-  }
-
-  .feature-box p {
-      font-size: 0.8rem;
-  }
+.progress-fill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.3s ease;
 }
 
-.bg-green-500 { background-color: #22c55e; }
-.bg-yellow-400 { background-color: #facc15; }
-.bg-red-600 { background-color: #dc2626; }
+.empresa-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #555;
+  margin-top: 0.25rem;
+}
 
+.card-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.alerta {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid #eee;
+  padding: 0.5rem 0;
+}
+
+.alerta-icon {
+  width: 8px;
+  height: 8px;
+  background: #dc2626;
+  border-radius: 50%;
+  margin-top: 5px;
+}
+
+.alerta-tiempo {
+  font-size: 0.75rem;
+  color: #888;
+  margin: 0;
+}
+
+.alerta-mensaje {
+  font-size: 0.85rem;
+  color: #444;
+  margin: 0;
+}
+
+.btn {
+  background: #2563eb;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn:hover {
+  background: #1d4ed8;
+}
+
+.btn-outline {
+  margin-top: 1rem;
+  border: 1px solid #2563eb;
+  color: #2563eb;
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-outline:hover {
+  background: #eff6ff;
+}
+
+/* Colores de barra dinámicos: define en el componente con ngClass */
+.bg-success { background-color: #10b981; }
+.bg-warning { background-color: #f59e0b; }
+.bg-error   { background-color: #ef4444; }

@@ -16,4 +16,9 @@ export class PakageService {
   getTokenAtt(): Observable<ApiResponse> {//Trae la nomina actual
     return this.http.post<ApiResponse>(`${environment.baseService}${'/attendances/tokenEmployee'}`,null);
   }
+
+  SentDataExel(data:any): Observable<ApiResponse> {//Trae la nomina actual
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/attendances/createDeliveryLoad'}`,data);
+  }
+
 }

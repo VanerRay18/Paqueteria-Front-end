@@ -1,6 +1,6 @@
 <div class="paquetes-container">
   <h2>Registros de paquetes</h2>
-  
+
   <div class="paquetes-box">
     <div class="paquetes-header">
       <div class="left">
@@ -9,10 +9,13 @@
       </div>
       <input type="text" placeholder="Buscar..." class="buscador" />
       <div class="acciones">
-        <button class="btn btn-archivo">
+        <input id="csvFile" type="file" (change)="onFileSelected($event)" accept=".csv" #fileInput
+          style="display: none" />
+
+        <button class="btn btn-archivo" (click)="fileInput.click()">
           📁 Cargar Excel
         </button>
-        <button class="btn btn-escanear">
+        <button class="btn btn-escanear" (click)="mostrarSwal()">
           Comenzar a escanear
         </button>
       </div>

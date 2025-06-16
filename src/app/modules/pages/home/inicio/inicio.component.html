@@ -1,48 +1,45 @@
-<div class="p-6">
-  <h2 class="text-3xl font-bold mb-4">¡Hola, Administrador!</h2>
+<div class="dashboard-container">
+  <h2 class="dashboard-title">¡Hola, Administrador!</h2>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <!-- Empresas -->
-    <div class="space-y-4">
-      <h3 class="text-xl text-blue-600 font-semibold">EMPRESAS</h3>
-      <div *ngFor="let empresa of empresas" 
-           class="border p-4 rounded-lg shadow cursor-pointer hover:shadow-lg"
-           (click)="irAEmpresa(empresa.ruta)">
-        <h3 class="text-center font-semibold text-lg mb-2">{{ empresa.nombre }}</h3>
-        <div class="w-full h-4 bg-gray-200 rounded-full">
-          <div 
-            class="h-full rounded-full" 
-            [ngClass]="getColor(empresa)" 
-            [style.width.%]="getPorcentaje(empresa)">
-          </div>
+  <div class="dashboard-grid">
+    <!-- EMPRESAS -->
+    <div class="card card-empresas">
+      <h3 class="card-title">📦 EMPRESAS</h3>
+      <div class="empresa-card" *ngFor="let empresa of empresas" (click)="irAEmpresa(empresa.ruta)">
+        <h4 class="empresa-nombre">{{ empresa.nombre }}</h4>
+        <div class="progress-bar">
+<div class="progress-fill" 
+     [style.width.%]="empresa.porcentaje" 
+     [ngClass]="getColorFromPorcentaje(empresa.porcentaje)">
+</div>
         </div>
-        <div class="flex justify-between text-xs mt-1">
-          <span>Paquetes entregados {{ empresa.entregados }}</span>
-          <span>Faltantes {{ empresa.faltantes }}</span>
+        <div class="empresa-info">
+          <span>Entregados: {{ empresa.entregados }}</span>
+          <span>Faltantes: {{ empresa.faltantes }}</span>
         </div>
       </div>
     </div>
 
-    <!-- Asistencias y alertas -->
-    <div class="space-y-4">
-      <!-- Asistencias -->
-      <div class="bg-white shadow-md p-4 rounded-lg">
-        <h4 class="text-blue-600 text-lg font-semibold">Asistencias del personal</h4>
-        <p class="mb-2">Ver las asistencias y faltas del personal</p>
-        <button class="bg-blue-500 text-white px-4 py-2 rounded" (click)="irAsistencias()">IR</button>
+    <!-- ASISTENCIAS Y ALERTAS -->
+    <div class="card-group">
+      <!-- ASISTENCIAS -->
+      <div class="card">
+        <h4 class="card-title">🕒 Asistencias del personal</h4>
+        <p>Consulta las asistencias y faltas del personal registrado.</p>
+        <button class="btn" (click)="irAsistencias()">IR</button>
       </div>
 
-      <!-- Alertas -->
-      <div class="bg-white shadow-md p-4 rounded-lg">
-        <h4 class="text-blue-600 text-lg font-semibold mb-2">ALERTAS</h4>
-        <div *ngFor="let alerta of alertas" class="border-b py-2 flex items-start gap-2">
-          <span class="w-2 h-2 bg-red-500 rounded-full mt-1"></span>
+      <!-- ALERTAS -->
+      <div class="card">
+        <h4 class="card-title alert-title">⚠️ ALERTAS</h4>
+        <div *ngFor="let alerta of alertas" class="alerta">
+          <span class="alerta-icon"></span>
           <div>
-            <p class="text-sm font-semibold text-gray-600">Hace {{ alerta.dias }} días</p>
-            <p class="text-sm text-gray-700">{{ alerta.mensaje }}</p>
+            <p class="alerta-tiempo">Hace {{ alerta.dias }} días</p>
+            <p class="alerta-mensaje">{{ alerta.mensaje }}</p>
           </div>
         </div>
-        <button class="mt-4 border border-blue-400 text-blue-600 px-4 py-1 rounded">VER TODAS</button>
+        <button class="btn-outline">Ver todas</button>
       </div>
     </div>
   </div>
