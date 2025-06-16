@@ -12,7 +12,7 @@
           [ngStyle]="{ 'background-image': 'url(' + fotoPreview + ')' }"></div>
 
         <label for="foto" class="foto-label">
-          <i class="icon">ℹ️</i> Fotografía de la persona
+          <i class="fas fa-info-circle info-icon" data-tooltip="Selecione la fotografia del trabajador"></i> Fotografía de la persona
         </label>
         <input type="file" id="foto" (change)="onFotoSelected($event)" hidden />
       </div>
@@ -22,43 +22,53 @@
         <label>Nombre completo del trabajador:</label>
         <input type="text" formControlName="nombreCompleto" />
 
+        <i class="fas fa-info-circle info-icon" data-tooltip="Registro Federal de Contribuyentes (RFC) del trabajador."></i>
         <label>RFC:</label>
         <input type="text" formControlName="rfc" />
 
+        <i class="fas fa-info-circle info-icon" data-tooltip="Clave Única de Registro de Población."></i>
         <label>Curp:</label>
         <input type="text" formControlName="curp" />
 
+        <i class="fas fa-info-circle info-icon" data-tooltip="Fecha de nacimiento del trabajador."></i>
         <label>Fecha de nacimiento:</label>
         <input type="date" formControlName="fechaNacimiento" />
 
+        <i class="fas fa-info-circle info-icon" data-tooltip="Seleccione el tipo de seguro medico del trabajador."></i>
         <label>Tipo de seguro:</label>
         <select formControlName="tipoSeguro">
           <option value="">Seleccione</option>
           <option *ngFor="let seguro of catSeguros" [value]="seguro.id">{{ seguro.name }}</option>
         </select>
 
+        <i class="fas fa-info-circle info-icon" data-tooltip="Ingrese los 10 digitos del numero de telefono personal del trabajador."></i>
         <label>Teléfono:</label>
         <input type="tel" formControlName="telefono" />
       </div>
 
       <div class="group">
+        <i class="fas fa-info-circle info-icon" data-tooltip="Fecha de inicio de labores del trabajador."></i>
         <label>Fecha de inicio laboral:</label>
         <input type="date" formControlName="fechaInicio" />
 
+        <i class="fas fa-info-circle info-icon" data-tooltip="Seleccione el puesto laboral actual."></i>
         <label>Puesto laboral:</label>
         <select formControlName="puestoLaboral">
           <option value="">Seleccione</option>
           <option *ngFor="let Employments of catEmployments" [value]="Employments.id">{{ Employments.name }}</option>
         </select>
 
+        <i class="fas fa-info-circle info-icon" data-tooltip="Seleccione el tipo de contratación del trabajador."></i>
         <label>Tipo de contratación:</label>
         <select formControlName="tipoContratacion">
           <option value="">Seleccione</option>
           <option *ngFor="let job of catJobs" [value]="job.id">{{ job.name }}</option>
         </select>
 
+        <i class="fas fa-info-circle info-icon" data-tooltip="Horario de entrada del trabajador."></i>
         <label>Horario de entrada:</label>
         <input type="text" formControlName="horarioEnt" />
+        <i class="fas fa-info-circle info-icon" data-tooltip="Horario de salida del trabajador."></i>
         <label>Horario de salida:</label>
         <input type="text" formControlName="horarioSal" />
 
@@ -74,7 +84,7 @@
   <!-- DIRECCIÓN DEL TRABAJADOR -->
   <form [formGroup]="direccionForm" (ngSubmit)="guardarDireccion()">
     <h4>Dirección del trabajador</h4>
-    <div class="grid-3">
+    <div class="grid-2">
       <input type="text" formControlName="codigoPostal"
         placeholder="Código Postal" />
       <input type="text" formControlName="municipio" placeholder="Municipio" />

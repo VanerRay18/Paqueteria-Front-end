@@ -35,14 +35,14 @@ export class LoggedGuard implements CanActivate, CanLoad {
       return new Promise<boolean>((resolve) => {
         this.authService.getModulesByRole().subscribe(
           (response: ApiResponse) => {
-            console.log('Respuesta de getModulesByRole:', response);
+            // console.log('Respuesta de getModulesByRole:', response);
             if (response.success) {
               const allowedModules: Module[] = response.data;
 
               // Verificar si el módulo solicitado coincide con algún módulo permitido
               const hasAccess = allowedModules.some((module: Module) => {
-                console.log('Módulo permitido:', module);
-                console.log('Ruta solicitada:', requestedPath);
+                // console.log('Módulo permitido:', module);
+                // console.log('Ruta solicitada:', requestedPath);
                 return requestedPath === module.config;
               });
 

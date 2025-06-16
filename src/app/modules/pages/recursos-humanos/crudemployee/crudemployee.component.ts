@@ -14,10 +14,10 @@ import { RHService } from 'src/app/services/rh.service';
 })
 export class CRUDEmployeeComponent {
   searchTerm: string = '';
-  headersB = ['Nombre','Primer Apellido','Segundo Apellido','RFC','CURP', 'Tipo de contratacion', 'Puesto', 'Telefono', 'Status', 'Informacion','Acciones'];
+  headersB = ['Nombre','Primer Apellido','Segundo Apellido','RFC','CURP', 'Tipo de contratacion', 'Puesto', 'Telefono', 'Status','Acciones'];
   displayedColumnsB = ['name','first_surname ','second_surname','rfc','curp', 'cat_job_id', 'cat_employment_id', 'phone', 'active'];
   dataB:any[] = [];
-  headersC = ['Nombre','Primer Apellido','Segundo Apellido','RFC','CURP', 'Tipo de contratacion', 'Puesto', 'Telefono', 'Status', 'Informacion', 'Acciones'];
+  headersC = ['Nombre','Primer Apellido','Segundo Apellido','RFC','CURP', 'Tipo de contratacion', 'Puesto', 'Telefono', 'Status','Acciones'];
   displayedColumnsC = ['name','first_surname ','second_surname','rfc','curp', 'cat_job_id', 'cat_employment_id', 'phone', 'active'];
   dataC:any[] = [];
   isLoading = false;
