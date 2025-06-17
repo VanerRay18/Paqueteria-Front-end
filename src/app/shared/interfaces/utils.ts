@@ -54,6 +54,14 @@ export interface Logs {
   folio: string;
 }
 
+export interface Cargamento {
+  id: number;              // Ej: "#001"
+  titulo: string;          // Ej: "Cargamento 1"
+  fecha: string;           // Ej: "2025-06-17"
+  entregados: number;      // Ej: 80
+  faltantes: number;       // Ej: 20
+}
+
 export interface LicMedica {
   sep?: any;
   sumaDias: any,

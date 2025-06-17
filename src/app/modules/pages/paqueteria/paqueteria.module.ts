@@ -5,6 +5,7 @@ import { PackageTrackingCarComponent } from './package-tracking-car/package-trac
 import { PaqueteriaRoutingModule } from './paqueteria-routing.module';
 import { FormsModule } from '@angular/forms';
 import { PakageTokenComponent } from './pakage-token/pakage-token.component';
+import { PakageIncomingComponent } from './pakage-incoming/pakage-incoming.component';
 
 
 
@@ -14,7 +15,8 @@ import { PakageTokenComponent } from './pakage-token/pakage-token.component';
   declarations: [
     PackageTrackingComponent,
     PackageTrackingCarComponent,
-    PakageTokenComponent
+    PakageTokenComponent,
+    PakageIncomingComponent
   ],
   imports: [
     CommonModule,

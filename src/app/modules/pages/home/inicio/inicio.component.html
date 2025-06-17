@@ -5,17 +5,18 @@
     <!-- EMPRESAS -->
     <div class="card card-empresas">
       <h3 class="card-title">📦 EMPRESAS</h3>
-      <div class="empresa-card" *ngFor="let empresa of empresas" (click)="irAEmpresa(empresa.ruta)">
-        <h4 class="empresa-nombre">{{ empresa.nombre }}</h4>
-        <div class="progress-bar">
-<div class="progress-fill" 
-     [style.width.%]="empresa.porcentaje" 
-     [ngClass]="getColorFromPorcentaje(empresa.porcentaje)">
-</div>
-        </div>
-        <div class="empresa-info">
-          <span>Entregados: {{ empresa.entregados }}</span>
-          <span>Faltantes: {{ empresa.faltantes }}</span>
+      <div *ngIf="empresas">
+        <div class="empresa-card" *ngFor="let empresa of empresas" (click)="irAEmpresa(empresa.ruta)">
+          <h4 class="empresa-nombre">{{ empresa.nombre }}</h4>
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="empresa.porcentaje"
+                 [ngClass]="getColorFromPorcentaje(empresa.porcentaje)">
+            </div>
+          </div>
+          <div class="empresa-info">
+            <span>Entregados: {{ empresa.entregados }}</span>
+            <span>Faltantes: {{ empresa.faltantes }}</span>
+          </div>
         </div>
       </div>
     </div>

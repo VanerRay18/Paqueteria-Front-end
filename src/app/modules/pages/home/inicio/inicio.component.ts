@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { PakageService } from 'src/app/services/pakage.service';
 
 @Component({
   selector: 'app-inicio',
@@ -54,25 +55,48 @@ export class InicioComponent {
     }
   ];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router,
+    private pakage: PakageService
+  ) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.pakage.getPaqueterias().subscribe({
+      next: (res) => {
+        // Asignamos los datos al arreglo de empresas
+        this.empresas = res.data;
+
+        // Ajustamos nombres de propiedades según el template
+        this.empresas.forEach((empresa: any) => {
+          empresa.nombre    = empresa.name;
+          empresa.faltantes = empresa.noEntregados;
+          // Calculamos el porcentaje de entregados
+          const total = empresa.entregados + empresa.faltantes;
+          empresa.porcentaje = total ? (empresa.entregados / total) * 100 : 0;
+        });
+      },
+      error: (err) => {
+        console.error('Error al obtener las empresas:', err);
+      }
+    });
+  }
+
+
 
   irAEmpresa(ruta: string) {
-    this.router.navigate([ruta]);
+    this.router.navigate(['/pages/Paqueteria/Carga-paquetes']);
   }
 
   irAsistencias() {
     this.router.navigate(['pages/RH/Control-Asistencias']);
   }
   getPorcentaje(empresa: any): number {
-  return (empresa.entregados / (empresa.entregados + empresa.faltantes)) * 100;
-}
+    return (empresa.entregados / (empresa.entregados + empresa.faltantes)) * 100;
+  }
 
-getColorFromPorcentaje(porcentaje: number): string {
-  if (porcentaje > 70) return 'bg-green-500';
-  if (porcentaje > 40) return 'bg-yellow-400';
-  return 'bg-red-600';
-}
+  getColorFromPorcentaje(porcentaje: number): string {
+    if (porcentaje > 70) return 'bg-green-500';
+    if (porcentaje > 40) return 'bg-yellow-400';
+    return 'bg-red-600';
+  }
 
 }

@@ -56,19 +56,20 @@ onFileSelected(event: any): void {
   // Método para enviar los datos al backend
   enviarAlBackend(data: any): void {
     console.log(data)
-    // this.LicenciasService.addOficios(data).subscribe(
-    //   response => {
-    // console.log(response.data);
-    //     Swal.fire({
-    //       title: '¡Éxito!',
-    //       text: 'Se editó la licencia correctamente.',
-    //       icon: 'success',
-    //       showConfirmButton: false,
-    //       timer: 1500,
-    //       timerProgressBar: true
-    //     });
-    //   }
-    // );
+    const incomingPackageId = 1; // Reemplaza con el ID real del paquete entrante
+    this.pakage.SentDataExel(data, incomingPackageId).subscribe(
+      response => {
+    console.log(response.data);
+        Swal.fire({
+          title: '¡Éxito!',
+          text: 'Se cargo el consolidado correctamente.',
+          icon: 'success',
+          showConfirmButton: false,
+          timer: 1500,
+          timerProgressBar: true
+        });
+      }
+    );
 
 
     //     console.log('Enviando datos al backend:', data);

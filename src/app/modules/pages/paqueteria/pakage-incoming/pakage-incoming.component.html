@@ -1,0 +1,62 @@
+<div class="cont col-auto row  mt-4 ms-4">
+  <div class="titulos ">
+    <h1>Carga de paquetes</h1>
+  </div>
+  <div class=" d-flex mt-3">
+    <div class="col-auto col-lg-12">
+
+      <div class="card2">
+        <div class="form-floating col-auto col-lg-5 m-3 row">
+          <input type="text" class=" buscar form-control" id="busqueda"
+            placeholder="Buscar"
+            [(ngModel)]="searchTerm" name="busqueda">
+          <label for="User">&nbsp;&nbsp;<i
+              class="fa-solid fa-magnifying-glass"></i> Buscar</label>
+        </div>
+        <div class="col-auto col-lg-3 d-flex justify-content-end mt-auto">
+          <button type="button" class="btn btn-sm" (click)="crearCargamento()">CREAR CARGAMENTO</button>
+
+        </div>
+        <div class="col-auto col-lg-2 d-flex justify-content-end mt-auto">
+          <a [routerLink]="['/pages/RH/Registrar-Trabajador']">
+            <button type="button" class="btn btn-sm">DESCARGAR REPORTES</button>
+          </a>
+        </div>
+        <!-- Cada card redirige a una ruta con el ID del cargamento -->
+        <!-- Tarjetas de cargamento -->
+        <div *ngFor="let item of data" class="card-person" (click)="infocard(item.id)">
+          <h3 class="title">{{ item.titulo }}</h3>
+
+          <div class="progress-container">
+            <div
+              class="progress-bar"
+              [ngClass]="{
+        'green': porcentaje(item) > 70,
+        'yellow': porcentaje(item) <= 70 && porcentaje(item) >= 30,
+        'red': porcentaje(item) < 30
+      }"
+              [style.width.%]="porcentaje(item)">
+            </div>
+          </div>
+
+          <div class="labels">
+            <div class="left">Entregados: {{ item.entregados }}</div>
+            <div class="right">Faltantes: {{ item.faltantes }}</div>
+          </div>
+
+          <div class="total">
+            Total de paquetes: {{ item.entregados + item.faltantes }}
+          </div>
+
+          <hr>
+          <div class="footer">
+            <span><strong>Fecha:</strong> {{ item.fecha }}</span>
+            <span><strong>ID:</strong> {{ item.id }}</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

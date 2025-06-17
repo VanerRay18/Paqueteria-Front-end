@@ -121,7 +121,7 @@ button:active {
   border-radius:  20px; /* Redondea solo las esquinas especificadas */
   width: 100%;
   padding: 15px; /* Agregado para un mejor espaciado interno */
-  flex: 0 0 calc(50% - 1rem); /* Tres por fila con espacio */
+  flex: 0 0 calc(33.333% - 1rem); /* Tres por fila con espacio */
   display: flex;
   flex-wrap: wrap;
   padding: 1rem;
@@ -131,32 +131,58 @@ button:active {
 
 
 .card-person {
-  margin: 1rem;
-  flex: 0 0 calc(28% - 1rem); /* Ahora casi 2 por fila */
-  padding: 1.5rem; /* Aumenta el espacio interno */
-  border: 2px solid #333;
-  border-radius: 15px;
-  box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+  border: 2px solid #000;
+  border-radius: 12px;
+  padding: 16px;
+  width: 300px;
+  font-family: sans-serif;
+  cursor: pointer;
+}
+
+.title {
   text-align: center;
-  background: white;
-  width: 100%; /* Asegura que el ancho se adapte al flex */
+  margin-bottom: 12px;
 }
 
-.barra {
-  height: 10px;
-  background: #eee;
+.progress-container {
+  background-color: #e0e0e0;
   border-radius: 10px;
+  height: 10px;
+  margin-bottom: 8px;
   overflow: hidden;
-  margin: 10px 0;
 }
 
-.progreso {
+.progress-bar {
   height: 100%;
-  transition: width 0.3s;
+  transition: width 0.3s ease;
 }
 
-.datos {
+.progress-bar.red {
+  background-color: #f44336;
+}
+
+.progress-bar.yellow {
+  background-color: #ffeb3b;
+}
+
+.progress-bar.green {
+  background-color: #4caf50;
+}
+
+.labels {
   display: flex;
   justify-content: space-between;
-  font-size: 0.8rem;
+  margin: 8px 0;
+  font-weight: bold;
+}
+
+.total {
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
 }
