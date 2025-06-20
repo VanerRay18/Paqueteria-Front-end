@@ -51,7 +51,8 @@
               (delete)="onDelete($event)"
               [showActionsPdf]=false
               [showActiveCheckbox]=false
-              [showDetailsColumn]=false
+              [showDetailsColumn]=true
+              (show)="showDetails($event)"
               [isLoading]="isLoading">
             </app-tables>
           </div>

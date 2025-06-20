@@ -12,7 +12,8 @@
                     <div class="vehicle-info">
                         <strong>{{ vehicle.placa }}</strong>
                         <div class="vehicle-model">{{ vehicle.modelo }}</div>
-                        <div class="vehicle-driver">Conductor: {{ vehicle.conductor }}</div>
+                        <div class="vehicle-driver"><strong>Conductor:</strong> {{ vehicle.conductor }}</div>
+                        <div class="vehicle-destination"><strong>Destino:</strong> {{ vehicle.destino }}</div>
                     </div>
                     <div class="vehicle-status" [ngClass]="vehicle.estado.toLowerCase().replace(' ', '-')">
                         <i class="fa-solid fa-truck-fast"></i>
@@ -23,7 +24,7 @@
                 <div class="progress-bar-container">
                     <div class="progress-bar-bg">
                         <div class="progress-bar-fill"
-                            [style.width.%]="(vehicle.entregados / (vehicle.entregados + vehicle.faltantes)) * 100">
+                            [style.width.%]="vehicle.porcentaje">
                         </div>
                     </div>
                     <div class="progress-labels">

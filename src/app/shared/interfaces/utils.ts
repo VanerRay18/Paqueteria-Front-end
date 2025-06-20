@@ -30,6 +30,9 @@ export interface VehicleCard {
   entregados: number;
   faltantes: number;
   imagen: string; // ruta de la imagen del vehículo
+  destino: string; // destino del vehículo
+  kmIniciales?: number;
+  porcentaje: number; // porcentaje de entregados
 }
 
 export interface Oficio {

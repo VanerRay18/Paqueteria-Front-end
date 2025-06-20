@@ -29,12 +29,36 @@ h5{
 }
 
 .vehicle-card {
-  width: 360px;
+  width: 30%;
+  min-width: 180px; /* Asegura que no se encoja demasiado */
+  max-width: 500px;
+  height: 220px;
   border: 2px solid #000;
   border-radius: 20px;
   padding: 20px;
   background: #fff;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Hover opcional */
+.vehicle-card:hover {
+  transform: scale(1.02);
+}
+
+/* Responsive para tablets */
+@media (max-width: 768px) {
+  .vehicle-card {
+    width: 45%;
+  }
+}
+
+/* Responsive para móviles */
+@media (max-width: 480px) {
+  .vehicle-card {
+    width: 80%;
+    height: auto;
+  }
 }
 
 .vehicle-header {

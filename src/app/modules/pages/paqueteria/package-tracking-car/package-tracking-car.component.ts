@@ -20,7 +20,9 @@ export class PackageTrackingCarComponent {
       estado: 'En Ruta',
       entregados: 2,
       faltantes: 20,
-      imagen: 'assets/nissan1.jpg'
+      imagen: 'assets/nissan1.jpg',
+      destino: 'Sucursal Centro',
+      porcentaje: 10 // Porcentaje de entregados
     },
     {
       placa: 'XYZ1234',
@@ -29,13 +31,69 @@ export class PackageTrackingCarComponent {
       estado: 'Entregado',
       entregados: 22,
       faltantes: 0,
-      imagen: 'assets/nissan1.jpg'
+      imagen: 'assets/nissan1.jpg',
+      destino: 'Sucursal Norte',
+      porcentaje: 100
+    },
+    {
+      placa: 'FYZWR34',
+      modelo: 'Honda Odise',
+      conductor: '',
+      estado: 'En Bodega',
+      entregados: 0,
+      faltantes: 0,
+      imagen: 'assets/nissan1.jpg',
+      destino: '',
+      porcentaje: 0
     },
     // agrega más vehículos aquí
   ];
 
   mostrarSwalVehiculo(vehicle: VehicleCard): void {
-    this.mostrarSwalPrincipal(vehicle);
+    const necesitaConfigurar =
+      !vehicle.conductor || !vehicle.destino || (this.paquetes.length === 0);
+
+    if (necesitaConfigurar) {
+      this.mostrarSwalFormularioPrevio(vehicle);
+    } else {
+      this.mostrarSwalPrincipal(vehicle);
+    }
+  }
+
+  mostrarSwalFormularioPrevio(vehicle: VehicleCard): void {
+    Swal.fire({
+      title: 'Asignar datos al vehículo',
+      html: `
+      <input id="input-conductor" class="swal2-input" placeholder="Conductor" value="${vehicle.conductor || ''}">
+      <input id="input-destino" class="swal2-input" placeholder="Destino" value="${vehicle.destino || ''}">
+      <input id="input-km" class="swal2-input" placeholder="Kilómetros Iniciales" type="number" value="${vehicle.kmIniciales || ''}">
+    `,
+      confirmButtonText: 'Guardar y continuar',
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar',
+      focusConfirm: false,
+      preConfirm: () => {
+        const conductor = (document.getElementById('input-conductor') as HTMLInputElement).value;
+        const destino = (document.getElementById('input-destino') as HTMLInputElement).value;
+        const km = parseFloat((document.getElementById('input-km') as HTMLInputElement).value);
+
+        if (!conductor || !destino || isNaN(km)) {
+          Swal.showValidationMessage('Todos los campos son obligatorios');
+          return false; // Evita continuar si no se completó el formulario
+        }
+
+        // Modifica los datos directamente
+        vehicle.conductor = conductor;
+        vehicle.destino = destino;
+        vehicle.kmIniciales = km;
+        vehicle.estado = 'En Bodega';
+        return true;
+      }
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.mostrarSwalPrincipal(vehicle); // Continúa con el flujo principal
+      }
+    });
   }
 
   mostrarSwalPrincipal(vehicle: VehicleCard): void {
