@@ -59,12 +59,14 @@ export class AuthService {
   // Método para verificar si el rol coincide con los permisos requeridos
 
 
-    getNotifications(userId: any): Observable<ApiResponse> {
-      let headers = new HttpHeaders({'userId': userId})
-      return this.http.get<ApiResponse>(`${environment.baseService}${'/notifications'}`,
-        {headers}
-      );
-    }
+ getNotifications( fromDate: string, toDate: string): Observable<ApiResponse> {
+  const headers = new HttpHeaders({
+    'desde': fromDate,
+    'hasta': toDate
+  });
+
+  return this.http.get<ApiResponse>(`${environment.baseService}/notifications`, { headers });
+}
 
     changeStatus(notificationId: any, status: any): Observable<ApiResponse> {//Cambia el estado de la nomina
       let headers = new HttpHeaders({'notificationId': notificationId, 'status': status})

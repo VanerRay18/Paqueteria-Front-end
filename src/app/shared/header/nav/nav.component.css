@@ -2,6 +2,7 @@
   text-align: right; /* Alinea el texto de la fecha hacia la izquierda */
   color: #858585;
   font-size: 12px;
+
 }
 
 .navbar{
@@ -18,7 +19,7 @@ color:rgb(184, 184, 184);
     margin-right: 8px; /* Ajusta el valor según el espacio que necesites */
 
 
-  font-size: 1.2em; /* Ajusta el tamaño del icono si es necesario */
+  font-size: 1.3em; /* Ajusta el tamaño del icono si es necesario */
 }
 .active-custom {
   color: #FFD700; /* Cambia el color del texto a dorado */
@@ -114,7 +115,7 @@ color: #FFD700;
 .img{
   margin-left: 10px;
   margin-top: -10px;
-  width: 150px;
+  width: 140px;
 }
 
 .navbar-toggler{
@@ -183,27 +184,10 @@ max-width: 32px;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.459); /* Negro semitransparente */
+  background-color: rgba(0, 0, 0, 0.527); /* Negro semitransparente */
   z-index: 999; /* Debe estar por debajo del dropdown */
 }
-/* Dropdown de notificaciones */
-.notification-dropdown {
-  position: absolute;
-  margin-left: 28px;
 
-  top: 62px;
-  left: 0;
-  transform: translateX(-20px);
-  width: 300px;
-  background-color: rgba(255, 255, 255, 0);
-  border-radius: 15px;
-  border: 1px solid #ffffff00;
-  z-index: 1000;
-  padding: 10px;
-  max-height: 800px;
-  overflow-y: auto;
-  overflow-x: auto;
-}
 
 ::-webkit-scrollbar {
   width: 10px; /* Ancho del scrollbar */
@@ -211,7 +195,7 @@ max-width: 32px;
 
 /* Personaliza el track (fondo del scroll) */
 ::-webkit-scrollbar-track {
-  background-color: #0000007c; /* Fondo del track */
+  background-color: #0000008e; /* Fondo del track */
   border-radius: 10px;
 }
 
@@ -239,10 +223,11 @@ max-width: 32px;
   max-height: inherit;
   overflow-y: auto;
   overflow-x: auto;
+  
 }
 
 .notification-item:hover {
-  transform: scale(1.03);
+  transform: scale(1.02);
   background-color: #f9f9f9;
 }
 
@@ -252,7 +237,17 @@ max-width: 32px;
   font-size: 14px;
   display: flex;
   flex-direction: column; /* Hace que el título y mensaje queden en columnas */
+    justify-content: space-between; /* distribuye arriba/abajo */
+  min-height: 70px; /* o ajusta según necesidad */
 }
+.alert-time-below {
+  margin-top: 8px;
+  text-align: right;
+  font-size: 12px;
+  color: #888;
+  padding-right: 4px;
+}
+
 
 .notification-content strong {
   font-weight: bold;
@@ -271,5 +266,86 @@ max-width: 32px;
 
 .iconNoti{
   font-size: 23px;
-  margin-right: 9px;
+  margin-right: 12px;
+}
+
+.notification-filters {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 10px;
+  gap: 6px;
+}
+
+.notification-filters button {
+  flex: 1;
+  background-color: #e0e0e0;
+  border: none;
+  border-radius: 15px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.notification-filters button:hover {
+  background-color: #c2c2c2;
+}
+
+.notification-filters button.active {
+  background-color: #1e3a8a;
+  color: white;
+  font-weight: bold;
+}
+.notification-dropdown {
+  position: absolute;
+  top: 62px;
+  left: 50px;
+  transform: translateX(-20px);
+  width: 300px;
+  background-color: rgba(255, 255, 255, 0);
+  border-radius: 15px;
+  border: 1px solid #00000000;
+  z-index: 1000;
+  padding: 10px;
+}
+
+.notification-filters {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.notification-filters button {
+  flex: 1;
+  margin: 0 2px;
+  padding: 6px 0;
+  border: none;
+  border-radius: 20px;
+  background-color: #e0e0e0;
+  font-weight: 500;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.notification-filters button.active {
+  background-color: #1e3a8a;
+  color: white;
+}
+.nav-link.generalHover {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* espacio entre icono y texto */
+  white-space: nowrap; /* evita salto de línea */
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  gap: 2px;
+}
+
+.notification-list {
+  max-height: 700px;
+  overflow-y: auto;
+  padding-right: 5px;
+
 }
