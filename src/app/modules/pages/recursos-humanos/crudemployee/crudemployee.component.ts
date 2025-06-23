@@ -15,10 +15,10 @@ import { RHService } from 'src/app/services/rh.service';
 export class CRUDEmployeeComponent {
   searchTerm: string = '';
   headersB = ['Nombre','Primer Apellido','Segundo Apellido','RFC','CURP', 'Tipo de contratacion', 'Puesto', 'Telefono', 'Status','Acciones'];
-  displayedColumnsB = ['name','first_surname ','second_surname','rfc','curp', 'cat_job_id', 'cat_employment_id', 'phone', 'active'];
+  displayedColumnsB = ['name','first_surname','second_surname','rfc','curp', 'cat_job_id', 'cat_employment_id', 'phone', 'active'];
   dataB:any[] = [];
   headersC = ['Nombre','Primer Apellido','Segundo Apellido','RFC','CURP', 'Tipo de contratacion', 'Puesto', 'Telefono', 'Status','Acciones'];
-  displayedColumnsC = ['name','first_surname ','second_surname','rfc','curp', 'cat_job_id', 'cat_employment_id', 'phone', 'active'];
+  displayedColumnsC = ['name','first_surname','second_surname','rfc','curp', 'cat_job_id', 'cat_employment_id', 'phone', 'active'];
   dataC:any[] = [];
   isLoading = false;
   info: any;
@@ -48,7 +48,7 @@ export class CRUDEmployeeComponent {
 
 getData() {
   this.rh.getEmployees().subscribe((response: ApiResponse) => {
-console.log('Datos obtenidos:', response.data);
+// console.log('Datos obtenidos:', response.data);
    this.dataB = response.data.individual;
    this.dataC = response.data.honorarios;
     // console.log('Datos obtenidos:', this.data);

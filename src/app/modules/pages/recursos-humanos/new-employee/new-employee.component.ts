@@ -29,7 +29,7 @@ export class NewEmployeeComponent implements OnInit {
   allUniforms: { id: number, name: string }[] = [];
   assignedUniforms: { id: number, name: string }[] = [];
   uniforms: number[] = [];
-  data: any ;
+  data: any;
   catDocuments: any[] = [];
   catEmployeeUniforms: any[] = [];
   catEmployments: any[] = [];
@@ -37,7 +37,9 @@ export class NewEmployeeComponent implements OnInit {
   catSeguros: any[] = [];
   employeeId: any;
   employeeIdPatch!: number | null;
-   isEditMode = false;
+  isEditMode = false;
+  isEditDocumentos = false;
+  isEditUniformes = false;
 
   constructor(private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
@@ -46,21 +48,23 @@ export class NewEmployeeComponent implements OnInit {
     private fileTransferService: FileTransferService
   ) {
 
-   }
+  }
 
   ngOnInit() {
-  this.fileTransferService.currentIdTercero$
-    .pipe(take(1))
-    .subscribe(id => {
-      if (id !== null) {
-        console.log('ID recibido:', id);
-        this.employeeIdPatch = id;
-        this.isEditMode = true;
-        this.loadEmployeeData(id); // tu método para llenar los campos
-      }
-    });
- this.getData();
- this.forms();
+    this.forms();
+
+    this.fileTransferService.currentIdTercero$
+      .pipe(take(1))  // <- solo se ejecuta una vez
+      .subscribe(id => {
+        if (id !== null) {
+          console.log('ID recibido:', id);
+          this.employeeIdPatch = id;
+          this.isEditMode = true;
+          this.loadEmployeeData(id); // solo una vez
+        }
+      });
+
+    this.getData();
 
   }
 
@@ -81,7 +85,7 @@ export class NewEmployeeComponent implements OnInit {
 
   }
 
-  forms(){
+  forms() {
     this.datosPersonalesForm = this.fb.group({
       foto: [null],
       nombreCompleto: [''],
@@ -129,29 +133,109 @@ export class NewEmployeeComponent implements OnInit {
       parentesco: ['', Validators.required]
     });
   }
+  formatHoraArray(horaArray: number[]): string {
+    if (!horaArray || horaArray.length < 2) return '';
+    const horas = horaArray[0].toString().padStart(2, '0');
+    const minutos = horaArray[1].toString().padStart(2, '0');
+    return `${horas}:${minutos}`;
+  }
 
-    // 2️⃣ Método para cargar datos existentes y llenar los formularios
+  // 2️⃣ Método para cargar datos existentes y llenar los formularios
   loadEmployeeData(id: number) {
-    // this.rh.getEmployeeById(id).subscribe((resp: ApiResponse) => {
-    //   const e = resp.data;
-    //   // Asume que resp.data trae los campos necesarios
-    //   this.datosPersonalesForm.patchValue({
-    //     nombreCompleto: `${e.name} ${e.firstSurname} ${e.secondSurname}`,
-    //     rfc: e.rfc,
-    //     curp: e.curp,
-    //     fechaNacimiento: e.nacimiento.split('T')[0],
-    //     tipoSeguro: e.catSeguroId.toString(),
-    //     telefono: e.phone,
-    //     horarioEnt: e.entrada,
-    //     horarioSal: e.salida,
-    //     fechaInicio: e.dateStart.split('T')[0],
-    //     puestoLaboral: e.catJobId.toString(),
-    //     tipoContratacion: e.catEmploymentId.toString()
-    //   });
+    this.rh.getEmployeeById(id).subscribe((resp: ApiResponse) => {
+      const e = resp.data.dataUser;
+      console.log('Datos del empleado:', e);
+      // Asume que resp.data trae los campos necesarios
+      this.datosPersonalesForm.patchValue({
+        nombreCompleto: `${e?.name || ''} ${e?.firstSurname || ''} ${e?.secondSurname || ''}`.trim(),
+        rfc: e?.rfc || '',
+        curp: e?.curp || '',
+        fechaNacimiento: e?.nacimiento ? new Date(e.nacimiento).toISOString().slice(0, 10) : '',
+        tipoSeguro: e?.catSeguroId != null ? e.catSeguroId.toString() : '',
+        telefono: e?.phone || '',
+        horarioEnt: this.formatHoraArray(e?.entrada),
+        horarioSal: this.formatHoraArray(e?.salida),
+        fechaInicio: e?.dateStart ? new Date(e.dateStart).toISOString().slice(0, 10) : '',
+        puestoLaboral: e?.catJobId != null ? e.catJobId.toString() : '',
+        tipoContratacion: e?.catEmploymentId != null ? e.catEmploymentId.toString() : ''
+      });
+      this.datosPersonalesForm.disable();
 
-      // Si quieres la sección dirección, puedes hacer lo mismo con direccionForm usando UpdateAddress
-      // this.direccionForm.patchValue({...});
-    // });
+      const d = resp.data.address;
+
+      this.direccionForm.patchValue({
+        codigoPostal: d.cp,
+        municipio: d.municipio,
+        estado: d.estado,
+        colonia: d.colonia,
+        calle: d.calle,
+        numInterior: d.interior,
+        numExterior: d.exterior,
+      });
+      this.direccionForm.disable();
+
+      const p = resp.data.clabes;
+
+      this.pagoForm.patchValue({
+        clabe: p.interbancaria,
+        tarjeta: p.clabe,
+        banco: p.banco,
+      });
+      this.pagoForm.disable();
+
+      const contactos = resp.data.emergencyContacts;
+
+      // ⛑️ Asegura que es un arreglo
+      if (Array.isArray(contactos)) {
+        const contactosArray: FormArray = this.fb.array([]); // explícitamente un FormArray
+
+        contactos.forEach((c: any) => {
+          const contactoGroup: FormGroup = this.fb.group({
+            telefono: [c.number, Validators.required],
+            nombre: [c.name, Validators.required],
+            parentesco: [c.relationship, Validators.required],
+          });
+
+          contactosArray.push(contactoGroup); // ✅ Se agrega como FormGroup
+        });
+
+        // 🧠 Aquí reemplazas el formArray existente por el nuevo
+        this.emergenciaForm.setControl('contactos', contactosArray);
+      }
+      this.emergenciaForm.disable();
+
+      const telefonos = resp.data.phonesBedmer;
+
+      // ⛑️ Asegura que es un arreglo
+      if (Array.isArray(telefonos)) {
+        const telefonosArray: FormArray = this.fb.array([]);
+
+        telefonos.forEach((t: any) => {
+          const telefonoGroup: FormGroup = this.fb.group({
+            modelo: [t.modelo, Validators.required],
+            plan: [t.plan, Validators.required],
+            telefono: [t.telefono, Validators.required],
+          });
+
+          telefonosArray.push(telefonoGroup);
+        });
+
+        // 🧠 Reemplaza el formArray actual en el formulario bermedForm
+        this.bermedForm.setControl('telefonos', telefonosArray);
+      }
+      this.bermedForm.disable();
+
+      const docs = resp.data.catDocuments;
+      this.assignedDocumentos = docs;
+      this.Documentos = docs.map((d: any) => d.id);
+      this.allDocumentos = this.allDocumentos.filter(d => !this.Documentos.includes(d.id));
+
+      const unis = resp.data.catEmployeeUniforms;
+      this.assignedUniforms = unis;
+      this.uniforms = unis.map((u: any) => u.id);
+      this.allUniforms = this.allUniforms.filter(u => !this.uniforms.includes(u.id));
+
+    });
   }
 
   crearBermed(): FormGroup {
@@ -195,91 +279,92 @@ export class NewEmployeeComponent implements OnInit {
   }
 
   // Métodos para enviar cada formulario
- guardarDatosPersonales() {
-  const formValue = this.datosPersonalesForm.value;
+  guardarDatosPersonales() {
+    this.datosPersonalesForm.enable()
+    const formValue = this.datosPersonalesForm.value;
 
-  const { name, firstSurname, secondSurname } = this.separarNombreCompleto(formValue.nombreCompleto);
+    const { name, firstSurname, secondSurname } = this.separarNombreCompleto(formValue.nombreCompleto);
 
-  const formatHorario = (horaStr: string) => {
-    if (!horaStr) return null;
-    const [hour, minute] = horaStr.split(':');
-    return `${hour.padStart(2, '0')}:${minute.padStart(2, '0')}:00`;
-  };
+    const formatHorario = (horaStr: string) => {
+      if (!horaStr) return null;
+      const [hour, minute] = horaStr.split(':');
+      return `${hour.padStart(2, '0')}:${minute.padStart(2, '0')}:00`;
+    };
 
-  const dto = {
-    name,
-    firstSurname,
-    secondSurname,
-    rfc: formValue.rfc,
-    curp: formValue.curp,
-    nacimiento: formValue.fechaNacimiento ? new Date(formValue.fechaNacimiento).toISOString() : null,
-    dateStart: formValue.fechaInicio ? new Date(formValue.fechaInicio).toISOString() : null,
-    dateFin: null,
-    entrada: formatHorario(formValue.horarioEnt),
-    salida: formatHorario(formValue.horarioSal),
-    active: true,
-    phone: formValue.telefono,
-    config: {},
-    catJobId: Number(formValue.puestoLaboral),
-    catEmploymentId: Number(formValue.tipoContratacion),
-    catSeguroId: Number(formValue.tipoSeguro),
-  };
+    const dto = {
+      name,
+      firstSurname,
+      secondSurname,
+      rfc: formValue.rfc,
+      curp: formValue.curp,
+      nacimiento: formValue.fechaNacimiento ? new Date(formValue.fechaNacimiento).toISOString() : null,
+      dateStart: formValue.fechaInicio ? new Date(formValue.fechaInicio).toISOString() : null,
+      dateFin: null,
+      entrada: formatHorario(formValue.horarioEnt),
+      salida: formatHorario(formValue.horarioSal),
+      active: true,
+      phone: formValue.telefono,
+      config: {},
+      catJobId: Number(formValue.puestoLaboral),
+      catEmploymentId: Number(formValue.tipoContratacion),
+      catSeguroId: Number(formValue.tipoSeguro),
+    };
 
-  if (this.isEditMode && this.employeeIdPatch) {
-    // 🟡 Modo edición
-    this.rh.UpdateEmployee(dto, this.employeeIdPatch).subscribe({
-      next: () => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Datos actualizados',
-          text: 'La información fue editada correctamente.',
-        });
-      },
-      error: (err) => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Ocurrió un error al actualizar los datos.',
-        });
-        console.error(err);
-      }
-    });
-  } else {
-    // 🟢 Modo creación
-    this.rh.createEmployee(dto).subscribe({
-      next: (response) => {
-        this.employeeId = response.data;
-        Swal.fire({
-          icon: 'success',
-          title: 'Datos guardados',
-          text: 'Los datos personales fueron guardados correctamente.',
-        });
-      },
-      error: (err) => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Ocurrió un error al guardar los datos.',
-        });
-        console.error(err);
-      }
-    });
+    if (this.isEditMode && this.employeeIdPatch) {
+      // 🟡 Modo edición
+      this.rh.UpdateEmployee(dto, this.employeeIdPatch).subscribe({
+        next: () => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Datos actualizados',
+            text: 'La información fue editada correctamente.',
+          });
+        },
+        error: (err) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Ocurrió un error al actualizar los datos.',
+          });
+          console.error(err);
+        }
+      });
+    } else {
+      // 🟢 Modo creación
+      this.rh.createEmployee(dto).subscribe({
+        next: (response) => {
+          this.employeeId = response.data;
+          Swal.fire({
+            icon: 'success',
+            title: 'Datos guardados',
+            text: 'Los datos personales fueron guardados correctamente.',
+          });
+        },
+        error: (err) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Ocurrió un error al guardar los datos.',
+          });
+          console.error(err);
+        }
+      });
+    }
   }
-}
 
-editarDatosPersonales() {
-  if (this.employeeIdPatch) {
-    this.isEditMode = true;
-    this.loadEmployeeData(this.employeeIdPatch);
-    Swal.fire('Edición activada', 'Puedes modificar los datos y volver a guardar.', 'info');
+  editarDatosPersonales() {
+    if (this.employeeIdPatch) {
+      this.isEditMode = true;
+
+      this.datosPersonalesForm.enable();
+      Swal.fire('Edición activada', 'Puedes modificar los datos y volver a guardar.', 'info');
+    }
   }
-}
 
 
 
   guardarDireccion() {
     const formValue = this.direccionForm.value;
-
     const dto = {
       cp: formValue.codigoPostal,
       municipio: formValue.municipio,
@@ -290,69 +375,70 @@ editarDatosPersonales() {
       exterior: formValue.numExterior,
     };
 
-    // console.log(dto);
+    const request$ = this.isEditMode
+      ? this.rh.UpdateAddress(dto, this.employeeIdPatch)
+      : this.rh.createAdress(dto, this.employeeId);
 
-    this.rh.createAdress(dto, this.employeeId).subscribe({
-      next: (response) => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Datos guardados',
-          text: 'Los datos personales fueron guardados correctamente.',
-        });
+    request$.subscribe({
+      next: () => {
+        Swal.fire('Dirección guardada', 'La información fue procesada correctamente.', 'success');
+        this.direccionForm.disable();
       },
       error: (err) => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Ocurrió un error al guardar los datos.',
-        });
+        Swal.fire('Error', 'Ocurrió un error al guardar la dirección.', 'error');
         console.error(err);
       }
     });
   }
 
+  editarDireccion() {
+    if (this.employeeIdPatch) {
+      this.isEditMode = true;
+      this.direccionForm.enable();
+      Swal.fire('Edición activada', 'Puedes modificar los datos y volver a guardar.', 'info');
+    }
+  }
+
   guardarEmpleo() {
+  const documents = this.Documentos;
+  const uniforms = this.uniforms;
 
-    const documents = this.Documentos;
-    const uniforms = this.uniforms;
+  const documentos$ = this.isEditMode
+    ? this.rh.UpdateDocuments(documents, this.employeeIdPatch)
+    : this.rh.SaveDocuments(documents, this.employeeId);
 
-    this.rh.SaveDocuments(documents, this.employeeId).subscribe({
-      next: (response) => {
-        console.log(documents);
-        Swal.fire({
-          icon: 'success',
-          title: 'Documentos guardados',
-          text: 'Los documentos fueron guardados correctamente.',
-        });
-      },
-      error: (err) => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Ocurrió un error al guardar los documentos.',
-        });
-        console.error(err);
-      }
-    });
-    this.rh.SaveUniforms(uniforms, this.employeeId).subscribe({
-      next: (response) => {
-        console.log(uniforms);
-        Swal.fire({
-          icon: 'success',
-          title: 'Documentos guardados',
-          text: 'Los documentos fueron guardados correctamente.',
-        });
-      },
-      error: (err) => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Ocurrió un error al guardar los documentos.',
-        });
-        console.error(err);
-      }
-    });
+  documentos$.subscribe({
+    next: () => {
+      Swal.fire('Documentos guardados', 'Se guardaron correctamente.', 'success');
+      this.isEditDocumentos = false;
+    },
+    error: (err) => {
+      Swal.fire('Error', 'Ocurrió un error al guardar los documentos.', 'error');
+      console.error(err);
+    }
+  });
 
+  const uniforms$ = this.isEditMode
+    ? this.rh.UpdateUniforms(uniforms, this.employeeIdPatch)
+    : this.rh.SaveUniforms(uniforms, this.employeeId);
+
+  uniforms$.subscribe({
+    next: () => {
+      Swal.fire('Uniformes guardados', 'Se guardaron correctamente.', 'success');
+      this.isEditUniformes = false;
+    },
+    error: (err) => {
+      Swal.fire('Error', 'Ocurrió un error al guardar los uniformes.', 'error');
+      console.error(err);
+    }
+  });
+}
+
+  editarEmpleo() {
+    if (this.employeeIdPatch) {
+      this.isEditMode = true;
+      Swal.fire('Edición activada', 'Puedes modificar los datos y volver a guardar.', 'info');
+    }
   }
 
   guardarPago() {
@@ -364,95 +450,103 @@ editarDatosPersonales() {
       interbancaria: formValue.clabe,
     };
 
-    // console.log(dto);
+    const request$ = this.isEditMode
+      ? this.rh.UpdatePay(dto, this.employeeIdPatch)
+      : this.rh.SavePay(dto, this.employeeId);
 
-    this.rh.SavePay(dto, this.employeeId).subscribe({
-      next: (response) => {
-        console.log(dto);
-        Swal.fire({
-          icon: 'success',
-          title: 'Datos guardados',
-          text: 'Los datos personales fueron guardados correctamente.',
-        });
+    request$.subscribe({
+      next: () => {
+        Swal.fire('Pago guardado', 'La información fue procesada correctamente.', 'success');
+        this.pagoForm.disable();
       },
       error: (err) => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Ocurrió un error al guardar los datos.',
-        });
+        Swal.fire('Error', 'Ocurrió un error al guardar el pago.', 'error');
         console.error(err);
       }
     });
   }
 
+  editarPago() {
+    if (this.employeeIdPatch) {
+      this.isEditMode = true;
+      this.pagoForm.enable();
+      Swal.fire('Edición activada', 'Puedes modificar los datos y volver a guardar.', 'info');
+    }
+  }
+
   guardarEmergencia() {
     const contactos = this.emergenciaForm.value.contactos;
 
-    contactos.forEach((contacto: { telefono: string; nombre: string; parentesco: string }) => {
+    contactos.forEach((contacto: any) => {
       const dto = {
         number: contacto.telefono,
         name: contacto.nombre,
         relationship: contacto.parentesco,
       };
 
-      console.log('Guardando contacto:', dto);
-      const employeeId = 10;
+      const request$ = this.isEditMode
+        ? this.rh.UpdateEmergency(dto, this.employeeIdPatch)
+        : this.rh.SaveEmergency(dto, this.employeeId);
 
-      this.rh.SaveEmergency(dto, employeeId).subscribe({
-        next: (response) => {
-          Swal.fire({
-            icon: 'success',
-            title: 'Contacto guardado',
-            text: 'Un contacto de emergencia fue guardado correctamente.',
-          });
+      request$.subscribe({
+        next: () => {
+          Swal.fire('Contacto guardado', 'Un contacto fue guardado correctamente.', 'success');
         },
         error: (err) => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Ocurrió un error al guardar un contacto.',
-          });
+          Swal.fire('Error', 'Ocurrió un error al guardar el contacto.', 'error');
           console.error(err);
         }
       });
     });
+
+    this.emergenciaForm.disable();
+  }
+
+  editarEmergencia() {
+    if (this.employeeIdPatch) {
+      this.isEditMode = true;
+      this.emergenciaForm.enable();
+      Swal.fire('Edición activada', 'Puedes modificar los datos y volver a guardar.', 'info');
+    }
+
   }
 
 
   guardarBermed() {
     const bermeds = this.bermedForm.value.telefonos;
 
-    bermeds.forEach((entry: { modelo: string; plan: string; telefono: string }) => {
+    bermeds.forEach((entry: any) => {
       const dto = {
         modelo: entry.modelo,
         plan: entry.plan,
         telefono: entry.telefono,
       };
 
-      console.log('Guardando bermed:', dto);
-      const employeeId = 10;
+      const request$ = this.isEditMode
+        ? this.rh.UpdatePhoneBermed(dto, this.employeeIdPatch)
+        : this.rh.SavephoneBermed(dto, this.employeeId);
 
-      this.rh.SavephoneBermed(dto, employeeId).subscribe({
-        next: (response) => {
-          Swal.fire({
-            icon: 'success',
-            title: 'Telefono guardado',
-            text: 'Un Telefono fue guardado correctamente.',
-          });
+      request$.subscribe({
+        next: () => {
+          Swal.fire('Teléfono guardado', 'Un teléfono fue guardado correctamente.', 'success');
         },
         error: (err) => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Ocurrió un error al guardar el telefono.',
-          });
+          Swal.fire('Error', 'Ocurrió un error al guardar el teléfono.', 'error');
           console.error(err);
         }
       });
     });
+
+    this.bermedForm.disable();
   }
 
+  editarBermed() {
+    if (this.employeeIdPatch) {
+      this.isEditMode = true;
+      this.bermedForm.enable();
+      Swal.fire('Edición activada', 'Puedes modificar los datos y volver a guardar.', 'info');
+    }
+  }
 
   onFotoSelected(event: any): void {
     const file = event.target.files[0];
@@ -471,21 +565,29 @@ editarDatosPersonales() {
   }
   onDropUniform(event: DragEvent, target: 'assigned' | 'all') {
     event.preventDefault();
+
     const Uniform = this.draggedUniforms;
-    if (Uniform) {
-      if (target === 'assigned') {
-        if (!this.assignedUniforms.some(r => r.id === Uniform.id)) {
-          this.assignedUniforms.push(Uniform);
-          this.uniforms.push(Uniform.id); // Agrega el ID al arreglo uniforms
-          this.allUniforms = this.allUniforms.filter(r => r.id !== Uniform.id);
-        }
-      } else {
-        this.assignedUniforms = this.assignedUniforms.filter(r => r.id !== Uniform.id);
-        this.uniforms = this.uniforms.filter(id => id !== Uniform.id); // Remueve el ID del arreglo uniforms
-        this.allUniforms.push(Uniform);
-      }
+    if (!Uniform) return;
+
+    // ✅ Si NO está en modo edición, solo permite mover visualmente sin modificar los arrays reales
+    if (!this.isEditUniformes) {
       this.draggedUniforms = null;
+      return;
     }
+
+    if (target === 'assigned') {
+      if (!this.assignedUniforms.some(r => r.id === Uniform.id)) {
+        this.assignedUniforms.push(Uniform);
+        this.uniforms.push(Uniform.id);
+        this.allUniforms = this.allUniforms.filter(r => r.id !== Uniform.id);
+      }
+    } else {
+      this.assignedUniforms = this.assignedUniforms.filter(r => r.id !== Uniform.id);
+      this.uniforms = this.uniforms.filter(id => id !== Uniform.id);
+      this.allUniforms.push(Uniform);
+    }
+
+    this.draggedUniforms = null;
   }
   onDragOverUniform(event: DragEvent) {
     event.preventDefault();
@@ -497,25 +599,28 @@ editarDatosPersonales() {
     event.dataTransfer?.setData('text/plain', Documento.name);
   }
 
-  onDrop(event: DragEvent, target: 'assigned' | 'all') {
-    event.preventDefault();
-    const Documentos = this.draggedDocumentos;
+onDrop(event: DragEvent, target: 'assigned' | 'all') {
+  event.preventDefault();
 
-    if (Documentos) {
-      if (target === 'assigned') {
-        if (!this.assignedDocumentos.some(r => r.id === Documentos.id)) {
-          this.assignedDocumentos.push(Documentos);
-          this.Documentos.push(Documentos.id); // Agrega el ID al arreglo roles
-          this.allDocumentos = this.allDocumentos.filter(r => r.id !== Documentos.id);
-        }
-      } else {
-        this.assignedDocumentos = this.assignedDocumentos.filter(r => r.id !== Documentos.id);
-        this.Documentos = this.Documentos.filter(id => id !== Documentos.id); // Remueve el ID del arreglo roles
-        this.allDocumentos.push(Documentos);
+  // ✅ Evitar que funcione si no está en modo edición
+  if (!this.isEditDocumentos) return;
+
+  const Documentos = this.draggedDocumentos;
+  if (Documentos) {
+    if (target === 'assigned') {
+      if (!this.assignedDocumentos.some(r => r.id === Documentos.id)) {
+        this.assignedDocumentos.push(Documentos);
+        this.Documentos.push(Documentos.id);
+        this.allDocumentos = this.allDocumentos.filter(r => r.id !== Documentos.id);
       }
-      this.draggedDocumentos = null;
+    } else {
+      this.assignedDocumentos = this.assignedDocumentos.filter(r => r.id !== Documentos.id);
+      this.Documentos = this.Documentos.filter(id => id !== Documentos.id);
+      this.allDocumentos.push(Documentos);
     }
+    this.draggedDocumentos = null;
   }
+}
 
   onDragOver(event: DragEvent) {
     event.preventDefault();

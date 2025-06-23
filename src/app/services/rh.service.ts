@@ -33,6 +33,13 @@ export class RHService {
     );
   }
 
+  getEmployeeById(employeeId : any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({'employeeId': employeeId});
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/employees/getAllDataEmployee'}`,
+      {headers}
+    );
+  }
+
   createAdress(data:any, employeeId: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({'employeeId': employeeId});
     return this.http.post<ApiResponse>(`${environment.baseService}${'/employees/address'}`, data,
@@ -86,7 +93,7 @@ export class RHService {
       {headers}
     );
   }
-  
+
 
     UpdateAddress(data:any, employeeId: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({'employeeId': employeeId});
@@ -137,7 +144,7 @@ export class RHService {
     );
   }
 
-  
+
 
   UpdateAttendance(data: any, attendanceId: any): Observable<ApiResponse> {//Trae la nomina actual
     let headers = new HttpHeaders({ 'attendanceId': attendanceId });
