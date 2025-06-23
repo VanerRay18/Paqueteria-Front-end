@@ -26,8 +26,8 @@ export class RHService {
   }
 
 
-  getAttencendanceById(employeeId: any, typeId: any, desde: any, hasta: any): Observable<ApiResponse> {
-    let headers = new HttpHeaders({'employeeId': employeeId, 'typeId': typeId, 'desde': desde, 'hasta': hasta});
+  getAttencendanceById(employeeId: any, typeId: any, desde: any, hasta: any, page: any, size: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({'employeeId': employeeId, 'typeId': typeId, 'desde': desde, 'hasta': hasta, 'page': page, 'size': size});
     return this.http.get<ApiResponse>(`${environment.baseService}${'/attendances/employeeId'}`,
       {headers}
     );
@@ -86,6 +86,15 @@ export class RHService {
     return this.http.post<ApiResponse>(`${environment.baseService}${'/employees/phoneBermed'}`, data,
       {headers}
     );
+  }
+
+
+
+  UpdateAttendance(data: any, attendanceId: any): Observable<ApiResponse> {//Trae la nomina actual
+    let headers = new HttpHeaders({ 'attendanceId': attendanceId });
+    console.log(data);
+    return this.http.patch<ApiResponse>(`${environment.baseService}${'/attendances/attendance'}`, data,
+      { headers });
   }
 
 }

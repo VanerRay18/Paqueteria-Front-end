@@ -25,7 +25,7 @@
         <!-- Cada card redirige a una ruta con el ID del cargamento -->
         <!-- Tarjetas de cargamento -->
         <div *ngFor="let item of data" class="card-person" (click)="infocard(item.id)">
-          <h3 class="title">{{ item.titulo }}</h3>
+          <h3 class="title">Cargamento {{ item.id }}</h3>
 
           <div class="progress-container">
             <div
@@ -41,11 +41,11 @@
 
           <div class="labels">
             <div class="left">Entregados: {{ item.entregados }}</div>
-            <div class="right">Faltantes: {{ item.faltantes }}</div>
+            <div class="right">Faltantes: {{ item.noEntregados }}</div>
           </div>
 
           <div class="total">
-            Total de paquetes: {{ item.entregados + item.faltantes }}
+            Total de paquetes: {{ item.paquetesTotal }}
           </div>
 
           <hr>

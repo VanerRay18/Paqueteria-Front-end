@@ -90,3 +90,19 @@ h2 {
   font-size: 0.85rem;
   color: #444;
 }
+
+.barra-progreso {
+  background: #eee;
+  border-radius: 10px;
+  height: 12px;
+  position: relative;
+  margin: 10px 0;
+  overflow: hidden;
+}
+
+.segmento.progreso {
+  height: 100%;
+  background-color: #4caf50; /* verde por defecto */
+  transition: width 0.3s ease;
+}
+

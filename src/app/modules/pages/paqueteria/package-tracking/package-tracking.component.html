@@ -18,20 +18,31 @@
         <button class="btn btn-escanear" (click)="mostrarSwal()">
           Comenzar a escanear
         </button>
+        <button class="btn btn-escanear" (click)="macheoPaquetes()">
+          Hacer macheo
+        </button>
       </div>
     </div>
 
     <div class="paquete" *ngFor="let paquete of paquetes">
-      <div class="codigo">{{ paquete.codigo }}</div>
-      <div class="barra-progreso">
-        <div class="segmento rojo"></div>
-        <div class="segmento gris"></div>
+      <div class="codigo">
+        {{ paquete.guia }}
+        <i class="fa fa-eye" style="cursor:pointer; margin-left: 10px;" (click)="verDetalles(paquete)"></i>
       </div>
+
+      <!-- Barra de progreso -->
+      <div class="barra-progreso">
+        <div class="segmento progreso" [style.width]="getBarraEstado(paquete)">
+        </div>
+      </div>
+
+      <!-- Etapas visuales -->
       <div class="etapas">
         <span>En Bodega</span>
         <span>Ruta de entrega</span>
         <span>Entregado</span>
       </div>
     </div>
+
   </div>
 </div>

@@ -23,6 +23,11 @@
             <button type="button" class="btn btn-sm">DESCARGAR REPORTES</button>
           </a>
         </div>
+                <div class="col-auto col-lg-2 d-flex justify-content-end mt-auto">
+          <a [routerLink]="['/pages/RH/Registrar-Trabajador']">
+            <button type="button" class="btn btn-sm">DIAS NO LABORALES</button>
+          </a>
+        </div>
         <div class="card-person" *ngFor="let persona of data" style="cursor: default;">
           <h3>{{ persona.name }}</h3>
 
@@ -47,7 +52,7 @@
           </div>
 
           <span class="datos">Retardos<br><strong>{{ persona.retardos }}</strong></span>
-          <div class="barra" (click)="abrirSwalInasistencias(persona)">
+          <div class="barra" (click)="abrirSwalRetardos(persona)">
             <div
               class="progreso"
               [style.width.%]="(persona.retardosBarra) * 100"

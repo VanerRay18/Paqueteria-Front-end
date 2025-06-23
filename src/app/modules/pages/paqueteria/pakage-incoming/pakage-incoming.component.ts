@@ -16,11 +16,12 @@ import { PakageService } from 'src/app/services/pakage.service';
 export class PakageIncomingComponent implements OnInit {
   searchTerm: string = '';
   data: Cargamento[] = []; // Ya no usamos la interfaz Persona
+  PackageOrgId: number = 1; // ID de la organización de paquetería, puedes cambiarlo según sea necesario
 
   constructor(private rh: RHService,
     private router: Router,
-     private pakage: PakageService
-  ) {}
+    private pakage: PakageService
+  ) { }
 
   ngOnInit(): void {
     this.getDatos();
@@ -28,8 +29,11 @@ export class PakageIncomingComponent implements OnInit {
 
   getDatos() {
     // 👇 Puedes descomentar esto cuando el endpoint esté funcionando
-    /*
-    this.rh.getAttencendance().subscribe(
+
+    const desdeFormatted = new Date('2025-06-01').toISOString().split('T')[0];
+    const hastaFormatted = new Date('2025-06-20').toISOString().split('T')[0];
+
+    this.pakage.getCargaById(this.PackageOrgId, desdeFormatted, hastaFormatted, 0, 50).subscribe(
       (response: ApiResponse) => {
         this.data = response.data;
       },
@@ -37,37 +41,37 @@ export class PakageIncomingComponent implements OnInit {
         console.error('Ocurrió un error', error);
       }
     );
-    */
+
 
     // 👉 Datos ficticios por mientras
-    this.data = [
-      {
-        id: 1,
-        titulo: 'Cargamento 1',
-        fecha: '2025-06-17',
-        entregados: 80,
-        faltantes: 20
-      },
-      {
-        id: 2,
-        titulo: 'Cargamento 2',
-        fecha: '2025-06-16',
-        entregados: 45,
-        faltantes: 55
-      },
-      {
-        id: 3,
-        titulo: 'Cargamento 3',
-        fecha: '2025-06-15',
-        entregados: 20,
-        faltantes: 80
-      }
-    ];
+    // this.data = [
+    //   {
+    //     id: 1,
+    //     titulo: 'Cargamento 1',
+    //     fecha: '2025-06-17',
+    //     entregados: 80,
+    //     faltantes: 20
+    //   },
+    //   {
+    //     id: 2,
+    //     titulo: 'Cargamento 2',
+    //     fecha: '2025-06-16',
+    //     entregados: 45,
+    //     faltantes: 55
+    //   },
+    //   {
+    //     id: 3,
+    //     titulo: 'Cargamento 3',
+    //     fecha: '2025-06-15',
+    //     entregados: 20,
+    //     faltantes: 80
+    //   }
+    // ];
   }
 
   porcentaje(item: Cargamento): number {
-    const total = item.entregados + item.faltantes;
-    return total === 0 ? 0 : (item.entregados / total) * 100;
+    const total = item.barra;
+    return total;
   }
 
   infocard(id: number) {
