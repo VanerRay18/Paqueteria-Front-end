@@ -52,7 +52,6 @@ export class RHService {
   }
 
 
-
   SaveDocuments(data:any, employeeId: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({'employeeId': employeeId});
     return this.http.post<ApiResponse>(`${environment.baseService}${'/employees/documents'}`, data,
@@ -87,8 +86,58 @@ export class RHService {
       {headers}
     );
   }
+  
 
+    UpdateAddress(data:any, employeeId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({'employeeId': employeeId});
+    return this.http.patch<ApiResponse>(`${environment.baseService}${'/employees/address'}`, data,
+      {headers}
+    );
+  }
 
+  UpdateEmployee(data:any, employeeId: any): Observable<ApiResponse> {//Trae la nomina actual
+    let headers = new HttpHeaders({'employeeId': employeeId});
+    return this.http.patch<ApiResponse>(`${environment.baseService}${'/employees'}`,data,
+      {headers}
+    );
+  }
+
+  UpdateEmergency(data: any, employeeId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'employeeId': employeeId });
+    return this.http.patch<ApiResponse>(`${environment.baseService}${'/employees/emergencyContact'}`, data,
+      { headers }
+    );
+  }
+
+  UpdatePhoneBermed(data: any, employeeId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'employeeId': employeeId });
+    return this.http.patch<ApiResponse>(`${environment.baseService}${'/employees/phoneBermed'}`, data,
+      { headers }
+    );
+  }
+
+  UpdateDocuments(data: any, employeeId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'employeeId': employeeId });
+    return this.http.patch<ApiResponse>(`${environment.baseService}${'/employees/documents'}`, data,
+      { headers }
+    );
+  }
+
+  UpdateUniforms(data: any, employeeId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'employeeId': employeeId });
+    return this.http.patch<ApiResponse>(`${environment.baseService}${'/employees/material'}`, data,
+      { headers }
+    );
+  }
+
+  UpdatePay(data: any, employeeId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'employeeId': employeeId });
+    return this.http.patch<ApiResponse>(`${environment.baseService}${'/employees/bankAccount'}`, data,
+      { headers }
+    );
+  }
+
+  
 
   UpdateAttendance(data: any, attendanceId: any): Observable<ApiResponse> {//Trae la nomina actual
     let headers = new HttpHeaders({ 'attendanceId': attendanceId });

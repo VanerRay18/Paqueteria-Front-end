@@ -5,6 +5,8 @@ import { RHService } from 'src/app/services/rh.service';
 import { ApiResponse } from 'src/app/models/ApiResponse';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
+import { FileTransferService } from 'src/app/services/file-transfer.service';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-new-employee',
@@ -34,16 +36,29 @@ export class NewEmployeeComponent implements OnInit {
   catJobs: any[] = [];
   catSeguros: any[] = [];
   employeeId: any;
+  employeeIdPatch!: number | null;
+   isEditMode = false;
 
   constructor(private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private rh: RHService,
-    private router: Router
+    private router: Router,
+    private fileTransferService: FileTransferService
   ) {
 
    }
 
   ngOnInit() {
+  this.fileTransferService.currentIdTercero$
+    .pipe(take(1))
+    .subscribe(id => {
+      if (id !== null) {
+        console.log('ID recibido:', id);
+        this.employeeIdPatch = id;
+        this.isEditMode = true;
+        this.loadEmployeeData(id); // tu método para llenar los campos
+      }
+    });
  this.getData();
  this.forms();
 
@@ -115,6 +130,30 @@ export class NewEmployeeComponent implements OnInit {
     });
   }
 
+    // 2️⃣ Método para cargar datos existentes y llenar los formularios
+  loadEmployeeData(id: number) {
+    // this.rh.getEmployeeById(id).subscribe((resp: ApiResponse) => {
+    //   const e = resp.data;
+    //   // Asume que resp.data trae los campos necesarios
+    //   this.datosPersonalesForm.patchValue({
+    //     nombreCompleto: `${e.name} ${e.firstSurname} ${e.secondSurname}`,
+    //     rfc: e.rfc,
+    //     curp: e.curp,
+    //     fechaNacimiento: e.nacimiento.split('T')[0],
+    //     tipoSeguro: e.catSeguroId.toString(),
+    //     telefono: e.phone,
+    //     horarioEnt: e.entrada,
+    //     horarioSal: e.salida,
+    //     fechaInicio: e.dateStart.split('T')[0],
+    //     puestoLaboral: e.catJobId.toString(),
+    //     tipoContratacion: e.catEmploymentId.toString()
+    //   });
+
+      // Si quieres la sección dirección, puedes hacer lo mismo con direccionForm usando UpdateAddress
+      // this.direccionForm.patchValue({...});
+    // });
+  }
+
   crearBermed(): FormGroup {
     return this.fb.group({
       modelo: ['', Validators.required],
@@ -156,38 +195,60 @@ export class NewEmployeeComponent implements OnInit {
   }
 
   // Métodos para enviar cada formulario
-  guardarDatosPersonales() {
-    const formValue = this.datosPersonalesForm.value;
+ guardarDatosPersonales() {
+  const formValue = this.datosPersonalesForm.value;
 
-    const { name, firstSurname, secondSurname } = this.separarNombreCompleto(formValue.nombreCompleto);
+  const { name, firstSurname, secondSurname } = this.separarNombreCompleto(formValue.nombreCompleto);
 
-    const formatHorario = (horaStr: string) => {
-      const [hour, minute] = horaStr.split(':');
-      return `${hour.padStart(2, '0')}:${minute.padStart(2, '0')}:00`;
-    };
+  const formatHorario = (horaStr: string) => {
+    if (!horaStr) return null;
+    const [hour, minute] = horaStr.split(':');
+    return `${hour.padStart(2, '0')}:${minute.padStart(2, '0')}:00`;
+  };
 
-    const dto = {
-      name,
-      firstSurname,
-      secondSurname,
-      rfc: formValue.rfc,
-      curp: formValue.curp,
-      nacimiento: new Date(formValue.fechaNacimiento).toISOString(),
-      dateStart: new Date(formValue.fechaInicio).toISOString(),
-      dateFin: null,
-      entrada: formatHorario(formValue.horarioEnt),
-      salida: formatHorario(formValue.horarioSal),
-      active: true,
-      phone: formValue.telefono,
-      config: {},
-      catJobId: Number(formValue.puestoLaboral),
-      catEmploymentId: Number(formValue.tipoContratacion),
-      catSeguroId: Number(formValue.tipoSeguro),
-    };
+  const dto = {
+    name,
+    firstSurname,
+    secondSurname,
+    rfc: formValue.rfc,
+    curp: formValue.curp,
+    nacimiento: formValue.fechaNacimiento ? new Date(formValue.fechaNacimiento).toISOString() : null,
+    dateStart: formValue.fechaInicio ? new Date(formValue.fechaInicio).toISOString() : null,
+    dateFin: null,
+    entrada: formatHorario(formValue.horarioEnt),
+    salida: formatHorario(formValue.horarioSal),
+    active: true,
+    phone: formValue.telefono,
+    config: {},
+    catJobId: Number(formValue.puestoLaboral),
+    catEmploymentId: Number(formValue.tipoContratacion),
+    catSeguroId: Number(formValue.tipoSeguro),
+  };
 
+  if (this.isEditMode && this.employeeIdPatch) {
+    // 🟡 Modo edición
+    this.rh.UpdateEmployee(dto, this.employeeIdPatch).subscribe({
+      next: () => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Datos actualizados',
+          text: 'La información fue editada correctamente.',
+        });
+      },
+      error: (err) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Ocurrió un error al actualizar los datos.',
+        });
+        console.error(err);
+      }
+    });
+  } else {
+    // 🟢 Modo creación
     this.rh.createEmployee(dto).subscribe({
       next: (response) => {
-        this.employeeId = response.data; // Guarda el ID del empleado creado
+        this.employeeId = response.data;
         Swal.fire({
           icon: 'success',
           title: 'Datos guardados',
@@ -204,6 +265,15 @@ export class NewEmployeeComponent implements OnInit {
       }
     });
   }
+}
+
+editarDatosPersonales() {
+  if (this.employeeIdPatch) {
+    this.isEditMode = true;
+    this.loadEmployeeData(this.employeeIdPatch);
+    Swal.fire('Edición activada', 'Puedes modificar los datos y volver a guardar.', 'info');
+  }
+}
 
 
 

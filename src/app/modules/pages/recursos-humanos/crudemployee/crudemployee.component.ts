@@ -33,7 +33,8 @@ export class CRUDEmployeeComponent {
     private router: Router,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
-    private rh: RHService
+    private rh: RHService,
+    private fileTransferService: FileTransferService
   ) {
   }
 
@@ -57,55 +58,6 @@ console.log('Datos obtenidos:', response.data);
       console.error('Ocurrio un error', error);
     });
 
-  this.dataB = [
-    {
-      nombre: 'Juan',
-      primer_apellido: 'Pérez',
-      segundo_apellido: 'López',
-      rfc: 'PEPJ800101HDF',
-      curp: 'PEPJ800101HDFRZN00',
-      tipo_contratacion: 'Por contrato',
-      puesto: 'Repartidor',
-      telefono: '7712345678',
-      activo: true
-    },
-    {
-      nombre: 'María',
-      primer_apellido: 'Gómez',
-      segundo_apellido: 'Hernández',
-      rfc: 'GOHM900202MDF',
-      curp: 'GOHM900202MDFRLR00',
-      tipo_contratacion: 'Por contrato',
-      puesto: 'Repartidor',
-      telefono: '7712345678',
-      activo: true
-    }
-  ];
-
-  this.dataC = [
-    {
-      nombre: 'Carlos',
-      primer_apellido: 'Ramírez',
-      segundo_apellido: 'Nava',
-      rfc: 'RANC850505HDF',
-      curp: 'RANC850505HDFMRV00',
-      tipo_contratacion: 'Honorarios',
-      puesto: 'Repartidor',
-      telefono: '7712345678',
-      activo: true
-    },
-    {
-      nombre: 'Laura',
-      primer_apellido: 'Martínez',
-      segundo_apellido: 'Soto',
-      rfc: 'MASL920304MDF',
-      curp: 'MASL920304MDFRRL00',
-      tipo_contratacion: 'Honorarios',
-      puesto: 'Repartidor',
-      telefono: '7712345678',
-      activo: true
-    }
-  ];
 }
 
 showDetails(row: any) {
@@ -150,8 +102,12 @@ showDetails(row: any) {
   });
 }
 
-onEdit(data: any) {
-  //AAGP790513HH4
+onEdit(employeeId: any) {
+  console.log('ID del empleado a editar:', employeeId.id);
+  const id = employeeId.id; // Obtiene el ID del empleado
+  this.fileTransferService.setIdTercero(id); // Establece el ID del
+  this.router.navigate(['/pages/RH/Registrar-Trabajador']); // Navega a la página de edición del empleado
+
 
 }
 

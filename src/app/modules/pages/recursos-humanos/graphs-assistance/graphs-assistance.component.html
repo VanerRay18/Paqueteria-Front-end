@@ -6,12 +6,10 @@
     <div class="col-auto col-lg-12">
 
       <div class="card2">
-        <div class="form-floating col-auto col-lg-5 m-3 row">
-          <input type="text" class=" buscar form-control" id="busqueda"
-            placeholder="Buscar"
-            [(ngModel)]="searchTerm" name="busqueda">
-          <label for="User">&nbsp;&nbsp;<i
-              class="fa-solid fa-magnifying-glass"></i> Buscar</label>
+        <div class="form-floating col-auto col-lg-3 m-3 row">
+          <input type="text" class=" buscar form-control" id="busqueda" placeholder="Buscar" [(ngModel)]="searchTerm"
+            name="busqueda">
+          <label for="User">&nbsp;&nbsp;<i class="fa-solid fa-magnifying-glass"></i> Buscar</label>
         </div>
         <div class="col-auto col-lg-3 d-flex justify-content-end mt-auto">
           <a [routerLink]="['/pages/RH/Trabajadores-Registrados']">
@@ -23,7 +21,7 @@
             <button type="button" class="btn btn-sm">DESCARGAR REPORTES</button>
           </a>
         </div>
-                <div class="col-auto col-lg-2 d-flex justify-content-end mt-auto">
+        <div class="col-auto col-lg-2 d-flex justify-content-end mt-auto">
           <a [routerLink]="['/pages/RH/Registrar-Trabajador']">
             <button type="button" class="btn btn-sm">DIAS NO LABORALES</button>
           </a>
@@ -34,9 +32,7 @@
           <!-- Barra de FALTAS (roja) -->
           <span class="datos">Faltas<br><strong>{{ persona.faltas }}</strong></span>
           <div class="barra" (click)="abrirSwalFaltas(persona)">
-            <div
-              class="progreso"
-              [style.width.%]="(persona.faltasBarra ) * 100"
+            <div class="progreso" [style.width.%]="(persona.faltasBarra ) * 100"
               style="background: red; cursor: pointer;">
             </div>
           </div>
@@ -44,33 +40,33 @@
           <!-- Barra de INASISTENCIAS (verde) -->
           <span class="datos">Asistencias<br><strong>{{ persona.asistencias }}</strong></span>
           <div class="barra" (click)="abrirSwalInasistencias(persona)">
-            <div
-              class="progreso"
-              [style.width.%]="(persona.asistenciaBarra) * 100"
+            <div class="progreso" [style.width.%]="(persona.asistenciaBarra) * 100"
               style="background: green; cursor: pointer;">
             </div>
           </div>
 
           <span class="datos">Retardos<br><strong>{{ persona.retardos }}</strong></span>
           <div class="barra" (click)="abrirSwalRetardos(persona)">
-            <div
-              class="progreso"
-              [style.width.%]="(persona.retardosBarra) * 100"
+            <div class="progreso" [style.width.%]="(persona.retardosBarra) * 100"
               style="background: rgb(255, 166, 0); cursor: pointer;">
             </div>
           </div>
 
           <hr>
           <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-            <span (click)="abrirSwalPendientes(persona)" style="color:  #3E5F8A; cursor: pointer; text-decoration: underline;">Pendientes: {{ persona.pendientes }}</span>
-            <span (click)="abrirSwalJustificados(persona)" style="color:  #3E5F8A; cursor: pointer; text-decoration: underline;">Justificadas: {{ persona.justificadas }}</span>
+            <span (click)="abrirSwalPendientes(persona)"
+              style="color:  #3E5F8A; cursor: pointer; text-decoration: underline;">Pendientes: {{ persona.pendientes
+              }}</span>
+            <span (click)="abrirSwalJustificados(persona)"
+              style="color:  #3E5F8A; cursor: pointer; text-decoration: underline;">Justificadas: {{
+              persona.justificadas }}</span>
           </div>
 
         </div>
 
-        </div>
-      </div>
-
-
       </div>
     </div>
+
+
+  </div>
+</div>
