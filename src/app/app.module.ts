@@ -22,6 +22,7 @@ import { RecursosHumanosModule } from './modules/pages/recursos-humanos/recursos
 import { PaqueteriaModule } from './modules/pages/paqueteria/paqueteria.module';
 import { RHRoutingModule } from './modules/pages/recursos-humanos/rh-routing.module';
 import { PaqueteriaRoutingModule } from './modules/pages/paqueteria/paqueteria-routing.module';
+import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
 
 
 
@@ -46,7 +47,8 @@ import { PaqueteriaRoutingModule } from './modules/pages/paqueteria/paqueteria-r
     RecursosHumanosModule,
     PaqueteriaModule,
     RHRoutingModule,
-    PaqueteriaRoutingModule
+    PaqueteriaRoutingModule,
+    NgxDaterangepickerMd.forRoot(),
   ],
   providers: [
     {

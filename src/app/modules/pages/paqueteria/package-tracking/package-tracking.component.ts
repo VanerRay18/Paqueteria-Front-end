@@ -23,6 +23,8 @@ export class PackageTrackingComponent  implements OnInit {
 
   }
   ngOnInit(): void {
+
+
     this.getData(); // Llamar al método para obtener los datos al inicializar el componente
     // Inicializar el componente
   }
@@ -37,7 +39,7 @@ export class PackageTrackingComponent  implements OnInit {
         console.error('Error al obtener los datos:', error);
       }
     );
-  } 
+  }
 
   getBarraEstado(paquete: any): string {
   const statusId = paquete.status?.id || 0;

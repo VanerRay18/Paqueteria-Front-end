@@ -6,6 +6,7 @@ import { PaqueteriaRoutingModule } from './paqueteria-routing.module';
 import { FormsModule } from '@angular/forms';
 import { PakageTokenComponent } from './pakage-token/pakage-token.component';
 import { PakageIncomingComponent } from './pakage-incoming/pakage-incoming.component';
+import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
 
 
 
@@ -21,7 +22,8 @@ import { PakageIncomingComponent } from './pakage-incoming/pakage-incoming.compo
   imports: [
     CommonModule,
     PaqueteriaRoutingModule,
-    FormsModule
+    FormsModule,
+     NgxDaterangepickerMd.forRoot()
   ]
 })
 export class PaqueteriaModule { }

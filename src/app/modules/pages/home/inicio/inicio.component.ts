@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { FileTransferService } from 'src/app/services/file-transfer.service';
 import { PakageService } from 'src/app/services/pakage.service';
 
 @Component({
@@ -7,82 +8,68 @@ import { PakageService } from 'src/app/services/pakage.service';
   templateUrl: './inicio.component.html',
   styleUrls: ['./inicio.component.css']
 })
-export class InicioComponent {
-
-  empresas = [
-    {
-      nombre: 'DHL',
-      entregados: 48,
-      faltantes: 12,
-      porcentaje: 70,
-      ruta: 'pages/Paqueteria/Registro-seguimiento'
-    },
-    {
-      nombre: 'J&T',
-      entregados: 22,
-      faltantes: 38,
-      porcentaje: 40,
-      ruta: 'pages/Paqueteria/Registro-seguimiento'
-    },
-    {
-      nombre: 'Mercado Libre',
-      entregados: 40,
-      porcentaje: 80,
-      faltantes: 20,
-      ruta: 'pages/Paqueteria/Registro-seguimiento'
-    },
-    {
-      nombre: 'AMAZON',
-      entregados: 8,
-      faltantes: 52,
-      porcentaje: 10,
-      ruta: 'pages/Paqueteria/Registro-seguimiento'
-    }
-  ];
+export class InicioComponent implements OnInit {
+empresas: any[] = [];
 
   alertas = [
     {
-      dias: 15,
-      mensaje: 'Sonia Juana González Niño ha solicitado vacaciones del 10/01/24 al 14/01/24 para Erik Randon Perez'
+      dias: 3,
+      mensaje: 'El paquete de la empresa "Paquetería Express" tiene 3 días sin ser entregado'
     },
     {
-      dias: 15,
-      mensaje: 'El contrato de Álvaro Clemente López Valderas finaliza el 19/01/2024'
+      dias: 5,
+      mensaje: 'El contrato de Álvaro Clemente López Valderas finaliza el 19/01/2025'
     },
     {
-      dias: 15,
-      mensaje: 'Ernest Leon Hernández ha sido dado de alta'
+      dias: 1,
+      mensaje: 'el paquete de la empresa "Logística Rápida" le queda 1 dia para ser entregado'
     }
   ];
 
   constructor(private router: Router,
-    private pakage: PakageService
+    private pakage: PakageService,
+    private idService: FileTransferService
   ) { }
 
   ngOnInit(): void {
-    this.pakage.getPaqueterias().subscribe({
-      next: (res) => {
-        // Asignamos los datos al arreglo de empresas
-        this.empresas = res.data;
-
-        // Ajustamos nombres de propiedades según el template
-        this.empresas.forEach((empresa: any) => {
-          empresa.nombre    = empresa.name;
-          empresa.faltantes = empresa.noEntregados;
-          // Calculamos el porcentaje de entregados
-          const total = empresa.entregados + empresa.faltantes;
-          empresa.porcentaje = total ? (empresa.entregados / total) * 100 : 0;
-        });
-      },
-      error: (err) => {
-        console.error('Error al obtener las empresas:', err);
-      }
-    });
+this.filtrarPor('dia');
   }
 
+  filtrarPor(rango: 'dia' | 'semana' | 'mes') {
+  const hoy = new Date();
+  let desde = new Date(hoy);
+
+  if (rango === 'semana') {
+    desde.setDate(hoy.getDate() - 7);
+  } else if (rango === 'mes') {
+    desde.setMonth(hoy.getMonth() - 1);
+  }
+
+  const desdeStr = desde.toISOString().split('T')[0]; // yyyy-mm-dd
+  const hastaStr = hoy.toISOString().split('T')[0];   // yyyy-mm-dd
+
+  this.pakage.getPaqueterias(desdeStr, hastaStr).subscribe({
+    next: (res) => {
+      console.log('Empresas filtradas:', res);
+      this.empresas = res.data;
+      this.empresas.forEach((empresa: any) => {
+        empresa.nombre = empresa.name;
+        empresa.faltantes = empresa.noEntregados;
+        const total = empresa.entregados + empresa.faltantes;
+        empresa.porcentaje = total ? (empresa.entregados / total) * 100 : 0;
+      });
+    },
+    error: (err) => {
+      console.error('Error al filtrar empresas:', err);
+    }
+  });
+}
 
 
-  irAEmpresa(ruta: string) {
+
+  irAEmpresa(id: any) {
+    // console.log('ID de la empresa:', id); // Obtiene el ID del empleado
+  this.idService.setIdTercero(id);
     this.router.navigate(['/pages/Paqueteria/Carga-paquetes']);
   }
 

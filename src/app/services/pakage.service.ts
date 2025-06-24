@@ -13,8 +13,11 @@ export class PakageService {
     private http: HttpClient
   ) { }
 
-  getPaqueterias(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/getOrgs'}`);
+  getPaqueterias(desde: any, hasta: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'desde': desde, 'hasta': hasta });
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/getOrgs'}`,
+      { headers }
+    );
   }
 
   getTokenAtt(): Observable<ApiResponse> {//Trae la nomina actual
@@ -28,6 +31,11 @@ export class PakageService {
 
   getDeliveriesCar(): Observable<ApiResponse> {
     return this.http.get<ApiResponse>(`${environment.baseService}${'/package/deliveries'}`);
+  }
+
+  getPackagesDeliveryById(deliveryId: any, page: any, size: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'deliveryId': deliveryId, 'page': page, 'size': size });
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/packagesByDeliveryId'}`, { headers });
   }
 
   searchPackage(guia: any): Observable<ApiResponse> {
@@ -71,9 +79,9 @@ export class PakageService {
     );
   }
 
-  addPackagesCar(data: any, deliveryId: any): Observable<ApiResponse> {
-    let headers = new HttpHeaders({ 'deliveryId': deliveryId });
-    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/addPackagesInDelivery'}`, data,
+  addPackagesCar(guia : any, deliveryId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'deliveryId': deliveryId, 'guia': guia });
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/addPackagesInDelivery'}`, null,
       { headers }
     );
   }

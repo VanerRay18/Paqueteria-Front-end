@@ -6,16 +6,30 @@
     <div class="col-auto col-lg-12">
 
       <div class="card2">
-        <div class="form-floating col-auto col-lg-5 m-3 row">
+        <div class="form-floating col-auto col-lg-3 m-3 row">
           <input type="text" class=" buscar form-control" id="busqueda"
             placeholder="Buscar"
             [(ngModel)]="searchTerm" name="busqueda">
           <label for="User">&nbsp;&nbsp;<i
               class="fa-solid fa-magnifying-glass"></i> Buscar</label>
         </div>
-        <div class="col-auto col-lg-3 d-flex justify-content-end mt-auto">
-          <button type="button" class="btn btn-sm" (click)="crearCargamento()">CREAR CARGAMENTO</button>
+        <div
+          class="col-auto col-lg-2 mt-4">
+          <input
+            type="text"
+            ngxDaterangepickerMd
+            [(ngModel)]="rango"
+            [showDropdowns]="true"
+            [autoApply]="true"
+            class="form-control"
+            placeholder="Seleccionar fechas"
+            (ngModelChange)="getDatos()"
+            />
+        </div>
 
+        <div class="col-auto col-lg-3 d-flex justify-content-end mt-auto">
+          <button type="button" class="btn btn-sm"
+            (click)="crearCargamento()">CREAR CARGAMENTO</button>
         </div>
         <div class="col-auto col-lg-2 d-flex justify-content-end mt-auto">
           <a [routerLink]="['/pages/RH/Registrar-Trabajador']">
@@ -24,7 +38,8 @@
         </div>
         <!-- Cada card redirige a una ruta con el ID del cargamento -->
         <!-- Tarjetas de cargamento -->
-        <div *ngFor="let item of data" class="card-person" (click)="infocard(item.id)">
+        <div *ngFor="let item of data" class="card-person"
+          (click)="infocard(item.id)">
           <h3 class="title">Cargamento {{ item.id }}</h3>
 
           <div class="progress-container">

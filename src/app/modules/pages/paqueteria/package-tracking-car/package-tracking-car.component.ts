@@ -16,55 +16,60 @@ export class PackageTrackingCarComponent implements OnInit {
 
   constructor(
     private Pk: PakageService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
+    this.getData(); // Cargar los datos al iniciar el componente
     // Aquí podrías cargar los datos iniciales si es necesario
   }
-mapEstado(statusName: string): 'En Ruta' | 'En Bodega' | 'Entregado' {
-  switch (statusName?.toUpperCase()) {
-    case 'EN RUTA':
-    case 'RUTA':
-      return 'En Ruta';
-    case 'ENTREGADO':
-      return 'Entregado';
-    case 'CARGAMENTO CREADO':
-    default:
-      return 'En Bodega';
+  mapEstado(statusName: string): 'En Ruta' | 'En Bodega' | 'Entregado' {
+    switch (statusName?.toUpperCase()) {
+      case 'EN RUTA':
+      case 'RUTA':
+        return 'En Ruta';
+      case 'ENTREGADO':
+        return 'Entregado';
+      case 'CARGAMENTO CREADO':
+      default:
+        return 'En Bodega';
+    }
   }
-}
 
-getData(): void {
-  this.Pk.getDeliveriesCar().subscribe((response: ApiResponse) => {
-    console.log('Datos recibidos:', response.data);
-    // 🔁 Mapear los datos recibidos al modelo VehicleCard
-    this.vehicleCards = response.data.map((item: any) => {
-      const conductor = `${item.employee?.name || ''} ${item.employee?.firstSurname || ''} ${item.employee?.secondSurname || ''}`.trim();
-      const entregados = item.entregados || 0;
-      const noEntregados = item.noEntregados || 0;
-      const total = entregados + noEntregados;
-      const porcentaje = total > 0 ? Math.round((entregados / total) * 100) : 0;
+  getData(): void {
+    this.Pk.getDeliveriesCar().subscribe((response: ApiResponse) => {
+      console.log('Datos recibidos:', response.data);
+      console.log('ID del primer elemento:', response.data.id); // Verifica el ID
 
-      return {
-        placa: item.car?.placa || '',
-        modelo: item.car?.modelo || '',
-        conductor: conductor || 'Sin conductor',
-        estado: this.mapEstado(item.catStatus?.name), // 👈 Estado amigable
-        entregados: entregados,
-        faltantes: noEntregados,
-        imagen: 'assets/img/vehiculo.png', // 🔁 Cambia según imagen real
-        destino: 'Sin destino asignado', // 🔁 Usa tu lógica real aquí
-        porcentaje: porcentaje,
-        kmIniciales: 0, // Agrega si lo tienes
-      } as VehicleCard;
+      // 🔁 Mapear los datos recibidos al modelo VehicleCard
+      this.vehicleCards = response.data.map((item: any) => {
+        const conductor = `${item.employee?.name || ''} ${item.employee?.firstSurname || ''} ${item.employee?.secondSurname || ''}`.trim();
+        const entregados = item.entregados || 0;
+        const noEntregados = item.noEntregados || 0;
+        const total = entregados + noEntregados;
+        const porcentaje = total > 0 ? Math.round((entregados / total) * 100) : 0;
+        const id = item.id || 0; // Asegúrate de que el ID esté presente
+
+        return {
+          placa: item.car?.placa || '',
+          modelo: item.car?.modelo || '',
+          conductor: conductor || 'Sin conductor',
+          estado: this.mapEstado(item.catStatus?.name), // 👈 Estado amigable
+          entregados: entregados,
+          faltantes: noEntregados,
+          imagen: 'assets/nissan1.png', // 🔁 Cambia según imagen real
+          destino: 'Sin destino asignado', // 🔁 Usa tu lógica real aquí
+          porcentaje: porcentaje,
+          kmIniciales: 0, // Agrega si lo tienes
+          id: id // Asegúrate de incluir el ID
+        } as VehicleCard;
+      });
+      console.log('Cards generadas:', this.vehicleCards);
+
+    }, error => {
+      console.error('Ocurrió un error', error);
     });
-    console.log('Cards generadas:', this.vehicleCards);
+  }
 
-  }, error => {
-    console.error('Ocurrió un error', error);
-  });
-}
-  
 
   // vehicleCards: VehicleCard[] = [
   //   {
@@ -105,7 +110,7 @@ getData(): void {
 
   mostrarSwalVehiculo(vehicle: VehicleCard): void {
     const necesitaConfigurar =
-      !vehicle.conductor || !vehicle.destino || (this.paquetes.length === 0);
+      !vehicle.conductor || !vehicle.destino;
 
     if (necesitaConfigurar) {
       this.mostrarSwalFormularioPrevio(vehicle);
@@ -150,34 +155,47 @@ getData(): void {
     });
   }
 
-  mostrarSwalPrincipal(vehicle: VehicleCard): void {
-    Swal.fire({
-      html: this.obtenerHtmlVehiculo(vehicle),
-      width: 700,
-      showConfirmButton: true,
-      confirmButtonText: 'Cerrar',
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      customClass: {
-        popup: 'swal-popup-scroll'
-      }
-    });
+mostrarSwalPrincipal(vehicle: VehicleCard): void {
+  const deliveryId = vehicle.id;
+  this.paquetes = []; // limpia por si acaso
 
-    setTimeout(() => {
-      const btn = document.getElementById('btn-escanear');
-      if (btn) {
-        btn.addEventListener('click', () => this.mostrarSwalEscaneo(vehicle));
-      }
-    }, 50);
-  }
+  this.Pk.getPackagesDeliveryById(deliveryId, 0, 50).subscribe({
+    next: (response) => {
+      console.log('Respuesta del backend:', response);
+      this.paquetes = response.data.packages.map((p: any) => p.guia);
+
+      Swal.fire({
+        title: 'Paquetes registrados en el vehículo',
+        html: this.obtenerHtmlVehiculo(vehicle),
+        showConfirmButton: false,
+        showCloseButton: true,
+        didOpen: () => {
+          const btn = document.getElementById('btn-escanear');
+          if (btn) {
+            btn.addEventListener('click', () => {
+              Swal.close(); // cierra el Swal actual
+              this.mostrarSwalEscaneo(vehicle); // abre escaneo
+            });
+          }
+        }
+      });
+    },
+    error: (err) => {
+      console.error('Error al obtener paquetes:', err);
+      Swal.fire('Error', 'No se pudieron cargar los paquetes del vehículo.', 'error');
+    }
+  });
+}
 
   mostrarSwalEscaneo(vehicle: VehicleCard): void {
+    this.paquetes = []; // limpia lista previa
+
     Swal.fire({
       title: 'Comience a escanear los paquetes',
       html: `
-        <input id="input-paquete" class="swal2-input" placeholder="Escanea o escribe el paquete" autofocus>
-        <div id="lista-paquetes" style="max-height: 250px; overflow-y: auto; text-align: left; margin-top: 1rem;"></div>
-      `,
+      <input id="input-paquete" class="swal2-input" placeholder="Escanea o escribe el paquete" autofocus>
+      <div id="lista-paquetes" style="max-height: 250px; overflow-y: auto; text-align: left; margin-top: 1rem;"></div>
+    `,
       showCancelButton: true,
       confirmButtonText: 'Guardar',
       cancelButtonText: 'Cancelar',
@@ -188,23 +206,39 @@ getData(): void {
       didOpen: () => {
         const input = document.getElementById('input-paquete') as HTMLInputElement;
         const lista = document.getElementById('lista-paquetes');
+        const deliveryId = vehicle.id;
 
         const renderLista = () => {
           if (!lista) return;
           lista.innerHTML = this.paquetes.map((p, i) => `
-            <div style="display: flex; justify-content: space-between; padding: 6px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 4px;">
-              <span>${p}</span>
-              <button style="border: none; background: none; color: red; cursor: pointer;"
-                onclick="document.dispatchEvent(new CustomEvent('quitar-paquete', { detail: ${i} }))">✖</button>
-            </div>
-          `).join('');
+          <div style="display: flex; justify-content: space-between; padding: 6px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 4px;">
+            <span>${p}</span>
+            <button style="border: none; background: none; color: red; cursor: pointer;"
+              onclick="document.dispatchEvent(new CustomEvent('quitar-paquete', { detail: ${i} }))">✖</button>
+          </div>
+        `).join('');
         };
 
         input?.addEventListener('keypress', (event: KeyboardEvent) => {
           if (event.key === 'Enter' && input.value.trim()) {
-            this.paquetes.push(input.value.trim());
-            input.value = '';
-            renderLista();
+            const guia = input.value.trim();
+
+            this.Pk.addPackagesCar([guia], deliveryId).subscribe({
+              next: () => {
+                this.paquetes.push(guia);
+                input.value = '';
+                renderLista();
+              },
+              error: (err) => {
+                console.error('No se pudo agregar la guía:', err);
+
+                // MOSTRAR error dentro del mismo swal
+                Swal.showValidationMessage('❌ No se pudo agregar la guía o ya existe.');
+
+                input.value = '';
+                input.focus();
+              }
+            });
           }
         });
 
@@ -218,11 +252,11 @@ getData(): void {
       }
     }).then((result) => {
       if (result.isConfirmed) {
-        // Volver al primer swal con paquetes actualizados
         this.mostrarSwalPrincipal(vehicle);
       }
     });
   }
+
 
   obtenerHtmlVehiculo(v: VehicleCard): string {
     return `
@@ -231,7 +265,6 @@ getData(): void {
         <h2 style="margin: 0; font-weight: bold;">${v.placa}</h2>
         <p style="margin-top: 4px; font-size: 1.1rem; color: #333;">${v.modelo}</p>
 <div style="margin-top: 20px; text-align: left;">
-  <h3 style="margin-bottom: 10px;">Paquetes registrados en el vehículo</h3>
 
   <div style="display: flex; justify-content: space-between; align-items: center;">
     <div><strong>Total:</strong> ${this.paquetes.length}</div>

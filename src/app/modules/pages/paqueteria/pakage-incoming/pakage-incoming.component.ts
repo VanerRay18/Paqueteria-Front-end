@@ -5,7 +5,9 @@ import { Cargamento, Persona } from 'src/app/shared/interfaces/utils';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 import { PakageService } from 'src/app/services/pakage.service';
-
+import { FileTransferService } from 'src/app/services/file-transfer.service';
+import { take } from 'rxjs';
+import * as dayjs from 'dayjs';
 
 
 @Component({
@@ -16,22 +18,38 @@ import { PakageService } from 'src/app/services/pakage.service';
 export class PakageIncomingComponent implements OnInit {
   searchTerm: string = '';
   data: Cargamento[] = []; // Ya no usamos la interfaz Persona
-  PackageOrgId: number = 1; // ID de la organización de paquetería, puedes cambiarlo según sea necesario
+  PackageOrgId: any; // ID de la organización de paquetería, puedes cambiarlo según sea necesario
+  rango: { startDate: dayjs.Dayjs; endDate: dayjs.Dayjs } | null = null;
 
   constructor(private rh: RHService,
     private router: Router,
-    private pakage: PakageService
-  ) { }
+    private pakage: PakageService,
+    private fileTransferService: FileTransferService
+  ) {
+  }
 
   ngOnInit(): void {
+
+    this.fileTransferService.currentIdTercero$
+    // <- solo se ejecuta una vez
+      .subscribe(id => {
+        if (id !== null) {
+          console.log('ID recibido:', id);
+          this.PackageOrgId = id;
+
+        }
+      });
+
     this.getDatos();
   }
 
   getDatos() {
-    // 👇 Puedes descomentar esto cuando el endpoint esté funcionando
+    if (!this.rango || !this.rango.startDate || !this.rango.endDate) return;
 
-    const desdeFormatted = new Date('2025-06-01').toISOString().split('T')[0];
-    const hastaFormatted = new Date('2025-06-20').toISOString().split('T')[0];
+  const desdeFormatted = this.rango.startDate.format('YYYY-MM-DD');
+  const hastaFormatted = this.rango.endDate.format('YYYY-MM-DD');
+
+    console.log('Fechas seleccionadas:', desdeFormatted, hastaFormatted);
 
     this.pakage.getCargaById(this.PackageOrgId, desdeFormatted, hastaFormatted, 0, 50).subscribe(
       (response: ApiResponse) => {

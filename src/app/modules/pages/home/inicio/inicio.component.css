@@ -95,6 +95,28 @@
   border-radius: 8px;
 }
 
+.card-header-options {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.card-header-options button {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.card-header-options button:hover {
+  background-color: #1e40af;
+}
+
+
 /* Colores según porcentaje */
 .bg-green-500 {
   background-color: #22c55e; /* verde */

@@ -23,6 +23,7 @@ export interface Persona {
 }
 
 export interface VehicleCard {
+  id: number; // identificador único del vehículo
   placa: string;
   modelo: string;
   conductor: string;
@@ -62,7 +63,7 @@ export interface Cargamento {
   titulo: string;          // Ej: "Cargamento 1"
   fecha: string;           // Ej: "2025-06-17"
   entregados: number;      // Ej: 80
-  noEntregados: number;   
+  noEntregados: number;
   barra: number;          // Ej: 80
   paquetesTotal: number; // Ej: 100
   is_match: any; // Indica si el cargamento está completo
