@@ -61,6 +61,7 @@ export class RHService {
 
   SaveDocuments(data:any, employeeId: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({'employeeId': employeeId});
+    console.log(employeeId);
     return this.http.post<ApiResponse>(`${environment.baseService}${'/employees/documents'}`, data,
       {headers}
     );
@@ -125,6 +126,7 @@ export class RHService {
 
   UpdateDocuments(data: any, employeeId: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'employeeId': employeeId });
+        console.log(employeeId);
     return this.http.patch<ApiResponse>(`${environment.baseService}${'/employees/documents'}`, data,
       { headers }
     );
@@ -151,6 +153,13 @@ export class RHService {
     console.log(data);
     return this.http.patch<ApiResponse>(`${environment.baseService}${'/attendances/attendance'}`, data,
       { headers });
+  }
+
+  DeleteEmployee(employeeId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'employeeId': employeeId });
+    return this.http.delete<ApiResponse>(`${environment.baseService}${'/employees/softdelete'}`,
+      { headers }
+    );
   }
 
 }

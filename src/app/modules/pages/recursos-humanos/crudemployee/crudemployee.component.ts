@@ -42,7 +42,44 @@ export class CRUDEmployeeComponent {
     this.getData();
   }
 
-  onDelete(licenciaId: any) {
+  onDelete(employeeId : any) {
+    console.log('ID del empleado a eliminar:', employeeId.id);
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: "¡No podrás deshacer esta acción!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Aquí puedes llamar al servicio para eliminar el empleado
+        this.rh.getEmployeeById(employeeId.id).subscribe((response: ApiResponse) => {
+          if (response.success) {
+            Swal.fire(
+              'Eliminado',
+              'El empleado ha sido eliminado correctamente.',
+              'success'
+            );
+            this.getData(); // Actualiza la lista de empleados
+          } else {
+            Swal.fire(
+              'Error',
+              'No se pudo eliminar el empleado. Inténtalo de nuevo más tarde.',
+              'error'
+            );
+          }
+        }, (error) => {
+          console.error('Error al eliminar el empleado:', error);
+          Swal.fire(
+            'Error',
+            'Ocurrió un error al intentar eliminar el empleado.',
+            'error'
+          );
+        });
+      }
+    });
 
   }
 
@@ -60,47 +97,6 @@ getData() {
 
 }
 
-showDetails(row: any) {
-
-  const detalles = row.detalles;
-
-  let tableHtml = `
-    <table class="table table-bordered">
-      <thead>
-        <tr>
-          <th>Pago</th>
-          <th>Tipo</th>
-          <th>Plaza</th>
-          <th>Quincenas</th>
-          <th>Total</th>
-          <th>Retención</th>
-          <th>Líquido</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${detalles.map((item: any) => `
-          <tr>
-            <td>${item.pago || 'N/A'}</td>
-            <td>${item.type || 'N/A'}</td>
-            <td>${item.plaza || 'N/A'}</td>
-            <td>${item.quincenas || 'N/A'}</td>
-            <td>${item.import || 'N/A'}</td>
-            <td>${item.retention || 'N/A'}</td>
-            <td>${item.liquid || 'N/A'}</td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>`;
-
-  Swal.fire({
-    title: 'Detalles del Pago',
-    html: tableHtml,
-    width: '1000px',
-    confirmButtonText: 'Cerrar',
-    confirmButtonColor: '#3085d6',
-    backdrop: true,
-  });
-}
 
 onEdit(employeeId: any) {
   console.log('ID del empleado a editar:', employeeId.id);

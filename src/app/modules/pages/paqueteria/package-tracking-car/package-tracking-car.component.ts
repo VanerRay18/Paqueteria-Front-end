@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ApiResponse } from 'src/app/models/ApiResponse';
+import { PakageService } from 'src/app/services/pakage.service';
 import { VehicleCard } from 'src/app/shared/interfaces/utils';
 import Swal from 'sweetalert2';
 
@@ -7,47 +9,99 @@ import Swal from 'sweetalert2';
   templateUrl: './package-tracking-car.component.html',
   styleUrls: ['./package-tracking-car.component.css']
 })
-export class PackageTrackingCarComponent {
+export class PackageTrackingCarComponent implements OnInit {
   filtro: string = '';
   paquetes: string[] = [];
+  vehicleCards: VehicleCard[] = [];
 
+  constructor(
+    private Pk: PakageService
+  ) {}
 
-  vehicleCards: VehicleCard[] = [
-    {
-      placa: 'MCH4VH0Q',
-      modelo: 'Nissan Versa',
-      conductor: 'Juan Perez Sanchez',
-      estado: 'En Ruta',
-      entregados: 2,
-      faltantes: 20,
-      imagen: 'assets/nissan1.jpg',
-      destino: 'Sucursal Centro',
-      porcentaje: 10 // Porcentaje de entregados
-    },
-    {
-      placa: 'XYZ1234',
-      modelo: 'Toyota Hilux',
-      conductor: 'Ana Lopez',
-      estado: 'Entregado',
-      entregados: 22,
-      faltantes: 0,
-      imagen: 'assets/nissan1.jpg',
-      destino: 'Sucursal Norte',
-      porcentaje: 100
-    },
-    {
-      placa: 'FYZWR34',
-      modelo: 'Honda Odise',
-      conductor: '',
-      estado: 'En Bodega',
-      entregados: 0,
-      faltantes: 0,
-      imagen: 'assets/nissan1.jpg',
-      destino: '',
-      porcentaje: 0
-    },
-    // agrega más vehículos aquí
-  ];
+  ngOnInit(): void {
+    // Aquí podrías cargar los datos iniciales si es necesario
+  }
+mapEstado(statusName: string): 'En Ruta' | 'En Bodega' | 'Entregado' {
+  switch (statusName?.toUpperCase()) {
+    case 'EN RUTA':
+    case 'RUTA':
+      return 'En Ruta';
+    case 'ENTREGADO':
+      return 'Entregado';
+    case 'CARGAMENTO CREADO':
+    default:
+      return 'En Bodega';
+  }
+}
+
+getData(): void {
+  this.Pk.getDeliveriesCar().subscribe((response: ApiResponse) => {
+    console.log('Datos recibidos:', response.data);
+    // 🔁 Mapear los datos recibidos al modelo VehicleCard
+    this.vehicleCards = response.data.map((item: any) => {
+      const conductor = `${item.employee?.name || ''} ${item.employee?.firstSurname || ''} ${item.employee?.secondSurname || ''}`.trim();
+      const entregados = item.entregados || 0;
+      const noEntregados = item.noEntregados || 0;
+      const total = entregados + noEntregados;
+      const porcentaje = total > 0 ? Math.round((entregados / total) * 100) : 0;
+
+      return {
+        placa: item.car?.placa || '',
+        modelo: item.car?.modelo || '',
+        conductor: conductor || 'Sin conductor',
+        estado: this.mapEstado(item.catStatus?.name), // 👈 Estado amigable
+        entregados: entregados,
+        faltantes: noEntregados,
+        imagen: 'assets/img/vehiculo.png', // 🔁 Cambia según imagen real
+        destino: 'Sin destino asignado', // 🔁 Usa tu lógica real aquí
+        porcentaje: porcentaje,
+        kmIniciales: 0, // Agrega si lo tienes
+      } as VehicleCard;
+    });
+    console.log('Cards generadas:', this.vehicleCards);
+
+  }, error => {
+    console.error('Ocurrió un error', error);
+  });
+}
+  
+
+  // vehicleCards: VehicleCard[] = [
+  //   {
+  //     placa: 'MCH4VH0Q',
+  //     modelo: 'Nissan Versa',
+  //     conductor: 'Juan Perez Sanchez',
+  //     estado: 'En Ruta',
+  //     entregados: 2,
+  //     faltantes: 20,
+  //     imagen: 'assets/nissan1.jpg',
+  //     destino: 'Sucursal Centro',
+  //     porcentaje: 10 // Porcentaje de entregados
+  //   },
+  //   {
+  //     placa: 'XYZ1234',
+  //     modelo: 'Toyota Hilux',
+  //     conductor: 'Ana Lopez',
+  //     estado: 'Entregado',
+  //     entregados: 22,
+  //     faltantes: 0,
+  //     imagen: 'assets/nissan1.jpg',
+  //     destino: 'Sucursal Norte',
+  //     porcentaje: 100
+  //   },
+  //   {
+  //     placa: 'FYZWR34',
+  //     modelo: 'Honda Odise',
+  //     conductor: '',
+  //     estado: 'En Bodega',
+  //     entregados: 0,
+  //     faltantes: 0,
+  //     imagen: 'assets/nissan1.jpg',
+  //     destino: '',
+  //     porcentaje: 0
+  //   },
+  //   // agrega más vehículos aquí
+  // ];
 
   mostrarSwalVehiculo(vehicle: VehicleCard): void {
     const necesitaConfigurar =

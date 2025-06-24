@@ -26,6 +26,10 @@ export class PakageService {
     return this.http.get<ApiResponse>(`${environment.baseService}${'/package/incomingPackagesByPackageOrgId'}`, { headers });
   }
 
+  getDeliveriesCar(): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/deliveries'}`);
+  }
+
   searchPackage(guia: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'guia': guia });
     return this.http.get<ApiResponse>(`${environment.baseService}${'/package/searchPackage'}`, { headers });
@@ -55,12 +59,23 @@ export class PakageService {
     );
   }
 
-   MatchingPackage(incomingPackageId: any): Observable<ApiResponse> {
+  MatchingPackage(incomingPackageId: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId });
     return this.http.post<ApiResponse>(`${environment.baseService}${'/package/createMatchPackage'}`, null,
       { headers }
     );
   }
 
+  createDeliveryCar(data: any): Observable<ApiResponse> {
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/createDelivery'}`, data,
+    );
+  }
+
+  addPackagesCar(data: any, deliveryId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'deliveryId': deliveryId });
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/addPackagesInDelivery'}`, data,
+      { headers }
+    );
+  }
 
 }

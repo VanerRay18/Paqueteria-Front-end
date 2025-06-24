@@ -40,6 +40,15 @@ export class NewEmployeeComponent implements OnInit {
   isEditMode = false;
   isEditDocumentos = false;
   isEditUniformes = false;
+  datosDireccionCargados = false;
+  datosPersonalesCargados = false;
+  datosPagoCargados = false;
+  datosEmergenciaCargados = false;
+  datosBermedCargados = false;
+  datosDocumentosCargados = false;
+  datosUniformesCargados = false;
+
+
 
   constructor(private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
@@ -85,6 +94,12 @@ export class NewEmployeeComponent implements OnInit {
 
   }
 
+  esFormularioRealmenteVacio(formGroup: FormGroup): boolean {
+    return Object.values(formGroup.value).every(valor =>
+      valor === null || valor === undefined || valor === ''
+    );
+  }
+
   forms() {
     this.datosPersonalesForm = this.fb.group({
       foto: [null],
@@ -126,6 +141,7 @@ export class NewEmployeeComponent implements OnInit {
     });
   }
 
+
   crearContacto(): FormGroup {
     return this.fb.group({
       telefono: ['', Validators.required],
@@ -144,7 +160,7 @@ export class NewEmployeeComponent implements OnInit {
   loadEmployeeData(id: number) {
     this.rh.getEmployeeById(id).subscribe((resp: ApiResponse) => {
       const e = resp.data.dataUser;
-      console.log('Datos del empleado:', e);
+      const personalesTieneDatos = e && Object.values(e).some(value => !!value);
       // Asume que resp.data trae los campos necesarios
       this.datosPersonalesForm.patchValue({
         nombreCompleto: `${e?.name || ''} ${e?.firstSurname || ''} ${e?.secondSurname || ''}`.trim(),
@@ -160,8 +176,10 @@ export class NewEmployeeComponent implements OnInit {
         tipoContratacion: e?.catEmploymentId != null ? e.catEmploymentId.toString() : ''
       });
       this.datosPersonalesForm.disable();
+      this.datosPersonalesCargados = personalesTieneDatos;
 
       const d = resp.data.address;
+      const direccionTieneDatos = d && Object.values(d).some(value => !!value);
 
       this.direccionForm.patchValue({
         codigoPostal: d.cp,
@@ -173,8 +191,10 @@ export class NewEmployeeComponent implements OnInit {
         numExterior: d.exterior,
       });
       this.direccionForm.disable();
+      this.datosDireccionCargados = direccionTieneDatos;
 
       const p = resp.data.clabes;
+      const pagoTieneDatos = p && Object.values(p).some(value => !!value);
 
       this.pagoForm.patchValue({
         clabe: p.interbancaria,
@@ -182,8 +202,10 @@ export class NewEmployeeComponent implements OnInit {
         banco: p.banco,
       });
       this.pagoForm.disable();
+      this.datosPagoCargados = pagoTieneDatos;
 
       const contactos = resp.data.emergencyContacts;
+      const emergenciaTieneDatos = contactos && contactos.length > 0;
 
       // ⛑️ Asegura que es un arreglo
       if (Array.isArray(contactos)) {
@@ -203,8 +225,10 @@ export class NewEmployeeComponent implements OnInit {
         this.emergenciaForm.setControl('contactos', contactosArray);
       }
       this.emergenciaForm.disable();
+      this.datosEmergenciaCargados = emergenciaTieneDatos;
 
       const telefonos = resp.data.phonesBedmer;
+      const telefonosTieneDatos = telefonos && telefonos.length > 0;
 
       // ⛑️ Asegura que es un arreglo
       if (Array.isArray(telefonos)) {
@@ -224,16 +248,25 @@ export class NewEmployeeComponent implements OnInit {
         this.bermedForm.setControl('telefonos', telefonosArray);
       }
       this.bermedForm.disable();
-
-      const docs = resp.data.catDocuments;
+      this.datosBermedCargados = telefonosTieneDatos;
+      // 📄 Documentos entregados
+      const docs = resp.data.catDocuments || [];
       this.assignedDocumentos = docs;
       this.Documentos = docs.map((d: any) => d.id);
       this.allDocumentos = this.allDocumentos.filter(d => !this.Documentos.includes(d.id));
 
-      const unis = resp.data.catEmployeeUniforms;
+      // ✅ Marcar como "editando" si hay al menos un documento
+      this.datosDocumentosCargados = docs.length > 0;
+
+
+      // 👕 Uniformes entregados
+      const unis = resp.data.catEmployeeUniforms || [];
       this.assignedUniforms = unis;
       this.uniforms = unis.map((u: any) => u.id);
       this.allUniforms = this.allUniforms.filter(u => !this.uniforms.includes(u.id));
+
+      // ✅ Marcar como "editando" si hay al menos un uniforme
+      this.datosUniformesCargados = unis.length > 0;
 
     });
   }
@@ -365,6 +398,7 @@ export class NewEmployeeComponent implements OnInit {
 
   guardarDireccion() {
     const formValue = this.direccionForm.value;
+
     const dto = {
       cp: formValue.codigoPostal,
       municipio: formValue.municipio,
@@ -375,9 +409,16 @@ export class NewEmployeeComponent implements OnInit {
       exterior: formValue.numExterior,
     };
 
-    const request$ = this.isEditMode
-      ? this.rh.UpdateAddress(dto, this.employeeIdPatch)
-      : this.rh.createAdress(dto, this.employeeId);
+    const idEmpleado = this.employeeId || this.employeeIdPatch;
+
+    if (!idEmpleado) {
+      Swal.fire('Error', 'No se pudo determinar el ID del empleado.', 'error');
+      return;
+    }
+
+    const request$ = this.datosDireccionCargados
+      ? this.rh.UpdateAddress(dto, idEmpleado)
+      : this.rh.createAdress(dto, idEmpleado);
 
     request$.subscribe({
       next: () => {
@@ -391,6 +432,7 @@ export class NewEmployeeComponent implements OnInit {
     });
   }
 
+
   editarDireccion() {
     if (this.employeeIdPatch) {
       this.isEditMode = true;
@@ -400,39 +442,51 @@ export class NewEmployeeComponent implements OnInit {
   }
 
   guardarEmpleo() {
-  const documents = this.Documentos;
-  const uniforms = this.uniforms;
+    const documents = this.Documentos;
+    const uniforms = this.uniforms;
 
-  const documentos$ = this.isEditMode
-    ? this.rh.UpdateDocuments(documents, this.employeeIdPatch)
-    : this.rh.SaveDocuments(documents, this.employeeId);
+    const idEmpleado = this.employeeIdPatch || this.employeeId;
 
-  documentos$.subscribe({
-    next: () => {
-      Swal.fire('Documentos guardados', 'Se guardaron correctamente.', 'success');
-      this.isEditDocumentos = false;
-    },
-    error: (err) => {
-      Swal.fire('Error', 'Ocurrió un error al guardar los documentos.', 'error');
-      console.error(err);
+    if (!idEmpleado) {
+      Swal.fire('Error', 'No se pudo determinar el ID del empleado.', 'error');
+      return;
     }
-  });
 
-  const uniforms$ = this.isEditMode
-    ? this.rh.UpdateUniforms(uniforms, this.employeeIdPatch)
-    : this.rh.SaveUniforms(uniforms, this.employeeId);
+    const documentos$ = this.datosDocumentosCargados
+      ? this.rh.UpdateDocuments(documents, idEmpleado)
+      : this.rh.SaveDocuments(documents, idEmpleado);
+    documentos$.subscribe({
+      next: () => {
+        Swal.fire('Documentos guardados', 'Se guardaron correctamente.', 'success');
+        this.isEditDocumentos = false;
+      },
+      error: (err) => {
+        Swal.fire('Error', 'Ocurrió un error al guardar los documentos.', 'error');
+        console.error(err);
+      }
+    });
 
-  uniforms$.subscribe({
-    next: () => {
-      Swal.fire('Uniformes guardados', 'Se guardaron correctamente.', 'success');
-      this.isEditUniformes = false;
-    },
-    error: (err) => {
-      Swal.fire('Error', 'Ocurrió un error al guardar los uniformes.', 'error');
-      console.error(err);
+    if (!idEmpleado) {
+      Swal.fire('Error', 'No se pudo determinar el ID del empleado.', 'error');
+      return;
     }
-  });
-}
+
+    const uniforms$ = this.datosUniformesCargados
+      ? this.rh.UpdateUniforms(uniforms, idEmpleado)
+      : this.rh.SaveUniforms(uniforms, idEmpleado);
+
+    uniforms$.subscribe({
+      next: () => {
+        Swal.fire('Uniformes guardados', 'Se guardaron correctamente.', 'success');
+        this.isEditUniformes = false;
+      },
+      error: (err) => {
+        Swal.fire('Error', 'Ocurrió un error al guardar los uniformes.', 'error');
+        console.error(err);
+      }
+    });
+  }
+
 
   editarEmpleo() {
     if (this.employeeIdPatch) {
@@ -450,9 +504,17 @@ export class NewEmployeeComponent implements OnInit {
       interbancaria: formValue.clabe,
     };
 
-    const request$ = this.isEditMode
-      ? this.rh.UpdatePay(dto, this.employeeIdPatch)
-      : this.rh.SavePay(dto, this.employeeId);
+    const idEmpleado = this.employeeIdPatch || this.employeeId;
+
+    if (!idEmpleado) {
+      Swal.fire('Error', 'No se pudo determinar el ID del empleado.', 'error');
+      return;
+    }
+
+    const request$ = this.datosPagoCargados
+      ? this.rh.UpdatePay(dto, idEmpleado)
+      : this.rh.SavePay(dto, idEmpleado);
+
 
     request$.subscribe({
       next: () => {
@@ -484,9 +546,16 @@ export class NewEmployeeComponent implements OnInit {
         relationship: contacto.parentesco,
       };
 
-      const request$ = this.isEditMode
-        ? this.rh.UpdateEmergency(dto, this.employeeIdPatch)
-        : this.rh.SaveEmergency(dto, this.employeeId);
+      const idEmpleado = this.employeeIdPatch || this.employeeId;
+
+      if (!idEmpleado) {
+        Swal.fire('Error', 'No se pudo determinar el ID del empleado.', 'error');
+        return;
+      }
+
+      const request$ = this.datosEmergenciaCargados
+        ? this.rh.UpdateEmergency(dto, idEmpleado)
+        : this.rh.SaveEmergency(dto, idEmpleado);
 
       request$.subscribe({
         next: () => {
@@ -521,10 +590,16 @@ export class NewEmployeeComponent implements OnInit {
         plan: entry.plan,
         telefono: entry.telefono,
       };
+      const idEmpleado = this.employeeIdPatch || this.employeeId;
 
-      const request$ = this.isEditMode
-        ? this.rh.UpdatePhoneBermed(dto, this.employeeIdPatch)
-        : this.rh.SavephoneBermed(dto, this.employeeId);
+      if (!idEmpleado) {
+        Swal.fire('Error', 'No se pudo determinar el ID del empleado.', 'error');
+        return;
+      }
+
+      const request$ = this.datosBermedCargados
+        ? this.rh.UpdatePhoneBermed(dto, idEmpleado)
+        : this.rh.SavephoneBermed(dto, idEmpleado);
 
       request$.subscribe({
         next: () => {
@@ -565,29 +640,21 @@ export class NewEmployeeComponent implements OnInit {
   }
   onDropUniform(event: DragEvent, target: 'assigned' | 'all') {
     event.preventDefault();
-
     const Uniform = this.draggedUniforms;
-    if (!Uniform) return;
-
-    // ✅ Si NO está en modo edición, solo permite mover visualmente sin modificar los arrays reales
-    if (!this.isEditUniformes) {
-      this.draggedUniforms = null;
-      return;
-    }
-
-    if (target === 'assigned') {
-      if (!this.assignedUniforms.some(r => r.id === Uniform.id)) {
-        this.assignedUniforms.push(Uniform);
-        this.uniforms.push(Uniform.id);
-        this.allUniforms = this.allUniforms.filter(r => r.id !== Uniform.id);
+    if (Uniform) {
+      if (target === 'assigned') {
+        if (!this.assignedUniforms.some(r => r.id === Uniform.id)) {
+          this.assignedUniforms.push(Uniform);
+          this.uniforms.push(Uniform.id); // Agrega el ID al arreglo uniforms
+          this.allUniforms = this.allUniforms.filter(r => r.id !== Uniform.id);
+        }
+      } else {
+        this.assignedUniforms = this.assignedUniforms.filter(r => r.id !== Uniform.id);
+        this.uniforms = this.uniforms.filter(id => id !== Uniform.id); // Remueve el ID del arreglo uniforms
+        this.allUniforms.push(Uniform);
       }
-    } else {
-      this.assignedUniforms = this.assignedUniforms.filter(r => r.id !== Uniform.id);
-      this.uniforms = this.uniforms.filter(id => id !== Uniform.id);
-      this.allUniforms.push(Uniform);
+      this.draggedUniforms = null;
     }
-
-    this.draggedUniforms = null;
   }
   onDragOverUniform(event: DragEvent) {
     event.preventDefault();
@@ -599,28 +666,25 @@ export class NewEmployeeComponent implements OnInit {
     event.dataTransfer?.setData('text/plain', Documento.name);
   }
 
-onDrop(event: DragEvent, target: 'assigned' | 'all') {
-  event.preventDefault();
+  onDrop(event: DragEvent, target: 'assigned' | 'all') {
+    event.preventDefault();
+    const Documentos = this.draggedDocumentos;
 
-  // ✅ Evitar que funcione si no está en modo edición
-  if (!this.isEditDocumentos) return;
-
-  const Documentos = this.draggedDocumentos;
-  if (Documentos) {
-    if (target === 'assigned') {
-      if (!this.assignedDocumentos.some(r => r.id === Documentos.id)) {
-        this.assignedDocumentos.push(Documentos);
-        this.Documentos.push(Documentos.id);
-        this.allDocumentos = this.allDocumentos.filter(r => r.id !== Documentos.id);
+    if (Documentos) {
+      if (target === 'assigned') {
+        if (!this.assignedDocumentos.some(r => r.id === Documentos.id)) {
+          this.assignedDocumentos.push(Documentos);
+          this.Documentos.push(Documentos.id); // Agrega el ID al arreglo roles
+          this.allDocumentos = this.allDocumentos.filter(r => r.id !== Documentos.id);
+        }
+      } else {
+        this.assignedDocumentos = this.assignedDocumentos.filter(r => r.id !== Documentos.id);
+        this.Documentos = this.Documentos.filter(id => id !== Documentos.id); // Remueve el ID del arreglo roles
+        this.allDocumentos.push(Documentos);
       }
-    } else {
-      this.assignedDocumentos = this.assignedDocumentos.filter(r => r.id !== Documentos.id);
-      this.Documentos = this.Documentos.filter(id => id !== Documentos.id);
-      this.allDocumentos.push(Documentos);
+      this.draggedDocumentos = null;
     }
-    this.draggedDocumentos = null;
   }
-}
 
   onDragOver(event: DragEvent) {
     event.preventDefault();
@@ -628,11 +692,11 @@ onDrop(event: DragEvent, target: 'assigned' | 'all') {
 
   saveAll() {
 
-    // Swal.fire({
-    //   icon: 'success',
-    //   title: 'Empleado guardado',
-    //   text: 'El empleado fue guardado correctamente.',
-    // });
+    Swal.fire({
+      icon: 'success',
+      title: 'Empleado guardado',
+      text: 'El empleado fue guardado correctamente.',
+    });
 
     this.router.navigate(['/pages/RH/Trabajadores-Registrados']);
 
