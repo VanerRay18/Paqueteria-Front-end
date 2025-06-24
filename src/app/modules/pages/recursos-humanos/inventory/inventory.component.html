@@ -70,13 +70,14 @@
                 class="fa-solid fa-magnifying-glass"></i> Buscar</label>
           </div>
 
-          <div class="col-auto col-lg-4 mt-4">
-            <h5>Total de registros: 64</h5>
-          </div>
+    
 
-          <div class="col-auto col-lg-3 d-flex justify-content-end mt-auto">
+          <div class="col-auto col-lg-6 d-flex justify-content-end mt-auto">
             <a [routerLink]="['/pages/RH/Registrar-Trabajador']">
-              <button type="button" class="btn btn-sm">DAR DE ALTA UN MATERIAL</button>
+              <button type="button" class="btn btn-sm">Guardar material</button>
+            </a>
+             <a [routerLink]="['/pages/RH/Registrar-Trabajador']">
+              <button type="button" class="btn btn-sm">Agregar material al catalogo</button>
             </a>
           </div>
 
@@ -96,7 +97,7 @@
               (delete)="onDelete($event)"
               [showActionsPdf]=false
               [showActiveCheckbox]=false
-              [showDetailsColumn]=true
+              [showDetailsColumn]=false
               (show)="showDetails($event)"
               [isLoading]="isLoading">
             </app-tables>
