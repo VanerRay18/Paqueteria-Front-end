@@ -623,16 +623,38 @@ export class NewEmployeeComponent implements OnInit {
     }
   }
 
-  onFotoSelected(event: any): void {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.fotoPreview = reader.result as string;
-      };
-      reader.readAsDataURL(file);
+onFotoSelected(event: any): void {
+  const file = event.target.files[0];
+  if (file) {
+    // Leer la imagen para mostrar la vista previa
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.fotoPreview = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+
+    // Crear un FormData para enviar el archivo al backend
+    const formData = new FormData();
+    formData.append('files', file);
+
+   const idEmpleado = this.employeeIdPatch || this.employeeId;
+    if (!idEmpleado) {
+      Swal.fire('Error', 'No se pudo determinar el ID del empleado.', 'error');
+      return;
     }
+
+    // Llamada al servicio para guardar el archivo
+    this.rh.SaveFoto(formData, idEmpleado).subscribe({
+      next: (res) => {
+        console.log('Archivo subido con éxito', res);
+      },
+      error: (err) => {
+        console.error('Error al subir el archivo', err);
+      }
+    });
   }
+}
+
   // Drag functions for uniforms
   onDragStartUniform(event: DragEvent, Uniform: { id: number, name: string }) {
     this.draggedUniforms = Uniform;

@@ -10,7 +10,7 @@ import { environment } from 'src/environments/enviroment';
 export class RHService {
 
   constructor(
-    private http:HttpClient
+    private http: HttpClient
   ) { }
 
   getEmployees(): Observable<ApiResponse> {
@@ -27,86 +27,94 @@ export class RHService {
 
 
   getAttencendanceById(employeeId: any, typeId: any, desde: any, hasta: any, page: any, size: any): Observable<ApiResponse> {
-    let headers = new HttpHeaders({'employeeId': employeeId, 'typeId': typeId, 'desde': desde, 'hasta': hasta, 'page': page, 'size': size});
+    let headers = new HttpHeaders({ 'employeeId': employeeId, 'typeId': typeId, 'desde': desde, 'hasta': hasta, 'page': page, 'size': size });
     return this.http.get<ApiResponse>(`${environment.baseService}${'/attendances/employeeId'}`,
-      {headers}
+      { headers }
     );
   }
 
-  getEmployeeById(employeeId : any): Observable<ApiResponse> {
-    let headers = new HttpHeaders({'employeeId': employeeId});
+  getEmployeeById(employeeId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'employeeId': employeeId });
     return this.http.get<ApiResponse>(`${environment.baseService}${'/employees/getAllDataEmployee'}`,
-      {headers}
+      { headers }
     );
   }
 
-  createAdress(data:any, employeeId: any): Observable<ApiResponse> {
-    let headers = new HttpHeaders({'employeeId': employeeId});
+  createAdress(data: any, employeeId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'employeeId': employeeId });
     return this.http.post<ApiResponse>(`${environment.baseService}${'/employees/address'}`, data,
-      {headers}
+      { headers }
     );
   }
 
-  createEmployee(data:any): Observable<ApiResponse> {//Trae la nomina actual
-    return this.http.post<ApiResponse>(`${environment.baseService}${'/employees'}`,data);
+  createEmployee(data: any): Observable<ApiResponse> {//Trae la nomina actual
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/employees'}`, data);
   }
 
   validateToken(token: any): Observable<ApiResponse> {
-    let headers = new HttpHeaders({'token': token});
+    let headers = new HttpHeaders({ 'token': token });
     return this.http.post<ApiResponse>(`${environment.baseService}${'/attendances/checkAttendance'}`, null,
-      {headers}
+      { headers }
     );
   }
 
+SaveFoto(data: FormData, employeeId: any): Observable<ApiResponse> {
+  let headers = new HttpHeaders({
+    'employeeId': employeeId.toString()
+  });
+  return this.http.post<ApiResponse>(`${environment.baseService}/employees/saveFilesEmployee`, data, {
+    headers
+  });
+}
 
-  SaveDocuments(data:any, employeeId: any): Observable<ApiResponse> {
-    let headers = new HttpHeaders({'employeeId': employeeId});
+  SaveDocuments(data: any, employeeId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'employeeId': employeeId });
     console.log(employeeId);
     return this.http.post<ApiResponse>(`${environment.baseService}${'/employees/documents'}`, data,
-      {headers}
+      { headers }
     );
   }
 
-  SaveUniforms(data:any, employeeId: any): Observable<ApiResponse> {
-    let headers = new HttpHeaders({'employeeId': employeeId});
+  SaveUniforms(data: any, employeeId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'employeeId': employeeId });
     return this.http.post<ApiResponse>(`${environment.baseService}${'/employees/material'}`, data,
-      {headers}
+      { headers }
     );
   }
 
-  SavePay(data:any, employeeId: any): Observable<ApiResponse> {
-    let headers = new HttpHeaders({'employeeId': employeeId});
+  SavePay(data: any, employeeId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'employeeId': employeeId });
     return this.http.post<ApiResponse>(`${environment.baseService}${'/employees/bankAccount'}`, data,
-      {headers}
+      { headers }
     );
   }
 
-  SaveEmergency(data:any, employeeId: any): Observable<ApiResponse> {
-    let headers = new HttpHeaders({'employeeId': employeeId});
+  SaveEmergency(data: any, employeeId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'employeeId': employeeId });
     return this.http.post<ApiResponse>(`${environment.baseService}${'/employees/emergencyContact'}`, data,
-      {headers}
+      { headers }
     );
   }
 
-  SavephoneBermed(data:any, employeeId: any): Observable<ApiResponse> {
-    let headers = new HttpHeaders({'employeeId': employeeId});
+  SavephoneBermed(data: any, employeeId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'employeeId': employeeId });
     return this.http.post<ApiResponse>(`${environment.baseService}${'/employees/phoneBermed'}`, data,
-      {headers}
+      { headers }
     );
   }
 
 
-    UpdateAddress(data:any, employeeId: any): Observable<ApiResponse> {
-    let headers = new HttpHeaders({'employeeId': employeeId});
+  UpdateAddress(data: any, employeeId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'employeeId': employeeId });
     return this.http.patch<ApiResponse>(`${environment.baseService}${'/employees/address'}`, data,
-      {headers}
+      { headers }
     );
   }
 
-  UpdateEmployee(data:any, employeeId: any): Observable<ApiResponse> {//Trae la nomina actual
-    let headers = new HttpHeaders({'employeeId': employeeId});
-    return this.http.patch<ApiResponse>(`${environment.baseService}${'/employees'}`,data,
-      {headers}
+  UpdateEmployee(data: any, employeeId: any): Observable<ApiResponse> {//Trae la nomina actual
+    let headers = new HttpHeaders({ 'employeeId': employeeId });
+    return this.http.patch<ApiResponse>(`${environment.baseService}${'/employees'}`, data,
+      { headers }
     );
   }
 
@@ -126,7 +134,7 @@ export class RHService {
 
   UpdateDocuments(data: any, employeeId: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'employeeId': employeeId });
-        console.log(employeeId);
+    console.log(employeeId);
     return this.http.patch<ApiResponse>(`${environment.baseService}${'/employees/documents'}`, data,
       { headers }
     );

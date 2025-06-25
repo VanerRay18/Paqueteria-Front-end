@@ -10,23 +10,27 @@ import { environment } from 'src/environments/enviroment';
 export class CarsService {
 
   constructor(
-          private http:HttpClient
-        ) { }
+    private http: HttpClient
+  ) { }
 
 
-        getAllCars(): Observable<ApiResponse> {
-            return this.http.get<ApiResponse>(`${environment.baseService}${'/cars'}`);
-          }
+  getAllCars(): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/cars'}`);
+  }
 
-             getFualCarLog(carId:any): Observable<ApiResponse> {
-                  let headers = new HttpHeaders({'carId': carId});
-            
-            return this.http.get<ApiResponse>(`${environment.baseService}${'/cars/fuelLogByCarId'}`,{headers});
-          }
+  getFualCarLog(carId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'carId': carId });
+
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/cars/fuelLogByCarId'}`, { headers });
+  }
 
 
-            createFuelLog(data:any): Observable<ApiResponse> {
-              return this.http.post<ApiResponse>(`${environment.baseService}${'/cars/createFuelLog'}`, data);
-            }
-  
+  createNewCar(data: any): Observable<ApiResponse> {
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/cars'}`, data);
+  }
+
+  createFuelLog(data: any): Observable<ApiResponse> {
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/cars/createFuelLog'}`, data);
+  }
+
 }

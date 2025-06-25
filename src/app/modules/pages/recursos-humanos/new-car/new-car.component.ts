@@ -4,6 +4,7 @@ import { RHService } from 'src/app/services/rh.service';
 import { ApiResponse } from 'src/app/models/ApiResponse';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
+import { CarsService } from 'src/app/services/cars.service';
 
 @Component({
   selector: 'app-new-car',
@@ -19,7 +20,7 @@ export class NewCarComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private rh: RHService,
+    private car: CarsService,
     private router: Router
   ) { }
 
@@ -41,9 +42,10 @@ export class NewCarComponent implements OnInit {
       vigencia: [''],
       verificacion: [''],
       estado: this.fb.group({
-        activo: [true]  // o false
+      activo: [true]  // o false
       }),
-      responsable: ['']
+      responsable: [''],
+      km : [0, [Validators.required, Validators.min(0)]],
     });
   }
   onFotoSelected(event: any): void {
@@ -90,30 +92,34 @@ export class NewCarComponent implements OnInit {
       placa: formValue.placa,
       marca: formValue.marca,
       modelo: formValue.modelo,
+      seguro: formValue.seguros,               // <- "seguros" del formulario
+      verificacion: formValue.verificacion, 
+      vigencia: formValue.vigencia,           // <- "vigencia" del formulario
       vin: formValue.serie,                         // <- "serie" del formulario va a "vin"
       anio: Number(formValue.vigencia),             // <- Usa "vigencia" si ahí tienes el año, o cambia por el campo correcto
       color: formValue.color || '',                 // <- Este campo no está en el form, pero puedes completarlo aquí
-      employeeId: Number(formValue.responsable),    // <- "responsable" es el ID del empleado
-      active: formValue.estado.activo               // <- Obtienes el booleano desde el grupo "estado"
+      employeeId: Number(formValue.responsable) || 1,    // <- "responsable" es el ID del empleado
+      active: formValue.estado.activo,
+      km: Number(formValue.km) || 0
     };
 
-    // this.rh.createEmployee(dto).subscribe({
-    //   next: (response) => {
-    //     Swal.fire({
-    //       icon: 'success',
-    //       title: 'Datos guardados',
-    //       text: 'Los datos personales fueron guardados correctamente.',
-    //     });
-    //   },
-    //   error: (err) => {
-    //     Swal.fire({
-    //       icon: 'error',
-    //       title: 'Error',
-    //       text: 'Ocurrió un error al guardar los datos.',
-    //     });
-    //     console.error(err);
-    //   }
-    // });
+    this.car.createNewCar(dto).subscribe({
+      next: (response) => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Datos guardados',
+          text: 'Los datos del vehículo fueron guardados correctamente.',
+        });
+      },
+      error: (err) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Ocurrió un error al guardar los datos.',
+        });
+        console.error(err);
+      }
+    });
   }
 
 
