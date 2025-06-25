@@ -204,7 +204,7 @@ export class InventoryComponent {
           }
 
           return {
-            odometro: Number(odometro),
+            odometro: Number(odometro)+row.km,
             litros: parseFloat(litros),
             precio: parseFloat(precio),
             comentarios
