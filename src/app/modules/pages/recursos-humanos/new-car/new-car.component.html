@@ -44,7 +44,7 @@
           Modelo:
           <i class="fas fa-info-circle info-icon" data-tooltip="Año del modelo del vehículo."></i>
         </label>
-        <input type="date" formControlName="modelo" />
+        <input type="text" formControlName="modelo" />
 
         <label>
           No. de serie:
@@ -60,6 +60,12 @@
       </div>
 
       <div class="group">
+        <label>
+          Color del vehículo:
+          <i class="fas fa-info-circle info-icon" data-tooltip="Color del vehículo"></i>
+        </label>
+        <input type="text" formControlName="color" />
+
         <label>
           Compañía de seguro:
           <i class="fas fa-info-circle info-icon" data-tooltip="Nombre de la aseguradora del vehículo."></i>
@@ -95,14 +101,16 @@
         <i class="fas fa-info-circle info-icon"
           data-tooltip="Seleccione el trabajadores responsable de este vehiculo"></i>
         <select formControlName="responsable">
-          <option value="">Seleccione</option>
-          <!-- <option *ngFor="let Employees of catEmployees" [value]="Employees.id">{{ Employees.name }}</option> -->
+          <option value="">Sin Responsable</option>
+          <option *ngFor="let Employees of catEmployees" [value]="Employees.id">{{ Employees.name }}</option>
         </select>
       </div>
 
     </div>
     <div class="col-auto d-flex justify-content-end mt-auto">
-      <button type="submit" class="btn  btn-sm">Guardar vehiculo</button>
+      <button type="button" class="btn btn-outline-secondary btn-sm ms-2"
+        *ngIf="isEditMode" (click)="habilitarEdicion()">Habilitar edición</button>
+      <button type="submit" class="btn  btn-sm" [disabled]="carForm.disabled">Guardar vehiculo</button>
     </div>
 
   </form>

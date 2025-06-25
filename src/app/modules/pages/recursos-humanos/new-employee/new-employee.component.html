@@ -88,10 +88,18 @@
         <label>Horario de salida:</label>
         <input type="text" formControlName="horarioSal" />
 
+        <div class="dias-semana">
+          <label *ngFor="let dia of diasSemana">
+            <input type="checkbox" [(ngModel)]="dia.checked" />
+            {{ dia.nombre }}
+          </label>
+        </div>
+
       </div>
 
     </div>
-    <div class="col-auto d-flex justify-content-end mt-auto">
+    <div
+      class="col-auto d-flex justify-content-end mt-auto  botones-responsivos">
       <button type="submit" [disabled]="datosPersonalesForm.disabled"
         class="btn  btn-sm">Guardar sección</button>
       <button type="button" class="btn btn-outline-secondary btn-sm ms-2"
@@ -117,9 +125,11 @@
       <input type="text" formControlName="numExterior"
         placeholder="No. Exterior" />
     </div>
-    <div class="col-auto d-flex justify-content-end mt-auto">
-      <button type="submit" class="btn  btn-sm" [disabled]="direccionForm.disabled">Guardar sección</button>
-            <button type="button" class="btn btn-outline-secondary btn-sm ms-2"
+    <div
+      class="col-auto d-flex justify-content-end mt-auto  botones-responsivos">
+      <button type="submit" class="btn  btn-sm"
+        [disabled]="direccionForm.disabled">Guardar sección</button>
+      <button type="button" class="btn btn-outline-secondary btn-sm ms-2"
         *ngIf="isEditMode" (click)="editarDireccion()">
         Editar sección
       </button>
@@ -219,7 +229,8 @@
         </div>
       </div>
     </div>
-    <div class="col-auto d-flex justify-content-end mt-auto">
+    <div
+      class="col-auto d-flex justify-content-end mt-auto  botones-responsivos">
       <button type="submit" class="btn  btn-sm"
         (click)="guardarEmpleo()">Guardar sección</button>
       <button type="button" class="btn btn-outline-secondary btn-sm ms-2"
@@ -239,8 +250,10 @@
         placeholder="Número de tarjeta" />
       <input type="text" formControlName="banco" placeholder="Banco" />
     </div>
-    <div class="col-auto d-flex justify-content-end mt-auto">
-      <button type="submit" class="btn  btn-sm" [disabled]="pagoForm.disabled">Guardar sección</button>
+    <div
+      class="col-auto d-flex justify-content-end mt-auto  botones-responsivos">
+      <button type="submit" class="btn  btn-sm"
+        [disabled]="pagoForm.disabled">Guardar sección</button>
       <button type="button" class="btn btn-outline-secondary btn-sm ms-2"
         *ngIf="isEditMode" (click)="editarPago()">
         Editar sección</button>
@@ -264,8 +277,10 @@
     </div>
     <button type="button" class="btn btn-link p-0 mb-2"
       (click)="agregarContacto()">➕ Agregar contacto</button>
-    <div class="col-auto d-flex justify-content-end mt-auto">
-      <button type="submit" class="btn btn-sm" [disabled]="emergenciaForm.disabled">Guardar sección</button>
+    <div
+      class="col-auto d-flex justify-content-end mt-auto  botones-responsivos">
+      <button type="submit" class="btn btn-sm"
+        [disabled]="emergenciaForm.disabled">Guardar sección</button>
       <button type="button" class="btn btn-outline-secondary btn-sm ms-2"
         *ngIf="isEditMode" (click)="editarEmergencia()">
         Editar sección</button>
@@ -289,8 +304,10 @@
     </div>
     <button type="button" class="btn btn-link p-0 mb-2"
       (click)="agregarBermed()">➕ Agregar teléfono</button>
-    <div class="col-auto d-flex justify-content-end mt-auto">
-      <button type="submit" class="btn btn-sm" [disabled]="bermedForm.disabled">Guardar sección</button>
+    <div
+      class="col-auto d-flex justify-content-end mt-auto  botones-responsivos">
+      <button type="submit" class="btn btn-sm"
+        [disabled]="bermedForm.disabled">Guardar sección</button>
       <button type="button" class="btn btn-outline-secondary btn-sm ms-2"
         *ngIf="isEditMode" (click)="editarBermed()">
         Editar sección</button>

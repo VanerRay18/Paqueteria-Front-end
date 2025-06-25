@@ -48,6 +48,16 @@ export class NewEmployeeComponent implements OnInit {
   datosDocumentosCargados = false;
   datosUniformesCargados = false;
 
+  diasSemana = [
+    { nombre: 'Lunes', valor: 1, checked: true },
+    { nombre: 'Martes', valor: 2, checked: true },
+    { nombre: 'Miércoles', valor: 3, checked: true },
+    { nombre: 'Jueves', valor: 4, checked: true },
+    { nombre: 'Viernes', valor: 5, checked: true },
+    { nombre: 'Sábado', valor: 6, checked: true },
+    { nombre: 'Domingo', valor: 7, checked: true },
+  ];
+
 
 
   constructor(private fb: FormBuilder,
@@ -70,6 +80,9 @@ export class NewEmployeeComponent implements OnInit {
           this.employeeIdPatch = id;
           this.isEditMode = true;
           this.loadEmployeeData(id); // solo una vez
+
+          // Limpiar el ID después de usarlo
+          this.fileTransferService.clearIdTercero();
         }
       });
 
@@ -81,7 +94,7 @@ export class NewEmployeeComponent implements OnInit {
     this.rh.getCatalogos().subscribe((response: ApiResponse) => {
       this.data = response.data;
       this.allDocumentos = response.data.catDocuments;
-      this.allUniforms = response.data.catEmployeeUniforms;
+      this.allUniforms = response.data.catMaterials;
       this.catJobs = response.data.catJobs;
       this.catSeguros = response.data.catSeguros;
       this.catEmployments = response.data.catEmployments;
@@ -92,6 +105,12 @@ export class NewEmployeeComponent implements OnInit {
         console.error('Ocurrio un error', error);
       });
 
+  }
+
+  getDiasNoSeleccionados(): number[] {
+    return this.diasSemana
+      .filter(dia => !dia.checked)
+      .map(dia => dia.valor);
   }
 
   esFormularioRealmenteVacio(formGroup: FormGroup): boolean {
@@ -317,6 +336,8 @@ export class NewEmployeeComponent implements OnInit {
     const formValue = this.datosPersonalesForm.value;
 
     const { name, firstSurname, secondSurname } = this.separarNombreCompleto(formValue.nombreCompleto);
+    const noSeleccionados = this.getDiasNoSeleccionados();
+    console.log('Días no seleccionados:', noSeleccionados);
 
     const formatHorario = (horaStr: string) => {
       if (!horaStr) return null;
@@ -623,37 +644,37 @@ export class NewEmployeeComponent implements OnInit {
     }
   }
 
-onFotoSelected(event: any): void {
-  const file = event.target.files[0];
-  if (file) {
-    // Leer la imagen para mostrar la vista previa
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.fotoPreview = reader.result as string;
-    };
-    reader.readAsDataURL(file);
+  onFotoSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      // Leer la imagen para mostrar la vista previa
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.fotoPreview = reader.result as string;
+      };
+      reader.readAsDataURL(file);
 
-    // Crear un FormData para enviar el archivo al backend
-    const formData = new FormData();
-    formData.append('files', file);
+      // Crear un FormData para enviar el archivo al backend
+      const formData = new FormData();
+      formData.append('files', file);
 
-   const idEmpleado = this.employeeIdPatch || this.employeeId;
-    if (!idEmpleado) {
-      Swal.fire('Error', 'No se pudo determinar el ID del empleado.', 'error');
-      return;
-    }
-
-    // Llamada al servicio para guardar el archivo
-    this.rh.SaveFoto(formData, idEmpleado).subscribe({
-      next: (res) => {
-        console.log('Archivo subido con éxito', res);
-      },
-      error: (err) => {
-        console.error('Error al subir el archivo', err);
+      const idEmpleado = this.employeeIdPatch || this.employeeId;
+      if (!idEmpleado) {
+        Swal.fire('Error', 'No se pudo determinar el ID del empleado.', 'error');
+        return;
       }
-    });
+
+      // Llamada al servicio para guardar el archivo
+      this.rh.SaveFoto(formData, idEmpleado).subscribe({
+        next: (res) => {
+          console.log('Archivo subido con éxito', res);
+        },
+        error: (err) => {
+          console.error('Error al subir el archivo', err);
+        }
+      });
+    }
   }
-}
 
   // Drag functions for uniforms
   onDragStartUniform(event: DragEvent, Uniform: { id: number, name: string }) {

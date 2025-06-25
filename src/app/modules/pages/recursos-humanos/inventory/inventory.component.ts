@@ -38,7 +38,8 @@ export class InventoryComponent {
     private fb: FormBuilder,
     private rh: RHService,
     private tabMaterial: TabMaterialService,
-    private cars: CarsService
+    private cars: CarsService,
+    private fileTransferService: FileTransferService
   ) {
   }
 
@@ -46,13 +47,54 @@ export class InventoryComponent {
     this.getData();
   }
 
-  onDelete(licenciaId: any) {
+  onDeleteCar(car: any) {
+    console.log('ID del coche a eliminar:', car.id);
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: "¡No podrás deshacer esta acción!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Aquí puedes llamar al servicio para eliminar el coche
+        this.cars.deleteCar(car.id).subscribe((response: ApiResponse) => {
+          if (response.success) {
+            Swal.fire(
+              'Eliminado',
+              'El coche ha sido eliminado correctamente.',
+              'success'
+            );
+            this.getData(); // Actualiza la lista de coches
+          } else {
+            Swal.fire(
+              'Error',
+              'No se pudo eliminar el coche. Inténtalo de nuevo más tarde.',
+              'error'
+            );
+          }
+        }, (error) => {
+          console.error('Error al eliminar el coche:', error);
+          Swal.fire(
+            'Error',
+            'Ocurrió un error al intentar eliminar el coche.',
+            'error'
+          );
+        });
+      }
+    });
+
+  }
+
+  onDeleteMaterial(materialId: any) {
 
   }
 
   getData() {
     this.tabMaterial.getMateriales().subscribe((response: ApiResponse) => {
-      console.log('Datos obtenidos:', response.data);
+      // console.log('Datos obtenidos:', response.data);
       const fecha = response.data.ts_created
       this.dataC = response.data.map((item: any) => ({
         ...item,
@@ -70,11 +112,11 @@ export class InventoryComponent {
 
   }
 
- showDetails(row: any) {
-  this.cars.getFualCarLog(row.id).subscribe((data: any) => {
-    const bitacora = data.data;
+  showDetails(row: any) {
+    this.cars.getFualCarLog(row.id).subscribe((data: any) => {
+      const bitacora = data.data;
 
-    const renderTabla = () => `
+      const renderTabla = () => `
       <style>
         .tabla-responsive {
           overflow-x: auto;
@@ -159,92 +201,99 @@ export class InventoryComponent {
       </div>
     `;
 
-    const abrirSwalTabla = () => {
-      Swal.fire({
-        title: `Bitácora del vehículo: ${row.placas || 'Sin placas'}`,
-        html: renderTabla(),
-        width: '1000px',
-        customClass: {
-          popup: 'swal-wide'
-        },
-        showConfirmButton: true,
-        confirmButtonText: 'Cerrar',
-        allowOutsideClick: false,
-        didOpen: () => {
-          const btn = document.getElementById('btnNuevoRegistro');
-          if (btn) {
-            btn.addEventListener('click', () => abrirSwalFormulario());
+      const abrirSwalTabla = () => {
+        Swal.fire({
+          title: `Bitácora del vehículo: ${row.placas || 'Sin placas'}`,
+          html: renderTabla(),
+          width: '1000px',
+          customClass: {
+            popup: 'swal-wide'
+          },
+          showConfirmButton: true,
+          confirmButtonText: 'Cerrar',
+          allowOutsideClick: false,
+          didOpen: () => {
+            const btn = document.getElementById('btnNuevoRegistro');
+            if (btn) {
+              btn.addEventListener('click', () => abrirSwalFormulario());
+            }
           }
-        }
-      });
-    };
+        });
+      };
 
-    const abrirSwalFormulario = () => {
-      Swal.fire({
-        title: 'Agregar nuevo registro',
-        html: `
+      const abrirSwalFormulario = () => {
+        Swal.fire({
+          title: 'Agregar nuevo registro',
+          html: `
           <input type="number" id="km" class="swal2-input" placeholder="Kilómetros">
           <input type="number" step="0.1" id="litros" class="swal2-input" placeholder="Litros">
           <input type="number" step="0.1" id="costo" class="swal2-input" placeholder="Costo">
           <textarea id="comentarios" class="swal2-textarea" placeholder="Comentarios"></textarea>
         `,
-        focusConfirm: false,
-        showCancelButton: true,
-        confirmButtonText: 'Guardar',
-        cancelButtonText: 'Cancelar',
-        preConfirm: () => {
-          const odometro = (document.getElementById('km') as HTMLInputElement).value;
-          const litros = (document.getElementById('litros') as HTMLInputElement).value;
-          const precio = (document.getElementById('costo') as HTMLInputElement).value;
-          const comentarios = (document.getElementById('comentarios') as HTMLTextAreaElement).value;
+          focusConfirm: false,
+          showCancelButton: true,
+          confirmButtonText: 'Guardar',
+          cancelButtonText: 'Cancelar',
+          preConfirm: () => {
+            const odometro = (document.getElementById('km') as HTMLInputElement).value;
+            const litros = (document.getElementById('litros') as HTMLInputElement).value;
+            const precio = (document.getElementById('costo') as HTMLInputElement).value;
+            const comentarios = (document.getElementById('comentarios') as HTMLTextAreaElement).value;
 
-          if (!odometro || !litros || !precio) {
-            Swal.showValidationMessage('Todos los campos excepto comentarios son obligatorios');
-            return false;
-          }
-
-          return {
-            odometro: Number(odometro),
-            litros: parseFloat(litros),
-            precio: parseFloat(precio),
-            comentarios
-          };
-        }
-      }).then(result => {
-        if (result.isConfirmed && result.value) {
-          const datos = {
-            ...result.value,
-            carId: row.id
-          };
-
-          this.cars.createFuelLog(datos).subscribe({
-            next: () => {
-              Swal.fire({
-                icon: 'success',
-                title: 'Datos guardados',
-                text: 'Registro agregado correctamente.',
-              }).then(() => {
-                this.showDetails(row);
-              });
-            },
-            error: (err) => {
-              Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Ocurrió un error al guardar los datos.',
-              });
-              console.error(err);
+            if (!odometro || !litros || !precio) {
+              Swal.showValidationMessage('Todos los campos excepto comentarios son obligatorios');
+              return false;
             }
-          });
-        }
-      });
-    };
 
-    abrirSwalTabla();
-  });
-}
+            return {
+              odometro: Number(odometro),
+              litros: parseFloat(litros),
+              precio: parseFloat(precio),
+              comentarios
+            };
+          }
+        }).then(result => {
+          if (result.isConfirmed && result.value) {
+            const datos = {
+              ...result.value,
+              carId: row.id
+            };
 
-  onEdit(data: any) {
+            this.cars.createFuelLog(datos).subscribe({
+              next: () => {
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Datos guardados',
+                  text: 'Registro agregado correctamente.',
+                }).then(() => {
+                  this.showDetails(row);
+                });
+              },
+              error: (err) => {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: 'Ocurrió un error al guardar los datos.',
+                });
+                console.error(err);
+              }
+            });
+          }
+        });
+      };
+
+      abrirSwalTabla();
+    });
+  }
+
+  onEditCar(data: any) {
+    console.log('Editar vehículo:', data.id);
+    const id = data.id; // Obtiene el ID del empleado
+    this.fileTransferService.setIdTercero(id); // Establece el ID del
+    this.router.navigate(['/pages/RH/Registrar-Automovil']);
+  }
+
+  onEditMat(data: any) {
     //AAGP790513HH4
 
   }

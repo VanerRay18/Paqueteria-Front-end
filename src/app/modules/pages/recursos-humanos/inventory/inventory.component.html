@@ -46,9 +46,9 @@
               [maxHeight]="'630px'"
               [itemsPerPage]="10"
               [showActionsEdit]=true
-              (edit)="onEdit($event)"
+              (edit)="onEditCar($event)"
               [showActionsDeleted]=true
-              (delete)="onDelete($event)"
+              (delete)="onDeleteCar($event)"
               [showActionsPdf]=false
               [showActiveCheckbox]=false
               [showDetailsColumn]=true
@@ -70,7 +70,7 @@
                 class="fa-solid fa-magnifying-glass"></i> Buscar</label>
           </div>
 
-    
+
 
           <div class="col-auto col-lg-6 d-flex justify-content-end mt-auto">
             <a [routerLink]="['/pages/RH/Registrar-Trabajador']">
@@ -92,9 +92,9 @@
               [maxHeight]="'630px'"
               [itemsPerPage]="10"
               [showActionsEdit]=true
-              (edit)="onEdit($event)"
+              (edit)="onEditMat($event)"
               [showActionsDeleted]=true
-              (delete)="onDelete($event)"
+              (delete)="onDeleteMaterial($event)"
               [showActionsPdf]=false
               [showActiveCheckbox]=false
               [showDetailsColumn]=false

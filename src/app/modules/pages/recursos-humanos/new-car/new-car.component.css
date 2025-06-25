@@ -2,7 +2,8 @@
   padding: 2rem;
   border-radius: 12px;
   font-family: Arial, sans-serif;
-  h1{
+
+  h1 {
     font-weight: bold;
   }
 
@@ -43,22 +44,16 @@
     }
   }
 
-  .grid,
-  .grid-2,
-  .grid-3 {
-    display: grid;
-    gap: 1rem;
-  }
-
   .grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 1rem;
   }
 
   @media (max-width: 768px) {
     .grid {
-      grid-template-columns: 1fr; /* 1 sola columna en pantallas pequeñas */
+      grid-template-columns: 1fr;
+      /* 1 sola columna en pantallas pequeñas */
     }
   }
 
@@ -82,28 +77,39 @@
   }
 
   button:hover {
-    background-color: #3E5F8A; /* Fondo marrón en hover */
-    color: #ffffff; /* Texto blanco en hover */
-    border-color: #3E5F8A; /* Borde marrón en hover */
+    background-color: #3E5F8A;
+    /* Fondo marrón en hover */
+    color: #ffffff;
+    /* Texto blanco en hover */
+    border-color: #3E5F8A;
+    /* Borde marrón en hover */
   }
 
   button:active {
-    background-color: #284F81; /* Fondo más oscuro para active */
-    color: #ffffff; /* Texto blanco en active */
-    border-color: #284F81; /* Borde oscuro en active */
-    outline: none; /* Sin borde adicional */
+    background-color: #284F81;
+    /* Fondo más oscuro para active */
+    color: #ffffff;
+    /* Texto blanco en active */
+    border-color: #284F81;
+    /* Borde oscuro en active */
+    outline: none;
+    /* Sin borde adicional */
   }
 }
 
 .foto-container {
-  margin: 20px 0;
-  text-align: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .carousel {
   position: relative;
-  width: 500px;
-  height: 330px;
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  aspect-ratio: 3 / 2; /* mantiene proporción sin forzar altura fija */
   margin: 0 auto;
   border: 2px solid #ccc;
   border-radius: 10px;
@@ -129,9 +135,12 @@
 }
 
 .carousel-control {
-  all: unset; /* Elimina todos los estilos por defecto del botón */
-  font-size: 2rem; /* Ajusta el tamaño de la flecha */
-  color: #333; /* Cambia según tu diseño */
+  all: unset;
+  /* Elimina todos los estilos por defecto del botón */
+  font-size: 2rem;
+  /* Ajusta el tamaño de la flecha */
+  color: #333;
+  /* Cambia según tu diseño */
   cursor: pointer;
   position: absolute;
   top: 50%;
@@ -153,7 +162,8 @@
 }
 
 .carousel-control:hover {
-  color: #000; /* Cambia si quieres resaltar al pasar el mouse */
+  color: #000;
+  /* Cambia si quieres resaltar al pasar el mouse */
 }
 
 .foto-label {
@@ -162,6 +172,7 @@
   font-weight: bold;
   cursor: pointer;
 }
+
 .foto-label {
   cursor: pointer;
   font-size: 14px;
@@ -204,17 +215,30 @@
   font-size: 13px;
   font-weight: 400;
   font-family: 'Segoe UI', sans-serif;
-  letter-spacing: 0.4px; /* <- separación entre letras */
+  letter-spacing: 0.4px;
+  /* <- separación entre letras */
   line-height: 1.4;
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease-in-out;
   z-index: 1000;
-  box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 
 .info-icon:hover::after {
   opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .col-auto.d-flex {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .col-auto.d-flex button {
+    width: 100%;
+    margin: 5px 0 !important;
+  }
 }

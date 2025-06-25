@@ -165,8 +165,8 @@ SaveFoto(data: FormData, employeeId: any): Observable<ApiResponse> {
 
   DeleteEmployee(employeeId: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'employeeId': employeeId });
-    return this.http.delete<ApiResponse>(`${environment.baseService}${'/employees/softdelete'}`,
-      { headers }
+    return this.http.patch<ApiResponse>(`${environment.baseService}${'/employees/softdelete'}`, null,
+     { headers }
     );
   }
 

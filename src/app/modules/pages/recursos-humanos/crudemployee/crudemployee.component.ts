@@ -55,7 +55,7 @@ export class CRUDEmployeeComponent {
     }).then((result) => {
       if (result.isConfirmed) {
         // Aquí puedes llamar al servicio para eliminar el empleado
-        this.rh.getEmployeeById(employeeId.id).subscribe((response: ApiResponse) => {
+        this.rh.DeleteEmployee(employeeId.id).subscribe((response: ApiResponse) => {
           if (response.success) {
             Swal.fire(
               'Eliminado',
