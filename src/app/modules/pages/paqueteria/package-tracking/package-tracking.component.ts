@@ -1,3 +1,4 @@
+import { formatDate } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import * as Papa from 'papaparse';
 import { PakageService } from 'src/app/services/pakage.service';
@@ -15,8 +16,11 @@ export class PackageTrackingComponent  implements OnInit {
   paqueteActual: string = '';
   incomingPackageId: number = 1; // ID del paquete entrante, puedes cambiarlo según tu lógica
   paquetes: any[] = [];
+  isMatch: boolean = false;  // Variable para controlar el disabled
+  cargamento: any[] = [];
+  total:number = 0;
 
-
+paquetesAgrupados: { fecha: string, paquetes: any[] }[] = [];
   constructor(
     private pakage: PakageService
   ) {
@@ -29,11 +33,36 @@ export class PackageTrackingComponent  implements OnInit {
     // Inicializar el componente
   }
 
+  agruparPorFechaDeEntrega(paquetes: any[]) {
+  const agrupados: { [fecha: string]: any[] } = {};
+
+  paquetes.forEach(p => {
+    const timestamp = p.commit_date;
+    const fecha = timestamp
+      ? formatDate(new Date(timestamp), 'dd-MM-yyyy', 'en-US')
+      : 'Sin fecha de entrega';
+
+    if (!agrupados[fecha]) agrupados[fecha] = [];
+    agrupados[fecha].push(p);
+  });
+
+  // Convertimos a array ordenado (opcionalmente por fecha)
+  this.paquetesAgrupados = Object.entries(agrupados).map(([fecha, paquetes]) => ({
+    fecha,
+    paquetes
+  }));
+}
+
   getData(): void {
     this.pakage.getPackageByCarga(this.incomingPackageId, 0, 50).subscribe(
       response => {
+        this.total = response.data.total
+        this.isMatch = response.data.cargamento.isMatch
+        this.cargamento = response.data.cagamento
         this.paquetes = response.data.packages; // Asignar los datos recibidos a la variable paquetes
         // console.log(response.data.packages);
+             this.agruparPorFechaDeEntrega(this.paquetes);
+
       },
       error => {
         console.error('Error al obtener los datos:', error);
@@ -42,19 +71,8 @@ export class PackageTrackingComponent  implements OnInit {
   }
 
   getBarraEstado(paquete: any): string {
-  const statusId = paquete.status?.id || 0;
-
-  if (statusId <= 4) {
-    return '0%'; // Solo en bodega lleno (barra vacía)
-  } else if (statusId >= 5 && statusId <= 7) {
-    // Avanza entre 33% y 66% según avance en ruta
-    const porcentaje = 33 + ((statusId - 5 + 1) / 3) * 33; // 5 → 33%, 6 → 50%, 7 → 66%
-    return `${porcentaje}%`;
-  } else if (statusId >= 8) {
-    return '100%'; // Entregado
-  }
-
-  return '0%';
+  const value = paquete.status.config?.value || 0;
+  return value+'%';
 }
 
 // Ojo para ver detalles

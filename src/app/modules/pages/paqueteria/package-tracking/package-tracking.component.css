@@ -88,7 +88,7 @@ h2 {
   display: flex;
   justify-content: space-between;
   font-size: 0.85rem;
-  color: #444;
+  color: #555555;
 }
 
 .barra-progreso {
@@ -105,4 +105,32 @@ h2 {
   background-color: #4caf50; /* verde por defecto */
   transition: width 0.3s ease;
 }
+.fecha-entrega-linea {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+  font-size: 18px; /* aumenté de 13px a 18px */
+  font-weight: 500;
+  color: #444444;
+}
 
+.fecha-entrega-linea::before,
+.fecha-entrega-linea::after {
+  content: '';
+  flex-grow: 1;
+  border-bottom: 1px solid #ccc;
+  margin-left: 10px;
+  margin-right: 0;
+}
+
+
+
+.btn-escanear:disabled {
+  background-color: #ccc !important; /* Gris claro */
+  color: #666 !important;            /* Texto gris */
+    border: 1px solid #ccc;
+
+  cursor: not-allowed;
+  opacity: 0.7;
+}

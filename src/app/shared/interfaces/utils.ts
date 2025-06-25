@@ -61,7 +61,7 @@ export interface Logs {
 export interface Cargamento {
   id: number;              // Ej: "#001"
   titulo: string;          // Ej: "Cargamento 1"
-  fecha: string;           // Ej: "2025-06-17"
+  ts_created: string;           // Ej: "2025-06-17"
   entregados: number;      // Ej: 80
   noEntregados: number;
   barra: number;          // Ej: 80

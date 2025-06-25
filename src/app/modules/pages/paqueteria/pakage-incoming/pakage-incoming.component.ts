@@ -36,9 +36,11 @@ export class PakageIncomingComponent implements OnInit {
         if (id !== null) {
           console.log('ID recibido:', id);
           this.PackageOrgId = id;
-
+          this.fileTransferService.clearIdTercero();
         }
       });
+
+      
 
     this.getDatos();
   }
