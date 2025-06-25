@@ -135,6 +135,10 @@ export class NewEmployeeComponent implements OnInit {
       tipoContratacion: [''],
     });
 
+    this.diasSemana.forEach(dia => {
+      this.datosPersonalesForm.addControl(dia.nombre, this.fb.control(dia.checked));
+    });
+
     this.direccionForm = this.fb.group({
       codigoPostal: [''],
       municipio: [''],

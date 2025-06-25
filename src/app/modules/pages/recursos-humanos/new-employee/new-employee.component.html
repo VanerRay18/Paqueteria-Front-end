@@ -8,20 +8,17 @@
     <div class="grid">
 
       <div class="foto-container">
-        <div class="preview"
-          [ngStyle]="{ 'background-image': 'url(' + fotoPreview + ')' }"></div>
+        <div class="preview" [ngStyle]="{ 'background-image': 'url(' + fotoPreview + ')' }"></div>
 
         <label for="foto" class="foto-label">
-          <i class="fas fa-info-circle info-icon"
-            data-tooltip="Selecione la fotografia del trabajador"></i>
+          <i class="fas fa-info-circle info-icon" data-tooltip="Selecione la fotografia del trabajador"></i>
           Fotografía de la persona
         </label>
         <input type="file" id="foto" (change)="onFotoSelected($event)" hidden />
       </div>
 
       <div class="group">
-        <i class="fas fa-info-circle info-icon"
-          data-tooltip="Nombre completo oficial del trabajador."></i>
+        <i class="fas fa-info-circle info-icon" data-tooltip="Nombre completo oficial del trabajador."></i>
         <label>Nombre completo del trabajador:</label>
         <input type="text" formControlName="nombreCompleto" />
 
@@ -30,18 +27,15 @@
         <label>RFC:</label>
         <input type="text" formControlName="rfc" />
 
-        <i class="fas fa-info-circle info-icon"
-          data-tooltip="Clave Única de Registro de Población."></i>
+        <i class="fas fa-info-circle info-icon" data-tooltip="Clave Única de Registro de Población."></i>
         <label>Curp:</label>
         <input type="text" formControlName="curp" />
 
-        <i class="fas fa-info-circle info-icon"
-          data-tooltip="Fecha de nacimiento del trabajador."></i>
+        <i class="fas fa-info-circle info-icon" data-tooltip="Fecha de nacimiento del trabajador."></i>
         <label>Fecha de nacimiento:</label>
         <input type="date" formControlName="fechaNacimiento" />
 
-        <i class="fas fa-info-circle info-icon"
-          data-tooltip="Seleccione el tipo de seguro medico del trabajador."></i>
+        <i class="fas fa-info-circle info-icon" data-tooltip="Seleccione el tipo de seguro medico del trabajador."></i>
         <label>Tipo de seguro:</label>
         <select formControlName="tipoSeguro">
           <option value>Seleccione</option>
@@ -56,22 +50,18 @@
       </div>
 
       <div class="group">
-        <i class="fas fa-info-circle info-icon"
-          data-tooltip="Fecha de inicio de labores del trabajador."></i>
+        <i class="fas fa-info-circle info-icon" data-tooltip="Fecha de inicio de labores del trabajador."></i>
         <label>Fecha de inicio laboral:</label>
         <input type="date" formControlName="fechaInicio" />
 
-        <i class="fas fa-info-circle info-icon"
-          data-tooltip="Seleccione el puesto laboral actual."></i>
+        <i class="fas fa-info-circle info-icon" data-tooltip="Seleccione el puesto laboral actual."></i>
         <label>Puesto laboral:</label>
         <select formControlName="puestoLaboral">
           <option value>Seleccione</option>
-          <option *ngFor="let Employments of catEmployments"
-            [value]="Employments.id">{{ Employments.name }}</option>
+          <option *ngFor="let Employments of catEmployments" [value]="Employments.id">{{ Employments.name }}</option>
         </select>
 
-        <i class="fas fa-info-circle info-icon"
-          data-tooltip="Seleccione el tipo de contratación del trabajador."></i>
+        <i class="fas fa-info-circle info-icon" data-tooltip="Seleccione el tipo de contratación del trabajador."></i>
         <label>Tipo de contratación:</label>
         <select formControlName="tipoContratacion">
           <option value>Seleccione</option>
@@ -79,18 +69,23 @@
             }}</option>
         </select>
 
-        <i class="fas fa-info-circle info-icon"
-          data-tooltip="Horario de entrada del trabajador."></i>
+        <i class="fas fa-info-circle info-icon" data-tooltip="Horario de entrada del trabajador."></i>
         <label>Horario de entrada:</label>
         <input type="text" formControlName="horarioEnt" />
-        <i class="fas fa-info-circle info-icon"
-          data-tooltip="Horario de salida del trabajador."></i>
+        <i class="fas fa-info-circle info-icon" data-tooltip="Horario de salida del trabajador."></i>
         <label>Horario de salida:</label>
         <input type="text" formControlName="horarioSal" />
 
         <div class="dias-semana">
-          <label *ngFor="let dia of diasSemana">
+          <!-- Icono con tooltip (asegúrate de tener un estilo adecuado para el tooltip) -->
+          <i class="fas fa-info-circle info-icon" data-tooltip="Días que el trabajador no va a trabajar."></i>
+
+          <!-- Primer label arriba de los checkboxes -->
+          <label class="dias-label">Días no laborables:</label>
+          <!-- Lista de checkboxes -->
+          <label *ngFor="let dia of diasSemana" class="custom-checkbox">
             <input type="checkbox" [(ngModel)]="dia.checked" />
+            <span class="checkmark"></span>
             {{ dia.nombre }}
           </label>
         </div>
@@ -98,12 +93,10 @@
       </div>
 
     </div>
-    <div
-      class="col-auto d-flex justify-content-end mt-auto  botones-responsivos">
-      <button type="submit" [disabled]="datosPersonalesForm.disabled"
-        class="btn  btn-sm">Guardar sección</button>
-      <button type="button" class="btn btn-outline-secondary btn-sm ms-2"
-        *ngIf="isEditMode" (click)="editarDatosPersonales()">
+    <div class="col-auto d-flex justify-content-end mt-auto  botones-responsivos">
+      <button type="submit" [disabled]="datosPersonalesForm.disabled" class="btn  btn-sm">Guardar sección</button>
+      <button type="button" class="btn btn-outline-secondary btn-sm ms-2" *ngIf="isEditMode"
+        (click)="editarDatosPersonales()">
         Editar sección
       </button>
     </div>
@@ -114,23 +107,18 @@
   <form [formGroup]="direccionForm" (ngSubmit)="guardarDireccion()">
     <h4>Dirección del trabajador</h4>
     <div class="grid-2">
-      <input type="text" formControlName="codigoPostal"
-        placeholder="Código Postal" />
+      <input type="text" formControlName="codigoPostal" placeholder="Código Postal" />
       <input type="text" formControlName="municipio" placeholder="Municipio" />
       <input type="text" formControlName="estado" placeholder="Estado" />
       <input type="text" formControlName="colonia" placeholder="Colonia" />
       <input type="text" formControlName="calle" placeholder="Calle" />
-      <input type="text" formControlName="numInterior"
-        placeholder="No. Interior" />
-      <input type="text" formControlName="numExterior"
-        placeholder="No. Exterior" />
+      <input type="text" formControlName="numInterior" placeholder="No. Interior" />
+      <input type="text" formControlName="numExterior" placeholder="No. Exterior" />
     </div>
-    <div
-      class="col-auto d-flex justify-content-end mt-auto  botones-responsivos">
-      <button type="submit" class="btn  btn-sm"
-        [disabled]="direccionForm.disabled">Guardar sección</button>
-      <button type="button" class="btn btn-outline-secondary btn-sm ms-2"
-        *ngIf="isEditMode" (click)="editarDireccion()">
+    <div class="col-auto d-flex justify-content-end mt-auto  botones-responsivos">
+      <button type="submit" class="btn  btn-sm" [disabled]="direccionForm.disabled">Guardar sección</button>
+      <button type="button" class="btn btn-outline-secondary btn-sm ms-2" *ngIf="isEditMode"
+        (click)="editarDireccion()">
         Editar sección
       </button>
     </div>
@@ -145,18 +133,12 @@
           <div class="draggable card col-lg-6 col-auto">
             <h5>Documentacion entregada:</h5>
             <div class="assigned-roles">
-              <div
-                *ngFor="let Documento of assignedDocumentos"
-                draggable="true"
-                (dragstart)="onDragStart($event, Documento)"
-                class="custom-checkbox draggable-role assigned-role">
+              <div *ngFor="let Documento of assignedDocumentos" draggable="true"
+                (dragstart)="onDragStart($event, Documento)" class="custom-checkbox draggable-role assigned-role">
                 <input type="checkbox" checked disabled /> {{ Documento.name }}
               </div>
               <!-- Área de drop para asignar roles -->
-              <div
-                class="drop-area"
-                (dragover)="onDragOver($event)"
-                (drop)="onDrop($event, 'assigned')">
+              <div class="drop-area" (dragover)="onDragOver($event)" (drop)="onDrop($event, 'assigned')">
                 <p>Arrastra aquí para asignar docuemtacion</p>
               </div>
             </div>
@@ -166,18 +148,12 @@
           <div class="draggable card col-lg-6 col-auto ">
             <h5>Documentacion Faltante:</h5>
             <div class="all-roles">
-              <div
-                *ngFor="let Documento of allDocumentos"
-                draggable="true"
-                (dragstart)="onDragStart($event, Documento)"
+              <div *ngFor="let Documento of allDocumentos" draggable="true" (dragstart)="onDragStart($event, Documento)"
                 class="custom-checkbox draggable-role">
                 <input type="checkbox" disabled /> {{ Documento.name }}
               </div>
               <!-- Área de drop para quitar roles -->
-              <div
-                class="drop-area"
-                (dragover)="onDragOver($event)"
-                (drop)="onDrop($event, 'all')">
+              <div class="drop-area" (dragover)="onDragOver($event)" (drop)="onDrop($event, 'all')">
                 <p>Arrastra aquí para quitar docuemtacion</p>
               </div>
             </div>
@@ -189,18 +165,12 @@
           <div class="draggable card col-lg-6 col-auto">
             <h5>Material entregada:</h5>
             <div class="assigned-roles">
-              <div
-                *ngFor="let Uniform of assignedUniforms"
-                draggable="true"
-                (dragstart)="onDragStartUniform($event, Uniform)"
-                class="custom-checkbox draggable-role assigned-role">
+              <div *ngFor="let Uniform of assignedUniforms" draggable="true"
+                (dragstart)="onDragStartUniform($event, Uniform)" class="custom-checkbox draggable-role assigned-role">
                 <input type="checkbox" checked disabled /> {{ Uniform.name }}
               </div>
               <!-- Área de drop para asignar roles -->
-              <div
-                class="drop-area"
-                (dragover)="onDragOverUniform($event)"
-                (drop)="onDropUniform($event, 'assigned')">
+              <div class="drop-area" (dragover)="onDragOverUniform($event)" (drop)="onDropUniform($event, 'assigned')">
                 <p>Arrastra aquí para asignar docuemtacion</p>
               </div>
             </div>
@@ -210,18 +180,12 @@
           <div class="draggable card col-lg-6 col-auto ">
             <h5>Todo el material:</h5>
             <div class="all-roles">
-              <div
-                *ngFor="let Uniform of allUniforms"
-                draggable="true"
-                (dragstart)="onDragStartUniform($event, Uniform)"
-                class="custom-checkbox draggable-role">
+              <div *ngFor="let Uniform of allUniforms" draggable="true"
+                (dragstart)="onDragStartUniform($event, Uniform)" class="custom-checkbox draggable-role">
                 <input type="checkbox" disabled /> {{ Uniform.name }}
               </div>
               <!-- Área de drop para quitar roles -->
-              <div
-                class="drop-area"
-                (dragover)="onDragOverUniform($event)"
-                (drop)="onDropUniform($event, 'all')">
+              <div class="drop-area" (dragover)="onDragOverUniform($event)" (drop)="onDropUniform($event, 'all')">
                 <p>Arrastra aquí para quitar docuemtacion</p>
               </div>
             </div>
@@ -229,12 +193,9 @@
         </div>
       </div>
     </div>
-    <div
-      class="col-auto d-flex justify-content-end mt-auto  botones-responsivos">
-      <button type="submit" class="btn  btn-sm"
-        (click)="guardarEmpleo()">Guardar sección</button>
-      <button type="button" class="btn btn-outline-secondary btn-sm ms-2"
-        *ngIf="isEditMode" (click)="editarEmpleo()">
+    <div class="col-auto d-flex justify-content-end mt-auto  botones-responsivos">
+      <button type="submit" class="btn  btn-sm" (click)="guardarEmpleo()">Guardar sección</button>
+      <button type="button" class="btn btn-outline-secondary btn-sm ms-2" *ngIf="isEditMode" (click)="editarEmpleo()">
         Editar sección
       </button>
     </div>
@@ -244,18 +205,13 @@
   <form [formGroup]="pagoForm" (ngSubmit)="guardarPago()">
     <h4>Datos de pago</h4>
     <div class="grid-3">
-      <input type="text" formControlName="clabe"
-        placeholder="Clave interbancaria" />
-      <input type="text" formControlName="tarjeta"
-        placeholder="Número de tarjeta" />
+      <input type="text" formControlName="clabe" placeholder="Clave interbancaria" />
+      <input type="text" formControlName="tarjeta" placeholder="Número de tarjeta" />
       <input type="text" formControlName="banco" placeholder="Banco" />
     </div>
-    <div
-      class="col-auto d-flex justify-content-end mt-auto  botones-responsivos">
-      <button type="submit" class="btn  btn-sm"
-        [disabled]="pagoForm.disabled">Guardar sección</button>
-      <button type="button" class="btn btn-outline-secondary btn-sm ms-2"
-        *ngIf="isEditMode" (click)="editarPago()">
+    <div class="col-auto d-flex justify-content-end mt-auto  botones-responsivos">
+      <button type="submit" class="btn  btn-sm" [disabled]="pagoForm.disabled">Guardar sección</button>
+      <button type="button" class="btn btn-outline-secondary btn-sm ms-2" *ngIf="isEditMode" (click)="editarPago()">
         Editar sección</button>
     </div>
   </form>
@@ -265,24 +221,18 @@
   <form [formGroup]="emergenciaForm" (ngSubmit)="guardarEmergencia()">
     <h4>Contacto de emergencia</h4>
     <div formArrayName="contactos">
-      <div *ngFor="let contacto of contactos.controls; let i = index"
-        [formGroupName]="i" class="grid-3 mb-2">
+      <div *ngFor="let contacto of contactos.controls; let i = index" [formGroupName]="i" class="grid-3 mb-2">
         <input type="tel" formControlName="telefono" placeholder="Teléfono" />
         <input type="text" formControlName="nombre" placeholder="Nombre" />
-        <input type="text" formControlName="parentesco"
-          placeholder="Parentesco" />
-        <button type="button" (click)="eliminarContacto(i)" class="icon-btn"><i
-            class="fa-solid fa-trash"></i></button>
+        <input type="text" formControlName="parentesco" placeholder="Parentesco" />
+        <button type="button" (click)="eliminarContacto(i)" class="icon-btn"><i class="fa-solid fa-trash"></i></button>
       </div>
     </div>
-    <button type="button" class="btn btn-link p-0 mb-2"
-      (click)="agregarContacto()">➕ Agregar contacto</button>
-    <div
-      class="col-auto d-flex justify-content-end mt-auto  botones-responsivos">
-      <button type="submit" class="btn btn-sm"
-        [disabled]="emergenciaForm.disabled">Guardar sección</button>
-      <button type="button" class="btn btn-outline-secondary btn-sm ms-2"
-        *ngIf="isEditMode" (click)="editarEmergencia()">
+    <button type="button" class="btn btn-link p-0 mb-2" (click)="agregarContacto()">➕ Agregar contacto</button>
+    <div class="col-auto d-flex justify-content-end mt-auto  botones-responsivos">
+      <button type="submit" class="btn btn-sm" [disabled]="emergenciaForm.disabled">Guardar sección</button>
+      <button type="button" class="btn btn-outline-secondary btn-sm ms-2" *ngIf="isEditMode"
+        (click)="editarEmergencia()">
         Editar sección</button>
     </div>
   </form>
@@ -291,25 +241,17 @@
   <form [formGroup]="bermedForm" (ngSubmit)="guardarBermed()">
     <h4>Teléfonos de BERMED</h4>
     <div formArrayName="telefonos">
-      <div *ngFor="let tel of telefonos.controls; let i = index"
-        [formGroupName]="i" class="grid-3 mb-2">
-        <input type="text" formControlName="modelo"
-          placeholder="Modelo del teléfono" />
+      <div *ngFor="let tel of telefonos.controls; let i = index" [formGroupName]="i" class="grid-3 mb-2">
+        <input type="text" formControlName="modelo" placeholder="Modelo del teléfono" />
         <input type="text" formControlName="plan" placeholder="Tipo de plan" />
-        <input type="text" formControlName="telefono"
-          placeholder="No. Teléfono" />
-        <button type="button" (click)="eliminarBermed(i)" class="icon-btn"><i
-            class="fa-solid fa-trash"></i></button>
+        <input type="text" formControlName="telefono" placeholder="No. Teléfono" />
+        <button type="button" (click)="eliminarBermed(i)" class="icon-btn"><i class="fa-solid fa-trash"></i></button>
       </div>
     </div>
-    <button type="button" class="btn btn-link p-0 mb-2"
-      (click)="agregarBermed()">➕ Agregar teléfono</button>
-    <div
-      class="col-auto d-flex justify-content-end mt-auto  botones-responsivos">
-      <button type="submit" class="btn btn-sm"
-        [disabled]="bermedForm.disabled">Guardar sección</button>
-      <button type="button" class="btn btn-outline-secondary btn-sm ms-2"
-        *ngIf="isEditMode" (click)="editarBermed()">
+    <button type="button" class="btn btn-link p-0 mb-2" (click)="agregarBermed()">➕ Agregar teléfono</button>
+    <div class="col-auto d-flex justify-content-end mt-auto  botones-responsivos">
+      <button type="submit" class="btn btn-sm" [disabled]="bermedForm.disabled">Guardar sección</button>
+      <button type="button" class="btn btn-outline-secondary btn-sm ms-2" *ngIf="isEditMode" (click)="editarBermed()">
         Editar sección</button>
     </div>
   </form>

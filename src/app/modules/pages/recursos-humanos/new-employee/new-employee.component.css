@@ -285,3 +285,61 @@
     margin: 0 !important; /* quitar márgenes laterales como ms-2 */
   }
 }
+
+.dias-semana {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-family: 'Arial', sans-serif;
+}
+
+.custom-checkbox {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  font-size: 16px;
+  padding-left: 30px; /* Para dar espacio al checkbox */
+  margin: 5px;
+}
+
+.custom-checkbox input[type="checkbox"] {
+  opacity: 0; /* Oculta el checkbox original */
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: -1; /* Para mantener la funcionalidad */
+}
+
+.checkmark {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 20px;
+  height: 20px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  transition: background-color 0.2s ease, border 0.2s ease;
+}
+
+.custom-checkbox input[type="checkbox"]:checked + .checkmark {
+  background-color: #4caf50; /* Verde cuando está marcado */
+  border: 2px solid #388e3c;
+}
+
+.checkmark::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 6px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+  opacity: 0; /* Inicialmente invisible */
+  transition: opacity 0.2s ease;
+}
+
+.custom-checkbox input[type="checkbox"]:checked + .checkmark::after {
+  opacity: 1; /* Mostrar el "check" cuando se marca */
+}
