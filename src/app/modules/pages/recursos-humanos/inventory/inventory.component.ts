@@ -245,19 +245,19 @@ export class InventoryComponent {
               return false;
             }
 
-            return {
-              odometro: Number(odometro),
-              litros: parseFloat(litros),
-              precio: parseFloat(precio),
-              comentarios
-            };
-          }
-        }).then(result => {
-          if (result.isConfirmed && result.value) {
-            const datos = {
-              ...result.value,
-              carId: row.id
-            };
+          return {
+            odometro: Number(odometro)+row.km,
+            litros: parseFloat(litros),
+            precio: parseFloat(precio),
+            comentarios
+          };
+        }
+      }).then(result => {
+        if (result.isConfirmed && result.value) {
+          const datos = {
+            ...result.value,
+            carId: row.id
+          };
 
             this.cars.createFuelLog(datos).subscribe({
               next: () => {

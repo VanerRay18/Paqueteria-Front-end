@@ -5,44 +5,54 @@
     <div class="paquetes-header">
       <div class="left">
         <strong>Paquetes registrados&nbsp;&nbsp;&nbsp;</strong>
-        <span>&nbsp;&nbsp;&nbsp;Total: 20</span>
+        <span>&nbsp;&nbsp;&nbsp;Total: {{this.total}}</span>
       </div>
       <input type="text" placeholder="Buscar..." class="buscador" />
       <div class="acciones">
         <input id="csvFile" type="file" (change)="onFileSelected($event)" accept=".csv" #fileInput
           style="display: none" />
 
-        <button class="btn btn-archivo" (click)="fileInput.click()">
+        <button class="btn btn-archivo" (click)="fileInput.click()" [disabled]="isMatch" [class.disabled-btn]="isMatch">
           📁 Cargar Excel
         </button>
         <button class="btn btn-escanear" (click)="mostrarSwal()">
           Comenzar a escanear
         </button>
-        <button class="btn btn-escanear" (click)="macheoPaquetes()">
+        <button class="btn btn-escanear" (click)="macheoPaquetes()" [disabled]="isMatch" [class.disabled-btn]="isMatch">
           Hacer macheo
         </button>
+
       </div>
     </div>
 
-    <div class="paquete" *ngFor="let paquete of paquetes">
-      <div class="codigo">
-        {{ paquete.guia }}
-        <i class="fa fa-eye" style="cursor:pointer; margin-left: 10px;" (click)="verDetalles(paquete)"></i>
+    <div *ngFor="let grupo of paquetesAgrupados">
+      <div class="fecha-entrega-linea">
+        <span>{{ grupo.fecha }}</span>
       </div>
+      <div class="paquete" *ngFor="let paquete of grupo.paquetes">
+        <div class="codigo">
+          <i class="fa fa-eye" style="cursor:pointer; margin-left: 10px;" (click)="verDetalles(paquete)"></i>
+          <i class="fa-solid fa-pen-to-square" style="cursor:pointer; margin-left: 10px;"
+            (click)="verDetalles(paquete)"></i>&nbsp;
 
-      <!-- Barra de progreso -->
-      <div class="barra-progreso">
-        <div class="segmento progreso" [style.width]="getBarraEstado(paquete)">
+          <span [ngStyle]="{ color: paquete.color }">{{ paquete.guia }}</span>
+        </div>
+
+        <div class="barra-progreso">
+          <div class="segmento progreso" [ngStyle]="{
+        width: getBarraEstado(paquete),
+        backgroundColor: paquete.status.config.color
+      }">
+          </div>
+        </div>
+
+        <div class="etapas">
+          <span></span>
+          <span>{{ paquete.status.tiempo | date: 'dd-MM-yyyy HH:mm' }}</span> <span></span>
         </div>
       </div>
-
-      <!-- Etapas visuales -->
-      <div class="etapas">
-        <span>En Bodega</span>
-        <span>Ruta de entrega</span>
-        <span>Entregado</span>
-      </div>
     </div>
+
 
   </div>
 </div>

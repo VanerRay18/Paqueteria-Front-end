@@ -65,7 +65,7 @@
 
           <hr>
           <div class="footer">
-            <span><strong>Fecha:</strong> {{ item.fecha }}</span>
+            <span><strong>Fecha:</strong> {{ item.ts_created | date: 'dd-MM-yyyy HH:mm'  }}</span>
             <span><strong>ID:</strong> {{ item.id }}</span>
           </div>
         </div>
