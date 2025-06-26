@@ -78,13 +78,13 @@
 
         <div class="dias-semana">
           <!-- Icono con tooltip (asegúrate de tener un estilo adecuado para el tooltip) -->
-          <i class="fas fa-info-circle info-icon" data-tooltip="Días que el trabajador no va a trabajar."></i>
+          <i class="fas fa-info-circle info-icon" data-tooltip="Días que el empleado va a trabajar."></i>
 
           <!-- Primer label arriba de los checkboxes -->
-          <label class="dias-label">Días no laborables:</label>
+          <label class="dias-label">Días laborables:</label>
           <!-- Lista de checkboxes -->
           <label *ngFor="let dia of diasSemana" class="custom-checkbox">
-            <input type="checkbox" [(ngModel)]="dia.checked" />
+            <input type="checkbox" [formControlName]="dia.nombre" />
             <span class="checkmark"></span>
             {{ dia.nombre }}
           </label>

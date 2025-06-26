@@ -135,6 +135,7 @@ export class NewEmployeeComponent implements OnInit {
       tipoContratacion: [''],
     });
 
+    // Agregar los días de la semana al formulario
     this.diasSemana.forEach(dia => {
       this.datosPersonalesForm.addControl(dia.nombre, this.fb.control(dia.checked));
     });
@@ -362,7 +363,9 @@ export class NewEmployeeComponent implements OnInit {
       salida: formatHorario(formValue.horarioSal),
       active: true,
       phone: formValue.telefono,
-      config: {},
+      config: {
+        attendanceExeption:noSeleccionados.length > 0 ? noSeleccionados : [],
+      },
       catJobId: Number(formValue.puestoLaboral),
       catEmploymentId: Number(formValue.tipoContratacion),
       catSeguroId: Number(formValue.tipoSeguro),
