@@ -86,4 +86,20 @@ export class PakageService {
     );
   }
 
+
+
+
+    createPackageWithConsolidado(packageId:any, description:any, data: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'packageId': packageId ,'description':description});
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/createPackageWithConsolidado'}`, data,
+      { headers }
+    );
+  }
+
+      updatePackageWithConsolidado(packageId:any, description:any, data: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'packageId': packageId ,'description':description});
+    return this.http.patch<ApiResponse>(`${environment.baseService}${'/package/createPackageWithConsolidado'}`, data,
+      { headers }
+    );
+  }
 }

@@ -33,8 +33,8 @@ export class PackageTrackingComponent implements OnInit {
   }
   ngOnInit(): void {
 
-    this.getData(this.page, this.size); 
-    
+    this.getData(this.page, this.size);
+
   }
 
   cambiarPagina(pagina: number) {
@@ -167,6 +167,30 @@ export class PackageTrackingComponent implements OnInit {
         const { body, headers } = result.value;
         console.log(body);
         console.log(headers);
+        console.log(paquete.consolidado.id)
+        if (paquete.consolidado.id == null) {
+          this.pakage.createPackageWithConsolidado(headers.packageId,headers.description,body).subscribe(
+            response => {
+             Swal.fire('¡Éxito!', `El consolidado fue ${esNuevo ? 'creado' : 'actualizado'} correctamente.`, 'success');
+            },
+            error => {
+              console.error('Error al obtener los datos:', error);
+              this.isLoading = false;
+            }
+          );
+          console.log("is post")
+        } else {
+           this.pakage.updatePackageWithConsolidado(headers.packageId,headers.description,body).subscribe(
+            response => {
+             Swal.fire('¡Éxito!', `El consolidado fue ${esNuevo ? 'creado' : 'actualizado'} correctamente.`, 'success');
+            },
+            error => {
+              console.error('Error al obtener los datos:', error);
+              this.isLoading = false;
+            }
+          );
+
+        }
         Swal.fire('¡Éxito!', `El consolidado fue ${esNuevo ? 'creado' : 'actualizado'} correctamente.`, 'success');
         this.getData(this.page, this.size);
       }
