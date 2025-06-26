@@ -27,7 +27,7 @@ body {
   margin-top: 30px;
   padding: 40px 30px;
   border-radius: 16px;
-  box-shadow: 0px 12px 30px rgba(19, 53, 224, 0.402);
+  box-shadow: 0px 0px 25px #00a2c75d;
   width: 100%;
   max-width: 400px;
   text-align: center;
@@ -75,7 +75,7 @@ input:focus {
 
 /* Botón login */
 .btn-login {
-  background-color: #2563eb;
+  background-color: #0070a8;
   color: white;
   border: none;
   padding: 12px;
@@ -90,7 +90,7 @@ input:focus {
 }
 
 .btn-login:hover:not(:disabled) {
-  background-color: #1d4ed8;
+  background-color: #0a4d6f;
 }
 
 .btn-login:disabled {
@@ -103,7 +103,7 @@ input:focus {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  border: 4px solid #60a5fa;
+  border: 4px solid #027EBA;
   border-top: 4px solid transparent;
   animation: spin 1s linear infinite;
 }
@@ -169,3 +169,11 @@ input:focus {
     padding-left: 34px !important;
   }
 }
+
+/* Cuando se está cargando, vuelve el botón semitransparente */
+.btn-login.loading {
+  background-color: rgba(0, 112, 168, 0); /* más transparente */
+  color: transparent; /* oculta el texto */
+  pointer-events: none; /* desactiva interacción */
+}
+

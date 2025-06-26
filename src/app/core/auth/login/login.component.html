@@ -28,12 +28,19 @@
     </div>
   </div>
 
-  <button type="submit" id="loginButton" class="btn-login btn-primary" [disabled]="loginForm.invalid">
-    <ng-container *ngIf="!isLoading; else loadingTemplate">Iniciar sesión</ng-container>
-    <ng-template #loadingTemplate>
-      <div class="loader"></div>
-    </ng-template>
-  </button>
+<button
+  type="submit"
+  id="loginButton"
+  class="btn-login btn-primary"
+  [class.loading]="isLoading"
+  [disabled]="loginForm.invalid || isLoading"
+>
+  <ng-container *ngIf="!isLoading; else loadingTemplate">Iniciar sesión</ng-container>
+  <ng-template #loadingTemplate>
+    <div class="loader"></div>
+  </ng-template>
+</button>
+
 </form>
 
   </div>

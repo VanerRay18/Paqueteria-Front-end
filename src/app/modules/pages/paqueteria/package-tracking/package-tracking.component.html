@@ -31,9 +31,9 @@
       </div>
       <div class="paquete" *ngFor="let paquete of grupo.paquetes">
         <div class="codigo">
-          <i class="fa fa-eye" style="cursor:pointer; margin-left: 10px;" (click)="verDetalles(paquete)"></i>
+          <i class="fa fa-eye" style="cursor:pointer; margin-left: 10px;" (click)="verdetallesPaquete(paquete)"></i>
           <i class="fa-solid fa-pen-to-square" style="cursor:pointer; margin-left: 10px;"
-            (click)="verDetalles(paquete)"></i>&nbsp;
+            (click)="editarConsolidado(paquete)"></i>&nbsp;
 
           <span [ngStyle]="{ color: paquete.color }">{{ paquete.guia }}</span>
         </div>
@@ -48,7 +48,7 @@
 
         <div class="etapas">
           <span></span>
-          <span>{{ paquete.status.tiempo | date: 'dd-MM-yyyy HH:mm' }}</span> <span></span>
+          <span>{{paquete.status.name}} - {{ paquete.status.tiempo | date: 'dd-MM-yyyy HH:mm' }}</span> <span></span>
         </div>
       </div>
     </div>
