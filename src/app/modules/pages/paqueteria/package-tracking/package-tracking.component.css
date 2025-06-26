@@ -134,3 +134,24 @@ h2 {
   cursor: not-allowed;
   opacity: 0.7;
 }
+.loader-contenedor {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 6px solid #ccc;
+  border-top-color: #007bff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+

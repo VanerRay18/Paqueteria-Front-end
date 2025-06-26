@@ -20,7 +20,12 @@ export class PackageTrackingComponent implements OnInit {
   cargamento: any = null;
   total: number = 0;
 
-  paquetesAgrupados: { fecha: string, paquetes: any[] }[] = [];
+  isLoading: boolean = false;
+  page: number = 0;
+  size: number = 20;
+
+  paquetesAgrupados: any[] = []; // Agrupados y paginados
+
   constructor(
     private pakage: PakageService
   ) {
@@ -28,10 +33,15 @@ export class PackageTrackingComponent implements OnInit {
   }
   ngOnInit(): void {
 
-
-    this.getData(); // Llamar al método para obtener los datos al inicializar el componente
-    // Inicializar el componente
+    this.getData(this.page, this.size); 
+    
   }
+
+  cambiarPagina(pagina: number) {
+    this.page = pagina;
+    this.getData(this.page, this.size);
+  }
+
   renderInput(id: string, value: string = ''): string {
     const safeValue = value ?? ''; // evita undefined
     return `
@@ -158,7 +168,7 @@ export class PackageTrackingComponent implements OnInit {
         console.log(body);
         console.log(headers);
         Swal.fire('¡Éxito!', `El consolidado fue ${esNuevo ? 'creado' : 'actualizado'} correctamente.`, 'success');
-        this.getData();
+        this.getData(this.page, this.size);
       }
     });
   }
@@ -203,10 +213,9 @@ export class PackageTrackingComponent implements OnInit {
         <div style="padding: 12px; border-radius: 8px; background: #e0f2fe; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
           <h4 style="margin-bottom: 8px; color: #0369a1;">Ruta</h4>
           ${paquete.delivery ? `
-            <p><strong>ID:</strong> ${paquete.delivery.id}</p>
             <p><strong>Descripción:</strong> ${paquete.delivery.description || 'Sin descripción'}</p>
-            <p><strong>Car ID:</strong> ${paquete.delivery.carId}</p>
-            <p><strong>Empleado:</strong> ${paquete.delivery.employeeId}</p>
+            <p><strong>Auto:</strong> ${paquete.delivery.car.marca} ${paquete.delivery.car.modelo} - ${paquete.delivery.car.placa}</p>
+            <p><strong>Empleado:</strong> ${paquete.delivery.employee.name} ${paquete.delivery.employee.firstSurname}</p>
             <p><strong>Creado:</strong> ${paquete.delivery.tsCreated ? formatDate(new Date(paquete.delivery.tsCreated), 'dd-MM-yyyy HH:mm', 'en-US') : 'N/A'}</p>
           ` : `<p>Sin ruta asignada</p>`}
         </div>
@@ -216,7 +225,7 @@ export class PackageTrackingComponent implements OnInit {
           <h4 style="margin-bottom: 8px; color: #065f46;">Cargamento</h4>
           <p><strong>ID:</strong> ${c?.id}</p>
           <p><strong>Descripción:</strong> ${c?.description}</p>
-          <p><strong>Empleado:</strong> ${c?.employeeId}</p>
+          <p><strong>Empleado:</strong> ${c?.employee.name} ${c?.employee.firstSurname}</p>
           <p><strong>Creado:</strong> ${c?.tsCreated ? formatDate(new Date(c.tsCreated), 'dd-MM-yyyy HH:mm', 'en-US') : 'N/A'}</p>
         </div>
 
@@ -252,8 +261,10 @@ export class PackageTrackingComponent implements OnInit {
     }));
   }
 
-  getData(): void {
-    this.pakage.getPackageByCarga(this.incomingPackageId, 0, 50).subscribe(
+  getData(page: number, size: number): void {
+    this.isLoading = true;
+    this.paquetesAgrupados = [];
+    this.pakage.getPackageByCarga(this.incomingPackageId, page, size).subscribe(
       response => {
         this.total = response.data.total
         this.isMatch = response.data.cargamento.isMatch
@@ -261,9 +272,11 @@ export class PackageTrackingComponent implements OnInit {
         this.paquetes = response.data.packages; // Asignar los datos recibidos a la variable paquetes
         // console.log(response.data.packages);
         this.agruparPorFechaDeEntrega(this.paquetes);
+        this.isLoading = false;
       },
       error => {
         console.error('Error al obtener los datos:', error);
+        this.isLoading = false;
       }
     );
   }
@@ -404,7 +417,7 @@ export class PackageTrackingComponent implements OnInit {
           .subscribe({
             next: (response) => {
               Swal.fire('¡Guardado!', `Se enviaron ${nuevosPaquetes.length} paquetes.`, 'success');
-              this.getData(); // Actualizar la lista de paquetes después de enviar
+              this.getData(this.page, this.size);
             },
             error: (error) => {
               console.error('Error al enviar paquetes:', error);

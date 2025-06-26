@@ -1,0 +1,62 @@
+.pagination button {
+  width: 35px;
+  height: 35px;
+  border-radius: 50% !important; /* Botones circulares */
+  font-size: 1.2rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+/* Botones de navegación « y » con fondo oscuro */
+.pagination button.btn-nav {
+  background-color: #1e3a8a !important;
+  border-color: #1e3a8a !important;
+  color: #ffffff !important;
+}
+
+.pagination button.btn-nav:hover {
+  background-color: #2346a5 !important;
+  border-color: #2346a5 !important;
+  color: #ffffff !important;
+}
+
+.pagination button.btn-primary {
+  background-color: #004080 !important; /* azul oscuro intenso */
+  border-color: #003366 !important;
+  color: white !important;
+}
+
+.pagination button.btn-primary:hover {
+  background-color: #003366 !important;
+  border-color: #002244 !important;
+  color: white !important;
+}
+
+/* Opcional: cursor puntero en botones */
+.pagination button {
+  cursor: pointer;
+}
+.loader-contenedor {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.spinner {
+    margin-top: 60px;
+  width: 40px;
+  height: 40px;
+  border: 6px solid #ccc;
+  border-top-color: #003366;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
