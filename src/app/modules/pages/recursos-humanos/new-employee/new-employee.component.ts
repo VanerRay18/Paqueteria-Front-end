@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 import { FileTransferService } from 'src/app/services/file-transfer.service';
 import { take } from 'rxjs/operators';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
 
 @Component({
   selector: 'app-new-employee',
@@ -47,6 +48,9 @@ export class NewEmployeeComponent implements OnInit {
   datosBermedCargados = false;
   datosDocumentosCargados = false;
   datosUniformesCargados = false;
+  selectedFotoFile: File | null = null;
+  fotoAntiguaId: number | null = null;   // El id de la foto actual (si la hay)
+
 
   diasSemana = [
     { nombre: 'Lunes', valor: 1, checked: true },
@@ -107,11 +111,25 @@ export class NewEmployeeComponent implements OnInit {
 
   }
 
-  getDiasNoSeleccionados(): number[] {
-    return this.diasSemana
-      .filter(dia => !dia.checked)
-      .map(dia => dia.valor);
+  nombreCompletoValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value as string;
+    if (!value) return { requerido: true };
+
+    const partes = value.trim().split(/\s+/);
+    if (partes.length < 3) {
+      return { nombreCompletoInvalido: 'Debe incluir nombre y dos apellidos' };
+    }
+
+    // Opcional: validar que cada parte tenga al menos 2 caracteres
+    for (const parte of partes) {
+      if (parte.length < 2) {
+        return { nombreCompletoInvalido: 'Cada nombre/apellido debe tener al menos 2 letras' };
+      }
+    }
+
+    return null; // válido
   }
+
 
   esFormularioRealmenteVacio(formGroup: FormGroup): boolean {
     return Object.values(formGroup.value).every(valor =>
@@ -122,17 +140,19 @@ export class NewEmployeeComponent implements OnInit {
   forms() {
     this.datosPersonalesForm = this.fb.group({
       foto: [null],
-      nombreCompleto: [''],
-      rfc: [''],
-      curp: [''],
-      fechaNacimiento: [''],
-      tipoSeguro: [''],
-      telefono: [''],
-      horarioEnt: [''],
-      horarioSal: [''],
-      fechaInicio: [''],
-      puestoLaboral: [''],
-      tipoContratacion: [''],
+      nombreCompleto: ['', [Validators.required, this.nombreCompletoValidator]],
+      rfc: ['', [Validators.required, Validators.pattern(/^([A-ZÑ&]{3,4})\d{6}[A-Z0-9]{3}$/i)]],
+      curp: ['', [Validators.required, Validators.pattern(/^([A-Z]{4})(\d{6})([HM]{1})([A-Z]{5})([A-Z\d]{2})$/i)]],
+      fechaNacimiento: ['', Validators.required],
+      tipoSeguro: ['', Validators.required],
+      telefono: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
+      horarioEnt: ['', Validators.required],
+      horarioSal: ['', Validators.required],
+      fechaInicio: ['', Validators.required],
+      puestoLaboral: ['', Validators.required],
+      tipoContratacion: ['', Validators.required],
+      activo: [true, Validators.required],
+      usaChecador: [true, Validators.required]
     });
 
     // Agregar los días de la semana al formulario
@@ -141,19 +161,19 @@ export class NewEmployeeComponent implements OnInit {
     });
 
     this.direccionForm = this.fb.group({
-      codigoPostal: [''],
-      municipio: [''],
-      estado: [''],
-      colonia: [''],
-      calle: [''],
-      numInterior: [''],
-      numExterior: ['']
+      codigoPostal: ['', [Validators.required, Validators.pattern(/^[0-9]{5}$/)]],
+      municipio: ['', [Validators.required, Validators.minLength(3)]],
+      estado: ['', [Validators.required, Validators.minLength(3)]],
+      colonia: ['', [Validators.required]],
+      calle: ['', [Validators.required]],
+      numInterior: ['', [Validators.required]],
+      numExterior: ['', [Validators.required]]
     });
 
     this.pagoForm = this.fb.group({
-      clabe: [''],
-      tarjeta: [''],
-      banco: ['']
+      clabe: ['', [Validators.required, Validators.pattern(/^\d{18}$/)]],
+      tarjeta: ['', [Validators.required, Validators.pattern(/^\d{16}$/)]],
+      banco: ['', Validators.required]
     });
 
     this.emergenciaForm = this.fb.group({
@@ -164,6 +184,17 @@ export class NewEmployeeComponent implements OnInit {
       telefonos: this.fb.array([this.crearBermed()])
     });
   }
+
+  getDiasNoSeleccionados(): number[] {
+    return this.diasSemana
+      .filter(dia => {
+        // lee el valor actual desde el formulario para este día
+        const valorControl = this.datosPersonalesForm.get(dia.nombre)?.value;
+        return !valorControl;
+      })
+      .map(dia => dia.valor);
+  }
+
 
 
   crearContacto(): FormGroup {
@@ -180,11 +211,41 @@ export class NewEmployeeComponent implements OnInit {
     return `${horas}:${minutos}`;
   }
 
+  getImageUrl(imagePath: string): string {
+    if (!imagePath) return '';
+    // Extrae el nombre de archivo desde la ruta local
+    const filename = imagePath.split('\\').pop() || '';
+    return `http://localhost:3000/uploads/images/${filename}`;
+  }
+
   // 2️⃣ Método para cargar datos existentes y llenar los formularios
   loadEmployeeData(id: number) {
     this.rh.getEmployeeById(id).subscribe((resp: ApiResponse) => {
       const e = resp.data.dataUser;
+      // console.log('Datos del empleado:', resp.data);
       const personalesTieneDatos = e && Object.values(e).some(value => !!value);
+      const diasNoSeleccionados: number[] = e?.config?.attendanceExeption ?? [];
+      this.fotoAntiguaId = resp.data?.images?.id || null;
+      // Obtener URL pública de la imagen si existe
+      const imgData = resp.data.images;
+      if (imgData && imgData.path) {
+        this.fotoPreview = this.getImageUrl(imgData.path);
+      } else {
+        this.fotoPreview = ''; // o imagen por defecto
+      }
+
+      this.diasSemana = this.diasSemana.map(dia => ({
+        ...dia,
+        checked: !diasNoSeleccionados.includes(dia.valor)
+      }));
+
+      this.diasSemana.forEach(dia => {
+        const control = this.datosPersonalesForm.get(dia.nombre);
+        if (control) {
+          control.setValue(dia.checked);
+        }
+      });
+
       // Asume que resp.data trae los campos necesarios
       this.datosPersonalesForm.patchValue({
         nombreCompleto: `${e?.name || ''} ${e?.firstSurname || ''} ${e?.secondSurname || ''}`.trim(),
@@ -195,6 +256,8 @@ export class NewEmployeeComponent implements OnInit {
         telefono: e?.phone || '',
         horarioEnt: this.formatHoraArray(e?.entrada),
         horarioSal: this.formatHoraArray(e?.salida),
+        activo: e?.active ?? true,
+        usaChecador: e?.isAttendance ?? true,
         fechaInicio: e?.dateStart ? new Date(e.dateStart).toISOString().slice(0, 10) : '',
         puestoLaboral: e?.catJobId != null ? e.catJobId.toString() : '',
         tipoContratacion: e?.catEmploymentId != null ? e.catEmploymentId.toString() : ''
@@ -361,55 +424,85 @@ export class NewEmployeeComponent implements OnInit {
       dateFin: null,
       entrada: formatHorario(formValue.horarioEnt),
       salida: formatHorario(formValue.horarioSal),
-      active: true,
+      active: formValue.activo,
       phone: formValue.telefono,
       config: {
-        attendanceExeption:noSeleccionados.length > 0 ? noSeleccionados : [],
+        attendanceExeption: noSeleccionados.length > 0 ? noSeleccionados : []
       },
+      isAttendance: formValue.usaChecador,
       catJobId: Number(formValue.puestoLaboral),
       catEmploymentId: Number(formValue.tipoContratacion),
       catSeguroId: Number(formValue.tipoSeguro),
     };
 
     if (this.isEditMode && this.employeeIdPatch) {
-      // 🟡 Modo edición
+      // 🟡 EDICIÓN
       this.rh.UpdateEmployee(dto, this.employeeIdPatch).subscribe({
         next: () => {
-          Swal.fire({
-            icon: 'success',
-            title: 'Datos actualizados',
-            text: 'La información fue editada correctamente.',
-          });
+          const subirFoto = () => {
+            if (this.selectedFotoFile) {
+              const formData = new FormData();
+              formData.append('files', this.selectedFotoFile);
+              this.rh.SaveFoto(formData, '', this.employeeIdPatch!, 'employee').subscribe({
+                next: () => {
+                  Swal.fire('Actualizado', 'Empleado y foto actualizados correctamente.', 'success');
+                  this.router.navigate(['/pages/RH/Inventario']);
+                },
+                error: () => {
+                  Swal.fire('Advertencia', 'Empleado actualizado, pero hubo un error al subir la foto.', 'warning');
+                  this.router.navigate(['/pages/RH/Inventario']);
+                }
+              });
+            } else {
+              Swal.fire('Actualizado', 'Empleado actualizado correctamente.', 'success');
+            }
+          };
+
+          if (this.fotoAntiguaId) {
+            this.rh.deleteFile([this.fotoAntiguaId]).subscribe({
+              next: subirFoto,
+              error: (err) => {
+                console.error('Error al eliminar foto antigua', err);
+                subirFoto();
+              }
+            });
+          } else {
+            subirFoto();
+          }
         },
-        error: (err) => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Ocurrió un error al actualizar los datos.',
-          });
-          console.error(err);
+        error: () => {
+          Swal.fire('Error', 'Ocurrió un error al actualizar los datos.', 'error');
         }
       });
+
     } else {
-      // 🟢 Modo creación
+      // 🟢 CREACIÓN
       this.rh.createEmployee(dto).subscribe({
         next: (response) => {
           this.employeeId = response.data;
-          Swal.fire({
-            icon: 'success',
-            title: 'Datos guardados',
-            text: 'Los datos personales fueron guardados correctamente.',
-          });
+
+          if (this.selectedFotoFile) {
+            const formData = new FormData();
+            formData.append('files', this.selectedFotoFile);
+            this.rh.SaveFoto(formData, '', this.employeeId, 'employee').subscribe({
+              next: () => {
+                Swal.fire('Guardado', 'Empleado y foto registrados correctamente.', 'success');
+                this.router.navigate(['/pages/RH/Inventario']);
+              },
+              error: () => {
+                Swal.fire('Advertencia', 'Empleado guardado, pero hubo un error al subir la foto.', 'warning');
+                this.router.navigate(['/pages/RH/Inventario']);
+              }
+            });
+          } else {
+            Swal.fire('Guardado', 'Empleado registrado correctamente.', 'success');
+          }
         },
-        error: (err) => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Ocurrió un error al guardar los datos.',
-          });
-          console.error(err);
+        error: () => {
+          Swal.fire('Error', 'Ocurrió un error al guardar los datos.', 'error');
         }
       });
+
     }
   }
 
@@ -421,6 +514,7 @@ export class NewEmployeeComponent implements OnInit {
       Swal.fire('Edición activada', 'Puedes modificar los datos y volver a guardar.', 'info');
     }
   }
+
 
 
 
@@ -654,32 +748,14 @@ export class NewEmployeeComponent implements OnInit {
   onFotoSelected(event: any): void {
     const file = event.target.files[0];
     if (file) {
-      // Leer la imagen para mostrar la vista previa
+      this.selectedFotoFile = file; // 🔴 Guarda el archivo para usar después
+
+      // Vista previa
       const reader = new FileReader();
       reader.onload = () => {
         this.fotoPreview = reader.result as string;
       };
       reader.readAsDataURL(file);
-
-      // Crear un FormData para enviar el archivo al backend
-      const formData = new FormData();
-      formData.append('files', file);
-
-      const idEmpleado = this.employeeIdPatch || this.employeeId;
-      if (!idEmpleado) {
-        Swal.fire('Error', 'No se pudo determinar el ID del empleado.', 'error');
-        return;
-      }
-
-      // Llamada al servicio para guardar el archivo
-      this.rh.SaveFoto(formData, idEmpleado).subscribe({
-        next: (res) => {
-          console.log('Archivo subido con éxito', res);
-        },
-        error: (err) => {
-          console.error('Error al subir el archivo', err);
-        }
-      });
     }
   }
 
@@ -740,8 +816,38 @@ export class NewEmployeeComponent implements OnInit {
     event.preventDefault();
   }
 
-  saveAll() {
+  validarSeccionesAntesDeAvanzar(): boolean {
+    if (this.datosPersonalesForm.invalid) {
+      Swal.fire('Atención', 'Completa la sección de datos personales antes de continuar.', 'warning');
+      return false;
+    }
 
+    if (this.direccionForm.invalid) {
+      Swal.fire('Atención', 'Completa la sección de dirección antes de continuar.', 'warning');
+      return false;
+    }
+
+    if (this.pagoForm.invalid) {
+      Swal.fire('Atención', 'Completa la sección de datos de pago antes de continuar.', 'warning');
+      return false;
+    }
+
+    if (this.emergenciaForm.invalid) {
+      Swal.fire('Atención', 'Completa la sección de contacto de emergencia antes de continuar.', 'warning');
+      return false;
+    }
+
+    if (this.bermedForm.invalid) {
+      Swal.fire('Atención', 'Completa la sección de teléfonos BERMED antes de finalizar.', 'warning');
+      return false;
+    }
+
+    return true;
+  }
+
+
+  saveAll() {
+    if (!this.validarSeccionesAntesDeAvanzar()) return;
     Swal.fire({
       icon: 'success',
       title: 'Empleado guardado',

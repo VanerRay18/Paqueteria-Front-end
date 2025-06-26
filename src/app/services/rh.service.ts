@@ -58,14 +58,24 @@ export class RHService {
     );
   }
 
-SaveFoto(data: FormData, employeeId: any): Observable<ApiResponse> {
-  let headers = new HttpHeaders({
-    'employeeId': employeeId.toString()
-  });
-  return this.http.post<ApiResponse>(`${environment.baseService}/employees/saveFilesEmployee`, data, {
-    headers
-  });
-}
+
+  SaveFoto(data: FormData, description: any, targetId: any, type: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({
+      'description': description,
+      'carId': targetId.toString(),
+      'type': type
+    });
+    return this.http.post<ApiResponse>(`${environment.baseService}/files/saveFiles`, data, {
+      headers
+    });
+  }
+
+
+  deleteFile(targetIds: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'targetIds ': targetIds });
+    return this.http.patch<ApiResponse>(`${environment.baseService}${'/files/softdelete'}`, { headers });
+  }
+
 
   SaveDocuments(data: any, employeeId: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'employeeId': employeeId });
