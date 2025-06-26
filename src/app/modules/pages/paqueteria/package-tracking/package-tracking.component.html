@@ -53,6 +53,9 @@
       </div>
     </div>
 
+    <app-paginador-component [isLoading]="isLoading" [page]="page" [size]="size" [total]="total"
+      (pageChange)="cambiarPagina($event)">
+    </app-paginador-component>
 
   </div>
 </div>

@@ -8,6 +8,7 @@ import { TablesComponent } from './componentes/tables/tables.component';
 import { FilterPipe } from './filter.pipe';
 import { BusquedaComponent } from './componentes/busqueda/busqueda.component';
 import { FooterComponent } from './header/footer/footer.component';
+import { PaginadorComponentComponent } from './componentes/paginador-component/paginador-component.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { FooterComponent } from './header/footer/footer.component';
     TablesComponent,
     FilterPipe,
     BusquedaComponent,
-    FooterComponent
+    FooterComponent,
+    PaginadorComponentComponent
   ],
   imports: [
     CommonModule,
@@ -27,6 +29,7 @@ import { FooterComponent } from './header/footer/footer.component';
     NavComponent,
     BusquedaComponent,
     TablesComponent,
+    PaginadorComponentComponent,
     FooterComponent
   ]
 })

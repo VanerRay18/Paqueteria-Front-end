@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { PakageTokenComponent } from './pakage-token/pakage-token.component';
 import { PakageIncomingComponent } from './pakage-incoming/pakage-incoming.component';
 import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 
 
@@ -23,6 +24,7 @@ import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
     CommonModule,
     PaqueteriaRoutingModule,
     FormsModule,
+    SharedModule,
      NgxDaterangepickerMd.forRoot()
   ]
 })
