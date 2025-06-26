@@ -113,6 +113,11 @@ export class RHService {
     );
   }
 
+  noWorkingDay(data: any): Observable<ApiResponse> {//Trae la nomina actual
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/attendances/nonWorkingDay'}`, data);
+  }
+
+
 
   UpdateAddress(data: any, employeeId: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'employeeId': employeeId });
@@ -176,8 +181,10 @@ export class RHService {
   DeleteEmployee(employeeId: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'employeeId': employeeId });
     return this.http.patch<ApiResponse>(`${environment.baseService}${'/employees/softdelete'}`, null,
-     { headers }
+      { headers }
     );
   }
+
+
 
 }
