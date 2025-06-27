@@ -75,44 +75,8 @@ export class PackageTrackingCarComponent implements OnInit {
   }
 
 
-  // vehicleCards: VehicleCard[] = [
-  //   {
-  //     placa: 'MCH4VH0Q',
-  //     modelo: 'Nissan Versa',
-  //     conductor: 'Juan Perez Sanchez',
-  //     estado: 'En Ruta',
-  //     entregados: 2,
-  //     faltantes: 20,
-  //     imagen: 'assets/nissan1.jpg',
-  //     destino: 'Sucursal Centro',
-  //     porcentaje: 10 // Porcentaje de entregados
-  //   },
-  //   {
-  //     placa: 'XYZ1234',
-  //     modelo: 'Toyota Hilux',
-  //     conductor: 'Ana Lopez',
-  //     estado: 'Entregado',
-  //     entregados: 22,
-  //     faltantes: 0,
-  //     imagen: 'assets/nissan1.jpg',
-  //     destino: 'Sucursal Norte',
-  //     porcentaje: 100
-  //   },
-  //   {
-  //     placa: 'FYZWR34',
-  //     modelo: 'Honda Odise',
-  //     conductor: '',
-  //     estado: 'En Bodega',
-  //     entregados: 0,
-  //     faltantes: 0,
-  //     imagen: 'assets/nissan1.jpg',
-  //     destino: '',
-  //     porcentaje: 0
-  //   },
-  //   // agrega más vehículos aquí
-  // ];
-
   mostrarSwalVehiculo(vehicle: VehicleCard): void {
+    this.fileTransferService.clearIdTercero();
     this.fileTransferService.setIdTercero(vehicle.id);
     console.log('ID del vehículo seleccionado:', vehicle.id);
       this.router.navigate(['/pages/Paqueteria/Paquetes-vehiculo']);

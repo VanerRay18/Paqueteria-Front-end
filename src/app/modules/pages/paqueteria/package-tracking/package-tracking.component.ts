@@ -41,7 +41,7 @@ export class PackageTrackingComponent implements OnInit {
         if (id !== null) {
 
           this.incomingPackageId = id;
-           this.fileTransferService.clearIdTercero();
+
         }
       });
 

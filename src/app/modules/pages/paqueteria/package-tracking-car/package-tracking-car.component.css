@@ -1,64 +1,47 @@
-h1{
+h1 {
   font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
-h5{
-  color: rgb(122, 122, 122);
+.titulos {
+  width: 100%;
+  padding: 0 20px;
 }
 
-.row{
-  margin: 0;
-}
-
-.card{
+.card {
   background-color: #ffffff;
   border-radius: 10px;
-  width: 98%;
+  width: 95%;
+
+  margin: 0 auto 40px auto;
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 20px;
   justify-content: center;
-}
-
-
-.vehicle-cards-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  justify-content: center;
+  padding: 20px 10px;
+  box-sizing: border-box;
 }
 
 .vehicle-card {
   width: 30%;
-  min-width: 180px; /* Asegura que no se encoja demasiado */
-  max-width: 500px;
-  height: 250px;
+  min-width: 250px; /* Más ancho mínimo para mejor lectura */
+  max-width: 350px;
+  height: 280px;
   border: 2px solid #000;
   border-radius: 20px;
   padding: 20px;
   background: #fff;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
 }
 
-/* Hover opcional */
 .vehicle-card:hover {
-  transform: scale(1.02);
-}
-
-/* Responsive para tablets */
-@media (max-width: 768px) {
-  .vehicle-card {
-    width: 45%;
-  }
-}
-
-/* Responsive para móviles */
-@media (max-width: 480px) {
-  .vehicle-card {
-    width: 80%;
-    height: auto;
-  }
+  transform: scale(1.03);
 }
 
 .vehicle-header {
@@ -68,27 +51,54 @@ h5{
 }
 
 .vehicle-img {
-  width: 70px;
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid #ddd;
 }
 
 .vehicle-info {
   flex-grow: 1;
   margin-left: 16px;
+  font-size: 14px;
+  color: #333;
+}
+
+.vehicle-info strong {
+  font-size: 16px;
 }
 
 .vehicle-model {
-  font-weight: bold;
+  font-weight: 600;
+  margin-top: 4px;
+  color: #555;
+}
+
+.vehicle-driver,
+.vehicle-destination {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #666;
 }
 
 .vehicle-status {
   border-radius: 15px;
-  padding: 5px 10px;
+  padding: 6px 12px;
   text-align: center;
-  box-shadow: 0 0 5px #00cc66;
+  box-shadow: 0 0 8px #00cc66;
+  font-weight: 600;
+  color: #00cc66;
+  min-width: 110px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
 }
 
 .vehicle-status.en-ruta {
   color: #00cc66;
+  box-shadow: 0 0 8px #00cc66;
 }
 
 .progress-bar-container {
@@ -98,7 +108,7 @@ h5{
 .progress-bar-bg {
   background-color: #eee;
   border-radius: 15px;
-  height: 20px;
+  height: 22px;
   position: relative;
   overflow: hidden;
 }
@@ -107,12 +117,84 @@ h5{
   background-color: #a00000;
   height: 100%;
   border-radius: 15px 0 0 15px;
+  transition: width 0.4s ease-in-out;
 }
 
 .progress-labels {
   display: flex;
   justify-content: space-between;
-  font-size: 14px;
-  margin-top: 5px;
+  font-size: 13px;
+  margin-top: 6px;
+  color: #444;
 }
 
+/* Responsive para tablets */
+@media (max-width: 992px) {
+  .vehicle-card {
+    width: 45%;
+    max-width: 100%;
+    height: auto;
+  }
+
+  .vehicle-info {
+    font-size: 13px;
+  }
+
+  .vehicle-status {
+    font-size: 13px;
+    min-width: 90px;
+    padding: 5px 10px;
+  }
+}
+
+/* Responsive para móviles */
+@media (max-width: 576px) {
+  .card {
+    width: 100%;
+    padding: 15px 10px;
+  }
+
+  .vehicle-card {
+    width: 90%;
+    min-width: auto;
+    max-width: none;
+    height: auto;
+    padding: 15px;
+  }
+
+  .vehicle-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .vehicle-img {
+    width: 100%;
+    height: auto;
+    margin-bottom: 12px;
+  }
+
+  .vehicle-info {
+    margin-left: 0;
+    margin-bottom: 12px;
+  }
+
+  .vehicle-status {
+    width: 100%;
+    justify-content: center;
+    box-shadow: none;
+    color: #333;
+    padding: 8px 0;
+    font-weight: 700;
+    font-size: 15px;
+    border-radius: 12px;
+    background-color: #e6f7e6;
+  }
+
+  .progress-bar-bg {
+    height: 18px;
+  }
+
+  .progress-labels {
+    font-size: 12px;
+  }
+}
