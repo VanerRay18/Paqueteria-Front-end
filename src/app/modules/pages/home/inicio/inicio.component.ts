@@ -50,7 +50,6 @@ this.filtrarPor('dia');
 
   this.pakage.getPaqueterias(desdeStr, hastaStr).subscribe({
     next: (res) => {
-      console.log('Empresas filtradas:', res);
       this.empresas = res.data;
       this.empresas.forEach((empresa: any) => {
         empresa.nombre = empresa.name;

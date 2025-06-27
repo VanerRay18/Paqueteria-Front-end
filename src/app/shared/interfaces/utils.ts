@@ -36,6 +36,13 @@ export interface VehicleCard {
   porcentaje: number; // porcentaje de entregados
 }
 
+export interface Justificacion {
+  id: number;
+  name: string;
+  to_day: any; // fecha de la justificación
+}
+
+
 export interface Oficio {
   oficioId: number;
   oficio: string;

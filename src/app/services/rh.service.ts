@@ -40,6 +40,13 @@ export class RHService {
     );
   }
 
+  getNextAttendance(catAttendanceId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'catAttendanceId': catAttendanceId });
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/attendances/nextAttendance'}`,
+      { headers }
+    );
+  }
+
   createAdress(data: any, employeeId: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'employeeId': employeeId });
     return this.http.post<ApiResponse>(`${environment.baseService}${'/employees/address'}`, data,

@@ -43,9 +43,18 @@ export class PakageService {
     return this.http.get<ApiResponse>(`${environment.baseService}${'/package/searchPackage'}`, { headers });
   }
 
+  getDeliveryByEmployeeId(): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/deliveryByEmployeeId'}`);
+  }
+
   getPackageByCarga(incomingPackageId: any, page: any, size: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId, 'page': page, 'size': size });
     return this.http.get<ApiResponse>(`${environment.baseService}${'/package/packagesByIncomingPackageId'}`, { headers });
+  }
+
+  searchPackageDelivery(guia : any, deliveryId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'guia': guia, 'deliveryId': deliveryId });
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/searchPackageByDeliveryId'}`, { headers });
   }
 
   SentDataExel(data: any, incomingPackageId: any): Observable<ApiResponse> {//Trae la nomina actual
@@ -87,7 +96,12 @@ export class PakageService {
   }
 
 
-
+  updatePackageStatus(packageId: any, catStatusId: any, description: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'packageId': packageId, 'catStatusId': catStatusId, 'description': description });
+    return this.http.patch<ApiResponse>(`${environment.baseService}${'/package/changeStatusPackage'}`, null,
+      { headers }
+    );
+  }
 
     createPackageWithConsolidado(packageId:any, description:any, data: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'packageId': packageId ,'description':description});

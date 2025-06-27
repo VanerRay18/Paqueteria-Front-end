@@ -1,6 +1,7 @@
 import { formatDate } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import * as Papa from 'papaparse';
+import { FileTransferService } from 'src/app/services/file-transfer.service';
 import { PakageService } from 'src/app/services/pakage.service';
 import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
@@ -14,7 +15,7 @@ import * as XLSX from 'xlsx';
 export class PackageTrackingComponent implements OnInit {
   paquetesEsc: string[] = [];
   paqueteActual: string = '';
-  incomingPackageId: number = 1; // ID del paquete entrante, puedes cambiarlo según tu lógica
+  incomingPackageId: any ; // ID del paquete entrante, puedes cambiarlo según tu lógica
   paquetes: any[] = [];
   isMatch: boolean = false;  // Variable para controlar el disabled
   cargamento: any = null;
@@ -24,14 +25,25 @@ export class PackageTrackingComponent implements OnInit {
   page: number = 0;
   size: number = 20;
 
+
   paquetesAgrupados: any[] = []; // Agrupados y paginados
 
   constructor(
-    private pakage: PakageService
+    private pakage: PakageService,
+        private fileTransferService: FileTransferService
   ) {
 
   }
   ngOnInit(): void {
+        this.fileTransferService.currentIdTercero$
+    // <- solo se ejecuta una vez
+      .subscribe(id => {
+        if (id !== null) {
+
+          this.incomingPackageId = id;
+          // this.fileTransferService.clearIdTercero();
+        }
+      });
 
     this.getData(this.page, this.size);
 

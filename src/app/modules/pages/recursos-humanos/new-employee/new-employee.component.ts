@@ -221,6 +221,7 @@ export class NewEmployeeComponent implements OnInit {
   // 2️⃣ Método para cargar datos existentes y llenar los formularios
   loadEmployeeData(id: number) {
     this.rh.getEmployeeById(id).subscribe((resp: ApiResponse) => {
+      console.log('Datos del empleado:', resp.data);
       const e = resp.data.dataUser;
       // console.log('Datos del empleado:', resp.data);
       const personalesTieneDatos = e && Object.values(e).some(value => !!value);
@@ -252,15 +253,15 @@ export class NewEmployeeComponent implements OnInit {
         rfc: e?.rfc || '',
         curp: e?.curp || '',
         fechaNacimiento: e?.nacimiento ? new Date(e.nacimiento).toISOString().slice(0, 10) : '',
-        tipoSeguro: e?.catSeguroId != null ? e.catSeguroId.toString() : '',
+        tipoSeguro: e?.catSeguroId,
         telefono: e?.phone || '',
         horarioEnt: this.formatHoraArray(e?.entrada),
         horarioSal: this.formatHoraArray(e?.salida),
         activo: e?.active ?? true,
         usaChecador: e?.isAttendance ?? true,
         fechaInicio: e?.dateStart ? new Date(e.dateStart).toISOString().slice(0, 10) : '',
-        puestoLaboral: e?.catJobId != null ? e.catJobId.toString() : '',
-        tipoContratacion: e?.catEmploymentId != null ? e.catEmploymentId.toString() : ''
+        puestoLaboral: e?.catEmploymentId,
+        tipoContratacion: e?.catJobId
       });
       this.datosPersonalesForm.disable();
       this.datosPersonalesCargados = personalesTieneDatos;

@@ -8,11 +8,12 @@ import { CRUDEmployeeComponent } from './modules/pages/recursos-humanos/crudempl
 import { NewEmployeeComponent } from './modules/pages/recursos-humanos/new-employee/new-employee.component';
 import { RecursosHumanosModule } from './modules/pages/recursos-humanos/recursos-humanos.module';
 import { PaqueteriaModule } from './modules/pages/paqueteria/paqueteria.module';
+import { DeliveryComponent } from './modules/pages/paqueteria/delivery/delivery.component';
 
 
 const routes: Routes = [
   {path:'',redirectTo:'/login',pathMatch:'full'},
-  { path: 'Test', component: NewEmployeeComponent},
+  { path: 'Test', component: DeliveryComponent},
   {path: 'login',
     component: LoginComponent,
   },

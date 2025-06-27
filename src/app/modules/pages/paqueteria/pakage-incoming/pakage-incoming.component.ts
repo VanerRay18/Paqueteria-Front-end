@@ -40,7 +40,7 @@ export class PakageIncomingComponent implements OnInit {
         }
       });
 
-      
+
 
     this.getDatos();
   }
@@ -96,6 +96,7 @@ export class PakageIncomingComponent implements OnInit {
 
   infocard(id: number) {
 
+this.fileTransferService.setIdTercero(id);
     this.router.navigate(['/pages/Paqueteria/Registro-seguimiento']);
   }
 

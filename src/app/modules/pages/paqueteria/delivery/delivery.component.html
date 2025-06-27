@@ -1,0 +1,54 @@
+<div class="ruta-container">
+  <h2 class="titulo">Ruta Asignada</h2>
+
+  <!-- Tarjeta de vehículo -->
+<div class="tarjeta-principal">
+  <div class="tarjeta-vehiculo">
+    <div class="vehiculo-header">
+      <img src="assets/nissan1.jpg" alt="Vehículo" class="vehiculo-img" />
+      <div class="info-vehiculo">
+        <h3>{{ car.marca }} {{ car.modelo }} {{ car.color }}</h3>
+        <p class="placa">Placa: {{ car.placa || 'Sin placa' }}</p>
+        <p>Destino: <strong>{{ deliveryInfo.destino || 'Sin destino asignado' }}</strong></p>
+        <p>Conductor: <strong>{{ conductor.name }} {{ conductor.firstSurname }} {{ conductor.secondSurname }}</strong></p>
+        <p>Total de paquetes: <strong>{{ packageInformation.paquetesTotal || 0 }}</strong></p>
+      </div>
+    </div>
+
+    <div class="progress-container">
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" [style.width.%]="packageInformation.barra"></div>
+      </div>
+      <div class="progress-labels">
+        <div>📦 Entregados: <small>{{ packageInformation.entregados }}</small></div>
+        <div>📦 Faltantes: <small>{{ packageInformation.noEntregados }}</small></div>
+      </div>
+    </div>
+
+    <div class="estado-ruta">
+      <span class="badge bodega">🚚 {{ status.name }}</span>
+      <button class="btn-comenzar">Comenzar ruta</button>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Paquetes -->
+  <div class="paquetes-card">
+    <h4>Paquetes en mi ruta</h4>
+
+    <div class="buscador">
+  <input type="text" placeholder="Buscar paquete..." class="input-busqueda" [(ngModel)]="searchGuia" (keyup.enter)="buscarPaquete()" />
+</div>
+
+<div *ngIf="paqueteEncontrado" class="paquete-item">
+  <span class="guia">{{ paqueteEncontrado.guia }}</span>
+  <div class="estado">
+    <span class="entregado" (click)="marcarEntregado(paqueteEncontrado)">✔️ Entregado</span>
+    <span class="no-entregado" (click)="marcarNoEntregado(paqueteEncontrado)">❌ Sin entregar</span>
+  </div>
+</div>
+
+    <!-- Agrega más paquetes si lo necesitas -->
+  </div>
+</div>

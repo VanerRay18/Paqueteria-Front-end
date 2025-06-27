@@ -6,3 +6,30 @@
     height: 100vh; /* Asegura que ocupe el 100% de la altura de la pantalla */
 
   }
+
+  /* Estilo para sweetalert personalizado y responsivo */
+.swal-wide {
+  max-width: 95% !important;
+  width: 900px;
+}
+
+@media (max-width: 768px) {
+  .swal-wide {
+    width: 100% !important;
+    padding: 0 10px;
+  }
+
+  .swal-wide table {
+    font-size: 12px;
+  }
+
+  .swal-wide input[type="date"],
+  .swal-wide select,
+  .swal-wide input[type="text"] {
+    width: 100%;
+  }
+
+  .swal-wide .swal2-html-container {
+    padding: 0 !important;
+  }
+}

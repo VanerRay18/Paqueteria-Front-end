@@ -8,6 +8,8 @@ import { PakageTokenComponent } from './pakage-token/pakage-token.component';
 import { PakageIncomingComponent } from './pakage-incoming/pakage-incoming.component';
 import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { DeliveryComponent } from './delivery/delivery.component';
+import { DeliveryPackagesComponent } from './delivery-packages/delivery-packages.component';
 
 
 
@@ -18,7 +20,9 @@ import { SharedModule } from 'src/app/shared/shared.module';
     PackageTrackingComponent,
     PackageTrackingCarComponent,
     PakageTokenComponent,
-    PakageIncomingComponent
+    PakageIncomingComponent,
+    DeliveryComponent,
+    DeliveryPackagesComponent
   ],
   imports: [
     CommonModule,
