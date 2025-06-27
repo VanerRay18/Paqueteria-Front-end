@@ -261,7 +261,7 @@ export class PackageTrackingComponent implements OnInit {
           <h4 style="margin-bottom: 8px; color: #065f46;">Cargamento</h4>
           <p><strong>ID:</strong> ${c?.id}</p>
           <p><strong>Descripción:</strong> ${c?.description}</p>
-          <p><strong>Empleado:</strong> ${c?.employee.name} ${c?.employee.firstSurname}</p>
+          <p><strong>Empleado:</strong> ${c?.employee.name || 'Sin nombre'} ${c?.employee.firstSurname || 'Sin apellido'}</p>
           <p><strong>Creado:</strong> ${c?.tsCreated ? formatDate(new Date(c.tsCreated), 'dd-MM-yyyy HH:mm', 'en-US') : 'N/A'}</p>
         </div>
 
@@ -430,33 +430,51 @@ export class PackageTrackingComponent implements OnInit {
         margin-top: 1rem;"></div>
     `,
       showCancelButton: true,
-      confirmButtonText: 'Guardar',
+      confirmButtonText: 'Cerrar',
       cancelButtonText: 'Cancelar',
       allowOutsideClick: false,
       preConfirm: () => {
+        // Retorna todos los paquetes que se escanearon (opcional)
         return this.paquetesEsc;
       },
       didOpen: () => {
         const input = document.getElementById('input-paquete') as HTMLInputElement;
         const lista = document.getElementById('lista-paquetes');
+        let debounceTimer: any;
 
         const renderLista = () => {
           if (!lista) return;
-          lista.innerHTML = this.paquetesEsc.map((p, i) => `
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding: 4px 8px; border: 1px solid #ccc; border-radius: 6px;">
+          lista.innerHTML = this.paquetesEsc.map((p, i) =>
+            `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding: 4px 8px; border: 1px solid #ccc; border-radius: 6px;">
             <span>${p}</span>
             <button style="border: none; background: transparent; font-size: 16px; cursor: pointer; color: #b91c1c;"
               onclick="document.dispatchEvent(new CustomEvent('quitar-paquete', { detail: ${i} }))">✖</button>
-          </div>
-        `).join('');
+          </div>`
+          ).join('');
         };
 
-        input?.addEventListener('keypress', (event: KeyboardEvent) => {
-          if (event.key === 'Enter' && input.value.trim()) {
-            this.paquetesEsc.push(input.value.trim());
-            input.value = '';
-            renderLista();
-          }
+        const enviarPaquete = (paquete: string) => {
+          this.pakage.paquetesEscaneados([paquete], this.incomingPackageId).subscribe({
+            next: () => {
+              this.paquetesEsc.push(paquete);
+              renderLista();
+            },
+            error: () => {
+              // Mensaje pequeño sin cerrar el Swal
+              Swal.showValidationMessage(`No se pudo guardar el paquete: "${paquete}"`);
+            }
+          });
+        };
+
+        input.addEventListener('input', () => {
+          if (debounceTimer) clearTimeout(debounceTimer);
+          debounceTimer = setTimeout(() => {
+            const valor = input.value.trim();
+            if (valor) {
+              enviarPaquete(valor);
+              input.value = '';
+            }
+          }, 600); // 600 ms tras el último input
         });
 
         document.addEventListener('quitar-paquete', (e: any) => {
@@ -465,27 +483,17 @@ export class PackageTrackingComponent implements OnInit {
           renderLista();
         });
 
-        input?.focus();
+        input.focus();
       }
     }).then((result) => {
       if (result.isConfirmed) {
-        const nuevosPaquetes = [...this.paquetesEsc];
-
-        // 👇 Llamada al servicio para enviar al backend
-        this.pakage.paquetesEscaneados(nuevosPaquetes, this.incomingPackageId)
-          .subscribe({
-            next: (response) => {
-              Swal.fire('¡Guardado!', `Se enviaron ${nuevosPaquetes.length} paquetes.`, 'success');
-              this.getData(this.page, this.size);
-            },
-            error: (error) => {
-              console.error('Error al enviar paquetes:', error);
-              Swal.fire('Error', 'Ocurrió un problema al enviar los paquetes.', 'error');
-            }
-          });
+        // Opcional: ya guardaste uno a uno, aquí solo cierras
+        console.log('Paquetes escaneados:', this.paquetesEsc);
+        this.getData(this.page, this.size);
       }
     });
   }
+
 
 
   macheoPaquetes(): void {
