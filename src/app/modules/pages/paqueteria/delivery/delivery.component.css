@@ -293,11 +293,10 @@
 
 .entregado, .no-entregado {
   cursor: pointer;
-  padding: 6px 12px;
-  border-radius: 5px;
+
   color: white;
   font-size: 0.9em;
-  white-space: nowrap;
+
 }
 
 .entregado {

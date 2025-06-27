@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ApiResponse } from 'src/app/models/ApiResponse';
+import { FileTransferService } from 'src/app/services/file-transfer.service';
 import { PakageService } from 'src/app/services/pakage.service';
 import { VehicleCard } from 'src/app/shared/interfaces/utils';
 import Swal from 'sweetalert2';
@@ -15,7 +17,9 @@ export class PackageTrackingCarComponent implements OnInit {
   vehicleCards: VehicleCard[] = [];
 
   constructor(
-    private Pk: PakageService
+    private Pk: PakageService,
+    private fileTransferService: FileTransferService,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -109,14 +113,17 @@ export class PackageTrackingCarComponent implements OnInit {
   // ];
 
   mostrarSwalVehiculo(vehicle: VehicleCard): void {
-    const necesitaConfigurar =
-      !vehicle.conductor || !vehicle.destino;
+    this.fileTransferService.setIdTercero(vehicle.id);
+    console.log('ID del vehículo seleccionado:', vehicle.id);
+      this.router.navigate(['/pages/Paqueteria/Paquetes-vehiculo']);
+    // const necesitaConfigurar =
+    //   !vehicle.conductor || !vehicle.destino;
 
-    if (necesitaConfigurar) {
-      this.mostrarSwalFormularioPrevio(vehicle);
-    } else {
-      this.mostrarSwalPrincipal(vehicle);
-    }
+    // if (necesitaConfigurar) {
+    //   this.mostrarSwalFormularioPrevio(vehicle);
+    // } else {
+    //   this.mostrarSwalPrincipal(vehicle);
+    // }
   }
 
   mostrarSwalFormularioPrevio(vehicle: VehicleCard): void {
