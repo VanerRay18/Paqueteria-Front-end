@@ -15,7 +15,7 @@ import * as XLSX from 'xlsx';
 export class PackageTrackingComponent implements OnInit {
   paquetesEsc: string[] = [];
   paqueteActual: string = '';
-  incomingPackageId: any ; // ID del paquete entrante, puedes cambiarlo según tu lógica
+  incomingPackageId: any; // ID del paquete entrante, puedes cambiarlo según tu lógica
   paquetes: any[] = [];
   isMatch: boolean = false;  // Variable para controlar el disabled
   cargamento: any = null;
@@ -30,13 +30,13 @@ export class PackageTrackingComponent implements OnInit {
 
   constructor(
     private pakage: PakageService,
-        private fileTransferService: FileTransferService
+    private fileTransferService: FileTransferService
   ) {
 
   }
   ngOnInit(): void {
-        this.fileTransferService.currentIdTercero$
-    // <- solo se ejecuta una vez
+    this.fileTransferService.currentIdTercero$
+      // <- solo se ejecuta una vez
       .subscribe(id => {
         if (id !== null) {
 
@@ -181,9 +181,9 @@ export class PackageTrackingComponent implements OnInit {
         console.log(headers);
         console.log(paquete.consolidado.id)
         if (paquete.consolidado.id == null) {
-          this.pakage.createPackageWithConsolidado(headers.packageId,headers.description,body).subscribe(
+          this.pakage.createPackageWithConsolidado(headers.packageId, headers.description, body).subscribe(
             response => {
-             Swal.fire('¡Éxito!', `El consolidado fue ${esNuevo ? 'creado' : 'actualizado'} correctamente.`, 'success');
+              Swal.fire('¡Éxito!', `El consolidado fue ${esNuevo ? 'creado' : 'actualizado'} correctamente.`, 'success');
             },
             error => {
               console.error('Error al obtener los datos:', error);
@@ -192,9 +192,9 @@ export class PackageTrackingComponent implements OnInit {
           );
           console.log("is post")
         } else {
-           this.pakage.updatePackageWithConsolidado(headers.packageId,headers.description,body).subscribe(
+          this.pakage.updatePackageWithConsolidado(headers.packageId, headers.description, body).subscribe(
             response => {
-             Swal.fire('¡Éxito!', `El consolidado fue ${esNuevo ? 'creado' : 'actualizado'} correctamente.`, 'success');
+              Swal.fire('¡Éxito!', `El consolidado fue ${esNuevo ? 'creado' : 'actualizado'} correctamente.`, 'success');
             },
             error => {
               console.error('Error al obtener los datos:', error);
@@ -350,20 +350,42 @@ export class PackageTrackingComponent implements OnInit {
 
     if (file) {
       const reader: FileReader = new FileReader();
-
       reader.onload = (e: any) => {
         const data: Uint8Array = new Uint8Array(e.target.result);
         const workbook: XLSX.WorkBook = XLSX.read(data, { type: 'array' });
 
-        const sheetName = workbook.SheetNames[0]; // leer solo la primera hoja
+        const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
 
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+        const jsonDataOriginal = XLSX.utils.sheet_to_json(worksheet, {
+          defval: '',
+          raw: false,
+          dateNF: 'm/dd/yyyy' // Formato de fecha
+        });
 
-        console.log('JSON generado desde Excel:', jsonData);
+        const toCamelCase = (str: string) => {
+          return str
+            .toLowerCase()
+            .replace(/[^a-zA-Z0-9 ]/g, '')              // quita caracteres especiales
+            .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) =>
+              index === 0 ? word.toLowerCase() : word.toUpperCase()
+            )
+            .replace(/\s+/g, '');
+        };
 
+        const jsonData = jsonDataOriginal.map((row: any) => {
+          const newRow: any = {};
+          Object.keys(row).forEach(key => {
+            const newKey = toCamelCase(key);
+            newRow[newKey] = row[key];
+          });
+          return newRow;
+        });
+
+        console.log('JSON limpio con títulos en camelCase:', jsonData);
         this.enviarAlBackend(jsonData);
       };
+
 
       reader.readAsArrayBuffer(file); // ✅ lee como binario
     }
@@ -375,6 +397,7 @@ export class PackageTrackingComponent implements OnInit {
     this.pakage.SentDataExel(data, this.incomingPackageId).subscribe(
       response => {
         console.log(response.data);
+        this.getData(this.page, this.size); // Actualiza la lista después de enviar los datos
         Swal.fire({
           title: '¡Éxito!',
           text: 'Se cargo el consolidado correctamente.',

@@ -65,14 +65,48 @@ export class DeliveryComponent implements OnInit {
     );
   }
 
+  empezarRuta() {
+    let catStatusId = 7; // Asumiendo que 1 es el ID para "Entregado"
+    let packageId = this.deliveryId; // Asegúrate de que el paquete tenga un ID
+    let description = 'Paquetes en ruta'; // Descripción de la acción
+    this.pakage.updateDeliveryStatus(packageId, catStatusId, description).subscribe(
+      (response) => {
+        console.log('Marcado como en ruta:', response);
+        // Aquí iría la lógica para actualizar el estado en el backend si aplica
+      },
+      (error) => {
+        console.error('Error al marcar como en ruta:', error);
+      }
+    );
+  }
+
+  terminarRuta() {
+    let catStatusId = 10;
+    let packageId = this.deliveryId; // Asegúrate de que el paquete tenga un ID
+    let description = 'ruta terminada'; // Descripción de la acción
+    this.pakage.updateDeliveryStatus(packageId, catStatusId, description).subscribe(
+      (response) => {
+        console.log('Marcado como no entregado:', response);
+        Swal.fire('Éxito', 'Paquete marcado como no entregado.', 'success');
+        this.cargarDeliveryInfo();
+        // Aquí iría la lógica para actualizar el estado en el backend si aplica
+      },
+      (error) => {
+        console.error('Error al marcar como no entregado:', error);
+      }
+    );
+  }
+
   marcarEntregado(paquete: any) {
     let catStatusId = 8; // Asumiendo que 1 es el ID para "Entregado"
     let packageId = paquete.id; // Asegúrate de que el paquete tenga un ID
     let description = 'Paquete entregado'; // Descripción de la acción
     this.pakage.updatePackageStatus(packageId, catStatusId, description).subscribe(
       (response) => {
-        console.log('Marcado como entregado:', paquete);
+        // console.log('Marcado como entregado:', paquete);
         Swal.fire('Éxito', 'Paquete marcado como entregado.', 'success');
+        this.cargarDeliveryInfo(); // Recargar la información de entrega
+         this.paqueteEncontrado = null;
         // Aquí iría la lógica para actualizar el estado en el backend si aplica
       },
       (error) => {
@@ -82,13 +116,15 @@ export class DeliveryComponent implements OnInit {
   }
 
   marcarNoEntregado(paquete: any) {
-     let catStatusId = 9;
+    let catStatusId = 9;
     let packageId = paquete.id; // Asegúrate de que el paquete tenga un ID
     let description = 'Paquete no entregado'; // Descripción de la acción
     this.pakage.updatePackageStatus(packageId, catStatusId, description).subscribe(
       (response) => {
         console.log('Marcado como no entregado:', paquete);
         Swal.fire('Éxito', 'Paquete marcado como no entregado.', 'success');
+        this.cargarDeliveryInfo(); // Recargar la información de entrega
+         this.paqueteEncontrado = null;
         // Aquí iría la lógica para actualizar el estado en el backend si aplica
       },
       (error) => {
