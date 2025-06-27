@@ -102,7 +102,14 @@ export class PakageService {
 
   updatePackageStatus(packageId: any, catStatusId: any, description: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'packageId': packageId, 'catStatusId': catStatusId, 'description': description });
-    return this.http.patch<ApiResponse>(`${environment.baseService}${'/package/changeStatusPackage'}`, null,
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/changeStatusPackage'}`, null,
+      { headers }
+    );
+  }
+
+    updateDeliveryStatus(deliveryId: any, catStatusId: any, description: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'deliveryId': deliveryId, 'catStatusId': catStatusId, 'description': description });
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/changeStatusDelivery'}`, null,
       { headers }
     );
   }
