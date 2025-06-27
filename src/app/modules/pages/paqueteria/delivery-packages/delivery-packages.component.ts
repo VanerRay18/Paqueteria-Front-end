@@ -22,7 +22,6 @@ export class DeliveryPackagesComponent implements OnInit {
   deliveryId: any;
   paquetesEsc: string[] = [];
   paqueteActual: string = '';
-  incomingPackageId: any ; // ID del paquete entrante, puedes cambiarlo según tu lógica
   paquetes: any[] = [];
   cargamento: any = null;
   total: number = 0;
@@ -307,7 +306,7 @@ export class DeliveryPackagesComponent implements OnInit {
             this.total = response.data.total
            // this.isMatch = response.data.cargamento.isMatch
             this.cargamento = response.data.cargamento
-            this.paquetes = response.data.packages; // Asignar los datos recibidos a la variable paquetes
+            this.paquetes = response.data.paquetes; // Asignar los datos recibidos a la variable paquetes
             // console.log(response.data.packages);
             this.agruparPorFechaDeEntrega(this.paquetes);
             this.isLoading = false;
@@ -374,7 +373,9 @@ export class DeliveryPackagesComponent implements OnInit {
       // Método para enviar los datos al backend
       enviarAlBackend(data: any): void {
         console.log(data) // Reemplaza con el ID real del paquete entrante
-        this.pakage.SentDataExel(data, this.incomingPackageId).subscribe(
+        this.pakage.SentDataExel(data, this.deliveryId
+          
+        ).subscribe(
           response => {
             console.log(response.data);
             Swal.fire({
@@ -394,79 +395,42 @@ export class DeliveryPackagesComponent implements OnInit {
       }
     
       mostrarSwal() {
-        this.paquetesEsc = [];
-    
-        Swal.fire({
-          title: 'Comience a escanear los paquetes',
-          html: `
-          <input id="input-paquete" class="swal2-input" placeholder="Escanea o escribe el paquete" autofocus>
-          <div id="lista-paquetes" style="
-            max-height: 250px;
-            overflow-y: auto;
-            text-align: left;
-            font-weight: 500;
-            font-family: sans-serif;
-            margin-top: 1rem;"></div>
-        `,
-          showCancelButton: true,
-          confirmButtonText: 'Guardar',
-          cancelButtonText: 'Cancelar',
-          allowOutsideClick: false,
-          preConfirm: () => {
-            return this.paquetesEsc;
-          },
-          didOpen: () => {
-            const input = document.getElementById('input-paquete') as HTMLInputElement;
-            const lista = document.getElementById('lista-paquetes');
-    
-            const renderLista = () => {
-              if (!lista) return;
-              lista.innerHTML = this.paquetesEsc.map((p, i) => `
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding: 4px 8px; border: 1px solid #ccc; border-radius: 6px;">
-                <span>${p}</span>
-                <button style="border: none; background: transparent; font-size: 16px; cursor: pointer; color: #b91c1c;"
-                  onclick="document.dispatchEvent(new CustomEvent('quitar-paquete', { detail: ${i} }))">✖</button>
-              </div>
-            `).join('');
-            };
-    
-            input?.addEventListener('keypress', (event: KeyboardEvent) => {
-              if (event.key === 'Enter' && input.value.trim()) {
-                this.paquetesEsc.push(input.value.trim());
-                input.value = '';
-                renderLista();
-              }
-            });
-    
-            document.addEventListener('quitar-paquete', (e: any) => {
-              const index = e.detail;
-              this.paquetesEsc.splice(index, 1);
-              renderLista();
-            });
-    
-            input?.focus();
-          }
-        }).then((result) => {
-          if (result.isConfirmed) {
-            const nuevosPaquetes = [...this.paquetesEsc];
-    
-            // 👇 Llamada al servicio para enviar al backend
-            this.pakage.paquetesEscaneados(nuevosPaquetes, this.incomingPackageId)
-              .subscribe({
-                next: (response) => {
-                  Swal.fire('¡Guardado!', `Se enviaron ${nuevosPaquetes.length} paquetes.`, 'success');
-                  this.getData(this.page, this.size);
-                },
-                error: (error) => {
-                  console.error('Error al enviar paquetes:', error);
-                  Swal.fire('Error', 'Ocurrió un problema al enviar los paquetes.', 'error');
-                }
-              });
-          }
-        });
+  Swal.fire({
+    title: 'Escanea o escribe el paquete',
+    html: `<input id="input-paquete" class="swal2-input" placeholder="Número de guía" autofocus>`,
+    showCancelButton: true,
+    confirmButtonText: 'Guardar',
+    cancelButtonText: 'Cancelar',
+    allowOutsideClick: false,
+    preConfirm: () => {
+      const input = document.getElementById('input-paquete') as HTMLInputElement;
+      const value = input?.value.trim();
+      if (!value) {
+        Swal.showValidationMessage('Debes ingresar un paquete');
+        return;
       }
-    
-    
+      return value;
+    }
+  }).then((result) => {
+    if (result.isConfirmed && result.value) {
+      const paquete = result.value;
+
+      // 👇 Llamada al servicio con un solo paquete
+      this.pakage.addPackagesInDelivery(paquete, this.deliveryId).subscribe({
+        next: () => {
+          Swal.fire('¡Guardado!', `Paquete ${paquete} enviado correctamente.`, 'success');
+          this.getData(this.page, this.size);
+        },
+        error: (error) => {
+          console.error('Error al enviar el paquete:', error);
+          Swal.fire('Error', 'Ocurrió un problema al enviar el paquete.', 'error');
+        }
+      });
+    }
+  });
+}
+
+      
       macheoPaquetes(): void {
  
       }

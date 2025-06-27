@@ -73,6 +73,13 @@ export class PakageService {
       { headers });
   }
 
+    addPackagesInDelivery(guia: any, deliveryId: any): Observable<ApiResponse> {//Trae la nomina actual
+    let headers = new HttpHeaders({ 'deliveryId': deliveryId ,'guia':guia});
+    console.log(headers)
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/addPackagesInDelivery'}`, null,
+      { headers });
+  }
+
   createIncoming(pakageOrgId: any, description: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'description': description, 'pakageOrgId': pakageOrgId });
     return this.http.post<ApiResponse>(`${environment.baseService}${'/package/createIncomingPackage'}`, null,
