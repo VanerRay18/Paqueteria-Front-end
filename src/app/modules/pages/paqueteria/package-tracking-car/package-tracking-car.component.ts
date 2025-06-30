@@ -76,18 +76,10 @@ export class PackageTrackingCarComponent implements OnInit {
 
 
   mostrarSwalVehiculo(vehicle: VehicleCard): void {
-    this.fileTransferService.clearIdTercero();
-    this.fileTransferService.setIdTercero(vehicle.id);
-    console.log('ID del vehículo seleccionado:', vehicle.id);
-      this.router.navigate(['/pages/Paqueteria/Paquetes-vehiculo']);
-    // const necesitaConfigurar =
-    //   !vehicle.conductor || !vehicle.destino;
-
-    // if (necesitaConfigurar) {
-    //   this.mostrarSwalFormularioPrevio(vehicle);
-    // } else {
-    //   this.mostrarSwalPrincipal(vehicle);
-    // }
+    // this.fileTransferService.clearIdTercero();
+    // this.fileTransferService.setIdTercero(vehicle.id);
+    console.log('ID del vehículo seleccionado:', vehicle);
+      this.router.navigate(['/pages/Paqueteria/Paquetes-vehiculo/'+vehicle.id]);
   }
 
   mostrarSwalFormularioPrevio(vehicle: VehicleCard): void {

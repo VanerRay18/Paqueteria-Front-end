@@ -10,7 +10,7 @@ export class PaginadorComponentComponent implements OnInit {
   @Input() size: number = 10;       // Lo controla el padre
   @Input() total: number = 0;       // Total de registros
   @Input() isLoading: boolean = true;       // Total de registros
-
+  @Input() message: String = "No hay registros que mostrar"; // Mensaje a mostrar cuando no hay registros
   @Output() pageChange = new EventEmitter<number>(); // Solo emite el nuevo `page`
 
   maxButtons = 8;
@@ -57,9 +57,11 @@ get totalPages(): number[] {
 }
 
 
-  cambiarPagina(p: number) {
-    if (p !== this.page) {
-      this.pageChange.emit(p);
-    }
+cambiarPagina(p: number) {
+  const totalPages = Math.ceil(this.total / this.size);
+  if (p >= 0 && p < totalPages && p !== this.page) {
+    this.pageChange.emit(p);
   }
+}
+
 }

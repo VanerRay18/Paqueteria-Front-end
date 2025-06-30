@@ -9,8 +9,8 @@ import { CheckAssistanceComponent } from './check-assistance/check-assistance.co
 
 const routes: Routes = [
   {path: 'Trabajadores-Registrados',component: CRUDEmployeeComponent},
-  {path: 'Registrar-Trabajador',component: NewEmployeeComponent},
-  {path: 'Registrar-Automovil',component: NewCarComponent},
+  {path: 'Registrar-Trabajador/:id',component: NewEmployeeComponent},
+  {path: 'Registrar-Automovil/:id',component: NewCarComponent},
   {path: 'Inventario',component: InventoryComponent},
   {path: 'Control-Asistencias',component: GraphsAssistanceComponent},
   {path: 'Registrar-Asistencias',component: CheckAssistanceComponent}

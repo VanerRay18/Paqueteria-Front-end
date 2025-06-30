@@ -35,6 +35,34 @@ export class CarsService {
   }
 
 
+  getCatService(): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/cars/catServices'}`);
+  }
+
+  getHistoryService(carId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'carId': carId });
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/cars/servicesHistoryByCarId'}`, { headers });
+  }
+
+  getActualService(carId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'carId': carId });
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/cars/servicesCurrentByCarId'}`, { headers });
+  }
+
+  addService(data: any): Observable<ApiResponse> {
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/cars/addService'}`, data);
+  }
+
+  updateService(data: any, serviceId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'serviceId': serviceId });
+    return this.http.patch<ApiResponse>(`${environment.baseService}${'/cars/updateService'}`, data, { headers });
+  }
+
+  deleteService(data: any, serviceId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'serviceId': serviceId });
+    return this.http.patch<ApiResponse>(`${environment.baseService}${'/cars/updateService/softdele'}`, data, { headers });
+  }
+
   createNewCar(data: any): Observable<ApiResponse> {
     return this.http.post<ApiResponse>(`${environment.baseService}${'/cars'}`, data);
   }
@@ -71,4 +99,5 @@ export class CarsService {
     let headers = new HttpHeaders({ 'carId': carId });
     return this.http.patch<ApiResponse>(`${environment.baseService}${'/cars'}`, data, { headers });
   }
+
 }

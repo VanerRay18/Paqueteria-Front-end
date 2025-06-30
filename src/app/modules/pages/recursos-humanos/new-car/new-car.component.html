@@ -1,119 +1,196 @@
 <div class="container  ">
-  <div class="titulos col-auto col-lg-8  row  mt-4 md-3">
-    <h1>Alta de Vehiculos</h1>
-  </div>
+  <ul class="nav nav-tabs mt-3" id="carTabs">
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="activeTab === 'vehiculo'" (click)="activeTab = 'vehiculo'">🚗 Vehículo</a>
+    </li>
+    <li class="nav-item" *ngIf="canService">
+      <a class="nav-link" [class.active]="activeTab === 'servicios'" (click)="activeTab = 'servicios'">🔧 Servicios</a>
+    </li>
+    <li class="nav-item" *ngIf="isEditMode">
+      <a class="nav-link" [class.active]="activeTab === 'historico'" (click)="activeTab = 'historico'">📜 Histórico</a>
+    </li>
+  </ul>
+
   <!-- DATOS PERSONALES -->
-  <form [formGroup]="carForm" (ngSubmit)="guardarDatosPersonales()">
-    <h4>Datos del vehiculo</h4>
-    <div class="grid">
+  <div *ngIf="activeTab === 'vehiculo'">
+    <form [formGroup]="carForm" (ngSubmit)="guardarDatosPersonales()">
+      <h4>Datos del vehiculo</h4>
+      <div class="grid">
 
-      <div class="foto-container">
-        <div class="carousel">
-          <div class="carousel-item" *ngFor="let foto of fotosPreview; let i = index"
-            [ngStyle]="{ 'background-image': 'url(' + foto + ')' }" [class.active]="i === fotoActual"></div>
-          <span class="carousel-control prev" (click)="anteriorFoto()">‹</span>
-          <span class="carousel-control next" (click)="siguienteFoto()">›</span>
+        <div class="foto-container">
+          <div class="carousel">
+            <div class="carousel-item" *ngFor="let foto of fotosPreview; let i = index"
+              [ngStyle]="{ 'background-image': 'url(' + foto + ')' }" [class.active]="i === fotoActual"></div>
+            <span class="carousel-control prev" (click)="anteriorFoto()">‹</span>
+            <span class="carousel-control next" (click)="siguienteFoto()">›</span>
+          </div>
+
+          <label for="foto" class="foto-label">
+            <i class="icon">ℹ️</i> Fotografías del vehículo
+          </label>
+          <input type="file" id="foto" (change)="onFotoSelected($event)" hidden multiple />
         </div>
 
-        <label for="foto" class="foto-label">
-          <i class="icon">ℹ️</i> Fotografías del vehículo
-        </label>
-        <input type="file" id="foto" (change)="onFotoSelected($event)" hidden multiple />
-      </div>
+        <div class="group">
+          <label>
+            Placa del vehículo:
+            <i class="fas fa-info-circle info-icon" data-tooltip="Ingrese el número de placa del vehículo."></i>
+          </label>
+          <input type="text" formControlName="placa" />
 
-      <div class="group">
-        <label>
-          Placa del vehículo:
-          <i class="fas fa-info-circle info-icon" data-tooltip="Ingrese el número de placa del vehículo."></i>
-        </label>
-        <input type="text" formControlName="placa" />
+          <label>
+            Marca:
+            <i class="fas fa-info-circle info-icon" data-tooltip="Marca registrada del vehículo."></i>
+          </label>
+          <input type="text" formControlName="marca" />
 
-        <label>
-          Marca:
-          <i class="fas fa-info-circle info-icon" data-tooltip="Marca registrada del vehículo."></i>
-        </label>
-        <input type="text" formControlName="marca" />
+          <label>
+            Submarca:
+            <i class="fas fa-info-circle info-icon" data-tooltip="Línea o versión específica de la marca."></i>
+          </label>
+          <input type="text" formControlName="submarca" />
 
-        <label>
-          Submarca:
-          <i class="fas fa-info-circle info-icon" data-tooltip="Línea o versión específica de la marca."></i>
-        </label>
-        <input type="text" formControlName="submarca" />
+          <label>
+            Modelo:
+            <i class="fas fa-info-circle info-icon" data-tooltip="Año del modelo del vehículo."></i>
+          </label>
+          <input type="text" formControlName="modelo" />
 
-        <label>
-          Modelo:
-          <i class="fas fa-info-circle info-icon" data-tooltip="Año del modelo del vehículo."></i>
-        </label>
-        <input type="text" formControlName="modelo" />
+          <label>
+            No. de serie:
+            <i class="fas fa-info-circle info-icon" data-tooltip="Número de serie del vehículo (VIN)."></i>
+          </label>
+          <input type="tel" formControlName="serie" />
 
-        <label>
-          No. de serie:
-          <i class="fas fa-info-circle info-icon" data-tooltip="Número de serie del vehículo (VIN)."></i>
-        </label>
-        <input type="tel" formControlName="serie" />
+          <label>
+            Kmts recorridos:
+            <i class="fas fa-info-circle info-icon" data-tooltip="Kilómetros recorridos"></i>
+          </label>
+          <input type="tel" formControlName="km" />
+        </div>
 
-        <label>
-          Kmts recorridos:
-          <i class="fas fa-info-circle info-icon" data-tooltip="Kilómetros recorridos"></i>
-        </label>
-        <input type="tel" formControlName="km" />
-      </div>
+        <div class="group">
+          <label>
+            Color del vehículo:
+            <i class="fas fa-info-circle info-icon" data-tooltip="Color del vehículo"></i>
+          </label>
+          <input type="text" formControlName="color" />
 
-      <div class="group">
-        <label>
-          Color del vehículo:
-          <i class="fas fa-info-circle info-icon" data-tooltip="Color del vehículo"></i>
-        </label>
-        <input type="text" formControlName="color" />
+          <label>
+            Compañía de seguro:
+            <i class="fas fa-info-circle info-icon" data-tooltip="Nombre de la aseguradora del vehículo."></i>
+          </label>
+          <input type="text" formControlName="seguros" />
 
-        <label>
-          Compañía de seguro:
-          <i class="fas fa-info-circle info-icon" data-tooltip="Nombre de la aseguradora del vehículo."></i>
-        </label>
-        <input type="text" formControlName="seguros" />
+          <label>
+            Verificación:
+            <i class="fas fa-info-circle info-icon"
+              data-tooltip="Indique si la verificación está vigente o la fecha de la última verificación."></i>
+          </label>
+          <input type="text" formControlName="verificacion" />
 
-        <label>
-          Verificación:
+          <label>
+            Vigencia:
+            <i class="fas fa-info-circle info-icon" data-tooltip="Fecha de vencimiento del seguro o verificación."></i>
+          </label>
+          <input type="date" formControlName="vigencia" />
+
+          <label>
+            Estado del Vehiculo:
+            <i class="fas fa-info-circle info-icon"
+              data-tooltip="Seleccione si el Vehiculo está activo o inactivo."></i>
+          </label>
+          <div formGroupName="estado">
+            <label>
+              <input type="radio" formControlName="activo" [value]="true"> Activo
+            </label>
+            <label>
+              <input type="radio" formControlName="activo" [value]="false"> Inactivo
+            </label>
+          </div>
+          <label>Responsable del vehiculo:</label>
           <i class="fas fa-info-circle info-icon"
-            data-tooltip="Indique si la verificación está vigente o la fecha de la última verificación."></i>
-        </label>
-        <input type="text" formControlName="verificacion" />
-
-        <label>
-          Vigencia:
-          <i class="fas fa-info-circle info-icon" data-tooltip="Fecha de vencimiento del seguro o verificación."></i>
-        </label>
-        <input type="date" formControlName="vigencia" />
-
-        <label>
-          Estado del Vehiculo:
-          <i class="fas fa-info-circle info-icon" data-tooltip="Seleccione si el Vehiculo está activo o inactivo."></i>
-        </label>
-        <div formGroupName="estado">
-          <label>
-            <input type="radio" formControlName="activo" [value]="true"> Activo
-          </label>
-          <label>
-            <input type="radio" formControlName="activo" [value]="false"> Inactivo
-          </label>
+            data-tooltip="Seleccione el trabajadores responsable de este vehiculo"></i>
+          <select formControlName="responsable">
+            <option value="">Sin Responsable</option>
+            <option *ngFor="let Employees of catEmployees" [value]="Employees.id">{{ Employees.name }}</option>
+          </select>
         </div>
-        <label>Responsable del vehiculo:</label>
-        <i class="fas fa-info-circle info-icon"
-          data-tooltip="Seleccione el trabajadores responsable de este vehiculo"></i>
-        <select formControlName="responsable">
-          <option value="">Sin Responsable</option>
-          <option *ngFor="let Employees of catEmployees" [value]="Employees.id">{{ Employees.name }}</option>
+
+      </div>
+      <div class="col-auto d-flex justify-content-end mt-auto">
+        <button type="button" class="btn btn-outline-secondary btn-sm ms-2" *ngIf="isEditMode"
+          (click)="habilitarEdicion()">Habilitar edición</button>
+        <button type="submit" class="btn  btn-sm" [disabled]="carForm.disabled">Guardar vehiculo</button>
+      </div>
+
+    </form>
+  </div>
+
+  <div *ngIf="activeTab === 'servicios'">
+    <div class="card">
+      <h4>Agregar servicio</h4>
+      <div class="d-flex gap-3 mb-3">
+        <select [(ngModel)]="nuevoServicio.catServiceCarId" class="form-select ">
+          <option *ngFor="let item of catServicios" [value]="item.id">{{ item.name }}</option>
         </select>
+        <input type="number" [(ngModel)]="nuevoServicio.km" (ngModelChange)="actualizarTotal()" placeholder="Km"
+          class="form-control" style="width: 100px;" />
+        <input type="number" [value]="nuevoServicio.total" [(ngModel)]="nuevoServicio.total" readonly
+          placeholder="Total" class="form-control" style="width: 100px;" />
+        <button class="btn btn-primary btn-sm" (click)="agregarServicio()">Agregar</button>
+      </div>
+
+      <div class="tabla-servicios mt-4">
+        <h5>Servicios Actuales</h5>
+        <div class="table">
+          <table class="table align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>Servicio</th>
+                <th>KMs</th>
+                <th class="text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let servicio of serviciosActuales">
+                <td>{{ servicio.service }}</td>
+                <td>{{ servicio.km }}</td>
+                <td class="text-center">
+                  <button class="icon-btn" (click)="editarServicio(servicio)" title="Editar">✏️</button>
+                  <button class="icon-btn" (click)="eliminarServicio(servicio)" title="Eliminar">🗑️</button>
+                  <button class="icon-btn" (click)="confirmarServicio(servicio)" title="Confirmar">✅</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
     </div>
-    <div class="col-auto d-flex justify-content-end mt-auto">
-      <button type="button" class="btn btn-outline-secondary btn-sm ms-2"
-        *ngIf="isEditMode" (click)="habilitarEdicion()">Habilitar edición</button>
-      <button type="submit" class="btn  btn-sm" [disabled]="carForm.disabled">Guardar vehiculo</button>
-    </div>
+  </div>
 
-  </form>
+  <div *ngIf="activeTab === 'historico'" class="mt-4">
+    <div class="card">
+      <h4>Historial de Servicios</h4>
+      <table class="table table-sm table-hover">
+        <thead>
+          <tr>
+            <th>Servicio</th>
+            <th>Fecha</th>
+            <th>KMs</th>
+
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let hist of historialServicios">
+            <td>{{ hist.service }}</td>
+            <td>{{ hist.tsService | date: 'shortDate' }}</td>
+            <td>{{ hist.km }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
 
 

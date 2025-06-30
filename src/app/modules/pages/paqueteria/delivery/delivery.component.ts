@@ -72,6 +72,7 @@ export class DeliveryComponent implements OnInit {
     this.pakage.updateDeliveryStatus(packageId, catStatusId, description).subscribe(
       (response) => {
         console.log('Marcado como en ruta:', response);
+         this.cargarDeliveryInfo();
         // Aquí iría la lógica para actualizar el estado en el backend si aplica
       },
       (error) => {
@@ -83,6 +84,7 @@ export class DeliveryComponent implements OnInit {
   terminarRuta() {
     let catStatusId = 10;
     let packageId = this.deliveryId; // Asegúrate de que el paquete tenga un ID
+    console.log('Terminar ruta con ID de paquete:', packageId);
     let description = 'ruta terminada'; // Descripción de la acción
     this.pakage.updateDeliveryStatus(packageId, catStatusId, description).subscribe(
       (response) => {

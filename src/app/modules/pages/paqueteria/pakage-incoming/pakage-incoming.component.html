@@ -5,52 +5,36 @@
   <div class=" d-flex mt-3">
     <div class="col-auto col-lg-12">
 
-      <div class="card2">
+      <div class="card2 row">
         <div class="form-floating col-auto col-lg-3 m-3 row">
-          <input type="text" class=" buscar form-control" id="busqueda"
-            placeholder="Buscar"
-            [(ngModel)]="searchTerm" name="busqueda">
-          <label for="User">&nbsp;&nbsp;<i
-              class="fa-solid fa-magnifying-glass"></i> Buscar</label>
+          <input type="text" class=" buscar form-control" id="busqueda" placeholder="Buscar" [(ngModel)]="searchTerm"
+            name="busqueda">
+          <label for="User">&nbsp;&nbsp;<i class="fa-solid fa-magnifying-glass"></i> Buscar</label>
         </div>
-        <div
-          class="col-auto col-lg-2 mt-4">
-          <input
-            type="text"
-            ngxDaterangepickerMd
-            [(ngModel)]="rango"
-            [showDropdowns]="true"
-            [autoApply]="true"
-            class="form-control"
-            placeholder="Seleccionar fechas"
-            (ngModelChange)="getDatos()"
-            />
+        <div class="col-auto col-lg-2 mt-4">
+          <input type="text" ngxDaterangepickerMd [(ngModel)]="rango" [showDropdowns]="true" [autoApply]="true"
+            class="form-control" placeholder="Seleccionar fechas" (ngModelChange)="getDatos(this.page, this.size)" />
         </div>
 
         <div class="col-auto col-lg-3 d-flex justify-content-end mt-auto">
-          <button type="button" class="btn btn-sm"
-            (click)="crearCargamento()">CREAR CARGAMENTO</button>
+          <button type="button" class="btn btn-sm" (click)="crearCargamento()">CREAR CARGAMENTO</button>
         </div>
         <div class="col-auto col-lg-2 d-flex justify-content-end mt-auto">
           <a [routerLink]="['/pages/RH/Registrar-Trabajador']">
             <button type="button" class="btn btn-sm">DESCARGAR REPORTES</button>
           </a>
         </div>
-        <!-- Cada card redirige a una ruta con el ID del cargamento -->
-        <!-- Tarjetas de cargamento -->
-        <div *ngFor="let item of data" class="card-person"
-          (click)="infocard(item.id)">
+
+
+        <div *ngFor="let item of data" class="card-person" (click)="infocard(item.id)">
           <h3 class="title">Cargamento {{ item.id }}</h3>
 
           <div class="progress-container">
-            <div
-              class="progress-bar"
-              [ngClass]="{
+            <div class="progress-bar" [ngClass]="{
         'green': porcentaje(item) > 70,
         'yellow': porcentaje(item) <= 70 && porcentaje(item) >= 30,
         'red': porcentaje(item) < 30
-      }"
-              [style.width.%]="porcentaje(item)">
+       }" [style.width.%]="porcentaje(item)">
             </div>
           </div>
 
@@ -65,12 +49,21 @@
 
           <hr>
           <div class="footer">
-            <span><strong>Fecha:</strong> {{ item.ts_created | date: 'dd-MM-yyyy HH:mm'  }}</span>
+            <span><strong>Fecha:</strong> {{ item.ts_created | date: 'dd-MM-yyyy HH:mm' }}</span>
             <span><strong>ID:</strong> {{ item.id }}</span>
           </div>
         </div>
 
+
+        <app-paginador-component [isLoading]="isLoading" [message]="'No hay cargamentos registrados en este día.'"
+          [page]="page" [size]="size" [total]="total" (pageChange)="cambiarPagina($event)">
+        </app-paginador-component>
+
       </div>
+
+
+
+
     </div>
 
   </div>

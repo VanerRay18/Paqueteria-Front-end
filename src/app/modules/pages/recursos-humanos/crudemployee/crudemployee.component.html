@@ -3,7 +3,7 @@
     <h1>Trabajadores Registrados</h1>
   </div>
   <div class="col-auto col-lg-3 d-flex justify-content-end mt-auto">
-    <a [routerLink]="['/pages/RH/Registrar-Trabajador']">
+    <a [routerLink]="['/pages/RH/Registrar-Trabajador/0']">
       <button type="button" class="btn btn-sm">DAR DE ALTA UN TRABAJADOR</button>
     </a>
   </div>
@@ -46,7 +46,7 @@
               [maxHeight]="'630px'"
               [itemsPerPage]="10"
               [showActionsEdit]=true
-              (edit)="onEdit($event)"
+              (edit)="onEdit($event.id)"
               [showActionsDeleted]=true
               (delete)="onDelete($event)"
               [showActionsPdf]=false
@@ -83,7 +83,7 @@
               [maxHeight]="'630px'"
               [itemsPerPage]="10"
               [showActionsEdit]=true
-              (edit)="onEdit($event)"
+              (edit)="onEdit($event.id)"
               [showActionsDeleted]=true
               (delete)="onDelete($event)"
               [showActionsPdf]=false

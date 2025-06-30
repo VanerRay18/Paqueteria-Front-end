@@ -10,6 +10,7 @@ import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { DeliveryComponent } from './delivery/delivery.component';
 import { DeliveryPackagesComponent } from './delivery-packages/delivery-packages.component';
+import { SearchDeliveryComponent } from './search-delivery/search-delivery.component';
 
 
 
@@ -22,7 +23,8 @@ import { DeliveryPackagesComponent } from './delivery-packages/delivery-packages
     PakageTokenComponent,
     PakageIncomingComponent,
     DeliveryComponent,
-    DeliveryPackagesComponent
+    DeliveryPackagesComponent,
+    SearchDeliveryComponent
   ],
   imports: [
     CommonModule,

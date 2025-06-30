@@ -43,7 +43,6 @@ export class CRUDEmployeeComponent {
   }
 
   onDelete(employeeId : any) {
-    console.log('ID del empleado a eliminar:', employeeId.id);
     Swal.fire({
       title: '¿Estás seguro?',
       text: "¡No podrás deshacer esta acción!",
@@ -99,10 +98,10 @@ getData() {
 
 
 onEdit(employeeId: any) {
-  console.log('ID del empleado a editar:', employeeId.id);
-  const id = employeeId.id; // Obtiene el ID del empleado
-  this.fileTransferService.setIdTercero(id); // Establece el ID del
-  this.router.navigate(['/pages/RH/Registrar-Trabajador']); // Navega a la página de edición del empleado
+  // console.log('ID del empleado a editar:', employeeId.id);
+  // const id = employeeId.id; // Obtiene el ID del empleado
+  // this.fileTransferService.setIdTercero(id); // Establece el ID del
+  this.router.navigate(['/pages/RH/Registrar-Trabajador/'+employeeId]); // Navega a la página de edición del empleado
 
 
 }

@@ -5,6 +5,7 @@ import * as Papa from 'papaparse';
 import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
 import { formatDate } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-delivery-packages',
@@ -33,47 +34,49 @@ export class DeliveryPackagesComponent implements OnInit {
 
   paquetesAgrupados: any[] = []; // Agrupados y paginados
   constructor(
-     private pakage: PakageService,
-        private fileTransferService: FileTransferService
+    private pakage: PakageService,
+    private fileTransferService: FileTransferService,
+    private route: ActivatedRoute,
   ) { }
 
   ngOnInit(): void {
-    this.fileTransferService.currentIdTercero$
-      .subscribe(id => {
-        if (id !== null) {
-          console.log('ID recibido:', id);
-          this.deliveryId = id;
-          //  this.fileTransferService.clearIdTercero();
-        }
-      });
-   this.getData(this.page, this.size);
-  
-    }
-      cambiarPagina(pagina: number) {
-        this.page = pagina;
-        this.getData(this.page, this.size);
-      }
-    
-      renderInput(id: string, value: string = ''): string {
-        const safeValue = value ?? ''; // evita undefined
-        return `
+    // this.fileTransferService.currentIdTercero$
+    //   .subscribe(id => {
+    //     if (id !== null) {
+    //       console.log('ID recibido:', id);
+    //       this.deliveryId = id;
+    //       //  this.fileTransferService.clearIdTercero();
+    //     }
+    //   });
+    this.deliveryId = this.route.snapshot.paramMap.get('id');
+    this.getData(this.page, this.size);
+
+  }
+  cambiarPagina(pagina: number) {
+    this.page = pagina;
+    this.getData(this.page, this.size);
+  }
+
+  renderInput(id: string, value: string = ''): string {
+    const safeValue = value ?? ''; // evita undefined
+    return `
         <div style="display: flex; flex-direction: column;">
           <label><strong>${id}</strong></label>
           <input id="${id}" class="swal2-input" placeholder="${id}" value="${safeValue}" />
         </div>
       `;
-      }
-    
-      editarConsolidado(paquete: any): void {
-        const esNuevo = !paquete.consolidado;
-        const consolidado = paquete.consolidado || {};
-        const commitDateValue = consolidado.commitDate
-          ? new Date(consolidado.commitDate[0], consolidado.commitDate[1] - 1, consolidado.commitDate[2]).toISOString().split('T')[0]
-          : '';
-    
-        Swal.fire({
-          title: esNuevo ? 'Nuevo Consolidado' : 'Editar Consolidado',
-          html: `
+  }
+
+  editarConsolidado(paquete: any): void {
+    const esNuevo = !paquete.consolidado;
+    const consolidado = paquete.consolidado || {};
+    const commitDateValue = consolidado.commitDate
+      ? new Date(consolidado.commitDate[0], consolidado.commitDate[1] - 1, consolidado.commitDate[2]).toISOString().split('T')[0]
+      : '';
+
+    Swal.fire({
+      title: esNuevo ? 'Nuevo Consolidado' : 'Editar Consolidado',
+      html: `
           <form id="consolidadoForm" style="display: flex; flex-direction: column; gap: 14px; font-size: 14px; max-height: 60vh; overflow-y: auto; padding-right: 4px;">
         <div style="display: flex; flex-direction: column;">
       <label><strong>commitDate *</strong></label>
@@ -120,108 +123,108 @@ export class DeliveryPackagesComponent implements OnInit {
             ${this.renderInput('specialHandlingCodes', consolidado.specialHandlingCodes)}
           </form>
         `,
-          showCancelButton: true,
-          showCloseButton: true,
-          confirmButtonText: 'Guardar',
-          cancelButtonText: 'Cancelar',
-          focusConfirm: false,
-          preConfirm: () => {
-            const getVal = (id: string) => (document.getElementById(id) as HTMLInputElement)?.value?.trim() || '';
-            const dateStr = getVal('commitDate');
-            const recipName = getVal('recipName');
-    
-            if (!dateStr || !recipName) {
-              Swal.showValidationMessage('Los campos "commitDate" y "recipName" son obligatorios.');
-              return;
-            }
-    
-            const date = new Date(dateStr);
-    
-            const body = {
-              trackingNo: getVal('trackingNo'),
-              latestDeptLocation: getVal('latestDeptLocation'),
-              latestDeptCntryCd: getVal('latestDeptCntryCd'),
-              originLocId: getVal('originLocId'),
-              shprCoShprName: getVal('shprCoShprName'),
-              shprAddr: getVal('shprAddr'),
-              shprCity: getVal('shprCity'),
-              shprState: getVal('shprState'),
-              shprCntry: getVal('shprCntry'),
-              shprPostal: getVal('shprPostal'),
-              destinationLocId: getVal('destinationLocId'),
-              recipCo: getVal('recipCo'),
-              recipName,
-              recipAddr: getVal('recipAddr'),
-              recipCity: getVal('recipCity'),
-              recipState: getVal('recipState'),
-              recipCntry: getVal('recipCntry'),
-              recipPostal: getVal('recipPostal'),
-              commitDate: `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`,
-              service: getVal('service'),
-              commitTime: getVal('commitTime'),
-              shprPhone: getVal('shprPhone'),
-              recipPhone: getVal('recipPhone'),
-              shprRef: getVal('shprRef'),
-              noPieces: getVal('noPieces'),
-              masterTrackingNo: getVal('masterTrackingNo'),
-              specialHandlingCodes: getVal('specialHandlingCodes')
-            };
-    
-            const headers = {
-              packageId: paquete.id,
-              description: (document.getElementById('descripcion') as HTMLTextAreaElement)?.value || ''
-            };
-    
-            return { body, headers };
-          }
-        }).then(result => {
-          if (result.isConfirmed && result.value) {
-            const { body, headers } = result.value;
-            console.log(body);
-            console.log(headers);
-            console.log(paquete.consolidado.id)
-            if (paquete.consolidado.id == null) {
-              this.pakage.createPackageWithConsolidado(headers.packageId,headers.description,body).subscribe(
-                response => {
-                 Swal.fire('¡Éxito!', `El consolidado fue ${esNuevo ? 'creado' : 'actualizado'} correctamente.`, 'success');
-                },
-                error => {
-                  console.error('Error al obtener los datos:', error);
-                  this.isLoading = false;
-                }
-              );
-              console.log("is post")
-            } else {
-               this.pakage.updatePackageWithConsolidado(headers.packageId,headers.description,body).subscribe(
-                response => {
-                 Swal.fire('¡Éxito!', `El consolidado fue ${esNuevo ? 'creado' : 'actualizado'} correctamente.`, 'success');
-                },
-                error => {
-                  console.error('Error al obtener los datos:', error);
-                  this.isLoading = false;
-                }
-              );
-    
-            }
-            Swal.fire('¡Éxito!', `El consolidado fue ${esNuevo ? 'creado' : 'actualizado'} correctamente.`, 'success');
-            this.getData(this.page, this.size);
-          }
-        });
+      showCancelButton: true,
+      showCloseButton: true,
+      confirmButtonText: 'Guardar',
+      cancelButtonText: 'Cancelar',
+      focusConfirm: false,
+      preConfirm: () => {
+        const getVal = (id: string) => (document.getElementById(id) as HTMLInputElement)?.value?.trim() || '';
+        const dateStr = getVal('commitDate');
+        const recipName = getVal('recipName');
+
+        if (!dateStr || !recipName) {
+          Swal.showValidationMessage('Los campos "commitDate" y "recipName" son obligatorios.');
+          return;
+        }
+
+        const date = new Date(dateStr);
+
+        const body = {
+          trackingNo: getVal('trackingNo'),
+          latestDeptLocation: getVal('latestDeptLocation'),
+          latestDeptCntryCd: getVal('latestDeptCntryCd'),
+          originLocId: getVal('originLocId'),
+          shprCoShprName: getVal('shprCoShprName'),
+          shprAddr: getVal('shprAddr'),
+          shprCity: getVal('shprCity'),
+          shprState: getVal('shprState'),
+          shprCntry: getVal('shprCntry'),
+          shprPostal: getVal('shprPostal'),
+          destinationLocId: getVal('destinationLocId'),
+          recipCo: getVal('recipCo'),
+          recipName,
+          recipAddr: getVal('recipAddr'),
+          recipCity: getVal('recipCity'),
+          recipState: getVal('recipState'),
+          recipCntry: getVal('recipCntry'),
+          recipPostal: getVal('recipPostal'),
+          commitDate: `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`,
+          service: getVal('service'),
+          commitTime: getVal('commitTime'),
+          shprPhone: getVal('shprPhone'),
+          recipPhone: getVal('recipPhone'),
+          shprRef: getVal('shprRef'),
+          noPieces: getVal('noPieces'),
+          masterTrackingNo: getVal('masterTrackingNo'),
+          specialHandlingCodes: getVal('specialHandlingCodes')
+        };
+
+        const headers = {
+          packageId: paquete.id,
+          description: (document.getElementById('descripcion') as HTMLTextAreaElement)?.value || ''
+        };
+
+        return { body, headers };
       }
-    
-      verdetallesPaquete(paquete: any): void {
-        const guia = paquete.guia;
-        const commitDate = paquete.commit_date
-          ? formatDate(new Date(paquete.commit_date[0], paquete.commit_date[1] - 1, paquete.commit_date[2]), 'dd-MM-yyyy', 'en-US')
-          : 'Sin fecha';
-    
-        const d = paquete.consolidado;
-        const s = paquete.status;
-        const c = this.cargamento;
-    
-        Swal.fire({
-          title: `<strong>${guia} - ${commitDate}</strong>`,
-          html: `
+    }).then(result => {
+      if (result.isConfirmed && result.value) {
+        const { body, headers } = result.value;
+        console.log(body);
+        console.log(headers);
+        console.log(paquete.consolidado.id)
+        if (paquete.consolidado.id == null) {
+          this.pakage.createPackageWithConsolidado(headers.packageId, headers.description, body).subscribe(
+            response => {
+              Swal.fire('¡Éxito!', `El consolidado fue ${esNuevo ? 'creado' : 'actualizado'} correctamente.`, 'success');
+            },
+            error => {
+              console.error('Error al obtener los datos:', error);
+              this.isLoading = false;
+            }
+          );
+          console.log("is post")
+        } else {
+          this.pakage.updatePackageWithConsolidado(headers.packageId, headers.description, body).subscribe(
+            response => {
+              Swal.fire('¡Éxito!', `El consolidado fue ${esNuevo ? 'creado' : 'actualizado'} correctamente.`, 'success');
+            },
+            error => {
+              console.error('Error al obtener los datos:', error);
+              this.isLoading = false;
+            }
+          );
+
+        }
+        Swal.fire('¡Éxito!', `El consolidado fue ${esNuevo ? 'creado' : 'actualizado'} correctamente.`, 'success');
+        this.getData(this.page, this.size);
+      }
+    });
+  }
+
+  verdetallesPaquete(paquete: any): void {
+    const guia = paquete.guia;
+    const commitDate = paquete.commit_date
+      ? formatDate(new Date(paquete.commit_date[0], paquete.commit_date[1] - 1, paquete.commit_date[2]), 'dd-MM-yyyy', 'en-US')
+      : 'Sin fecha';
+
+    const d = paquete.consolidado;
+    const s = paquete.status;
+    const c = this.cargamento;
+
+    Swal.fire({
+      title: `<strong>${guia} - ${commitDate}</strong>`,
+      html: `
           <div style="display: flex; flex-direction: column; gap: 1.2rem; font-size: 14px;">
     
             <!-- Consolidado -->
@@ -267,68 +270,68 @@ export class DeliveryPackagesComponent implements OnInit {
     
           </div>
         `,
-          width: 650,
-          showCloseButton: true,
-          confirmButtonText: 'Cerrar',
-          focusConfirm: false,
-          customClass: {
-            popup: 'custom-swal-popup'
-          }
-        });
+      width: 650,
+      showCloseButton: true,
+      confirmButtonText: 'Cerrar',
+      focusConfirm: false,
+      customClass: {
+        popup: 'custom-swal-popup'
       }
-    
-      agruparPorFechaDeEntrega(paquetes: any[]) {
-        const agrupados: { [fecha: string]: any[] } = {};
-    
-        paquetes.forEach(p => {
-          const timestamp = p.commit_date;
-          const fecha = timestamp
-            ? formatDate(new Date(timestamp), 'dd-MM-yyyy', 'en-US')
-            : 'Sin fecha de entrega';
-    
-          if (!agrupados[fecha]) agrupados[fecha] = [];
-          agrupados[fecha].push(p);
-        });
-    
-        // Convertimos a array ordenado (opcionalmente por fecha)
-        this.paquetesAgrupados = Object.entries(agrupados).map(([fecha, paquetes]) => ({
-          fecha,
-          paquetes
-        }));
+    });
+  }
+
+  agruparPorFechaDeEntrega(paquetes: any[]) {
+    const agrupados: { [fecha: string]: any[] } = {};
+
+    paquetes.forEach(p => {
+      const timestamp = p.commit_date;
+      const fecha = timestamp
+        ? formatDate(new Date(timestamp), 'dd-MM-yyyy', 'en-US')
+        : 'Sin fecha de entrega';
+
+      if (!agrupados[fecha]) agrupados[fecha] = [];
+      agrupados[fecha].push(p);
+    });
+
+    // Convertimos a array ordenado (opcionalmente por fecha)
+    this.paquetesAgrupados = Object.entries(agrupados).map(([fecha, paquetes]) => ({
+      fecha,
+      paquetes
+    }));
+  }
+
+  getData(page: number, size: number): void {
+    this.isLoading = true;
+    this.paquetesAgrupados = [];
+    console.log(this.deliveryId)
+    this.pakage.getPackageByDelivery(this.deliveryId, page, size).subscribe(
+      response => {
+        this.total = response.data.total
+        // this.isMatch = response.data.cargamento.isMatch
+        this.cargamento = response.data.cargamento
+        this.paquetes = response.data.paquetes; // Asignar los datos recibidos a la variable paquetes
+        // console.log(response.data.packages);
+        this.agruparPorFechaDeEntrega(this.paquetes);
+        this.isLoading = false;
+      },
+      error => {
+        console.error('Error al obtener los datos:', error);
+        this.isLoading = false;
       }
-    
-      getData(page: number, size: number): void {
-        this.isLoading = true;
-        this.paquetesAgrupados = [];
-        console.log(this.deliveryId)
-        this.pakage.getPackageByDelivery(this.deliveryId, page, size).subscribe(
-          response => {
-            this.total = response.data.total
-           // this.isMatch = response.data.cargamento.isMatch
-            this.cargamento = response.data.cargamento
-            this.paquetes = response.data.paquetes; // Asignar los datos recibidos a la variable paquetes
-            // console.log(response.data.packages);
-            this.agruparPorFechaDeEntrega(this.paquetes);
-            this.isLoading = false;
-          },
-          error => {
-            console.error('Error al obtener los datos:', error);
-            this.isLoading = false;
-          }
-        );
-      }
-    
-      getBarraEstado(paquete: any): string {
-        const value = paquete.status.config?.value || 0;
-        return value + '%';
-      }
-    
-      // Ojo para ver detalles
-      verDetalles(paquete: any): void {
-        const d = paquete.consolidado;
-        Swal.fire({
-          title: 'Detalles del Paquete',
-          html: `
+    );
+  }
+
+  getBarraEstado(paquete: any): string {
+    const value = paquete.status.config?.value || 0;
+    return value + '%';
+  }
+
+  // Ojo para ver detalles
+  verDetalles(paquete: any): void {
+    const d = paquete.consolidado;
+    Swal.fire({
+      title: 'Detalles del Paquete',
+      html: `
           <div style="text-align: left; font-size: 14px;">
             <p><strong>Guía:</strong> ${paquete.guia}</p>
             <p><strong>Fecha de Entrega:</strong> ${d.serviceCommitDate}</p>
@@ -341,100 +344,99 @@ export class DeliveryPackagesComponent implements OnInit {
             <p><strong>Referencias:</strong> ${d.shprRef}</p>
           </div>
         `,
-          confirmButtonText: 'Cerrar',
-          width: 600
+      confirmButtonText: 'Cerrar',
+      width: 600
+    });
+  }
+
+  onFileSelected(event: any): void {
+    const file: File = event.target.files[0];
+
+    if (file) {
+      const reader: FileReader = new FileReader();
+
+      reader.onload = (e: any) => {
+        const data: Uint8Array = new Uint8Array(e.target.result);
+        const workbook: XLSX.WorkBook = XLSX.read(data, { type: 'array' });
+
+        const sheetName = workbook.SheetNames[0]; // leer solo la primera hoja
+        const worksheet = workbook.Sheets[sheetName];
+
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+
+        console.log('JSON generado desde Excel:', jsonData);
+
+        this.enviarAlBackend(jsonData);
+      };
+
+      reader.readAsArrayBuffer(file); // ✅ lee como binario
+    }
+  }
+
+  // Método para enviar los datos al backend
+  enviarAlBackend(data: any): void {
+    console.log(data) // Reemplaza con el ID real del paquete entrante
+    this.pakage.SentDataExel(data, this.deliveryId
+
+    ).subscribe(
+      response => {
+        console.log(response.data);
+        Swal.fire({
+          title: '¡Éxito!',
+          text: 'Se cargo el consolidado correctamente.',
+          icon: 'success',
+          showConfirmButton: false,
+          timer: 1500,
+          timerProgressBar: true
         });
       }
-    
-      onFileSelected(event: any): void {
-        const file: File = event.target.files[0];
-    
-        if (file) {
-          const reader: FileReader = new FileReader();
-    
-          reader.onload = (e: any) => {
-            const data: Uint8Array = new Uint8Array(e.target.result);
-            const workbook: XLSX.WorkBook = XLSX.read(data, { type: 'array' });
-    
-            const sheetName = workbook.SheetNames[0]; // leer solo la primera hoja
-            const worksheet = workbook.Sheets[sheetName];
-    
-            const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
-    
-            console.log('JSON generado desde Excel:', jsonData);
-    
-            this.enviarAlBackend(jsonData);
-          };
-    
-          reader.readAsArrayBuffer(file); // ✅ lee como binario
+    );
+
+
+    //     console.log('Enviando datos al backend:', data);
+    //     // Aquí puedes usar un servicio HTTP para enviar los datos
+  }
+
+  mostrarSwal() {
+    Swal.fire({
+      title: 'Escanea o escribe el paquete',
+      html: `<input id="input-paquete" class="swal2-input" placeholder="Número de guía" autofocus>`,
+      showCancelButton: true,
+      confirmButtonText: 'Guardar',
+      cancelButtonText: 'Cancelar',
+      allowOutsideClick: false,
+      preConfirm: () => {
+        const input = document.getElementById('input-paquete') as HTMLInputElement;
+        const value = input?.value.trim();
+        if (!value) {
+          Swal.showValidationMessage('Debes ingresar un paquete');
+          return;
         }
+        return value;
       }
-    
-      // Método para enviar los datos al backend
-      enviarAlBackend(data: any): void {
-        console.log(data) // Reemplaza con el ID real del paquete entrante
-        this.pakage.SentDataExel(data, this.deliveryId
-          
-        ).subscribe(
-          response => {
-            console.log(response.data);
-            Swal.fire({
-              title: '¡Éxito!',
-              text: 'Se cargo el consolidado correctamente.',
-              icon: 'success',
-              showConfirmButton: false,
-              timer: 1500,
-              timerProgressBar: true
-            });
+    }).then((result) => {
+      if (result.isConfirmed && result.value) {
+        const paquete = result.value;
+
+        // 👇 Llamada al servicio con un solo paquete
+        this.pakage.addPackagesInDelivery(paquete, this.deliveryId).subscribe({
+          next: () => {
+            Swal.fire('¡Guardado!', `Paquete ${paquete} enviado correctamente.`, 'success');
+            this.getData(this.page, this.size);
+          },
+          error: (error) => {
+            console.error('Error al enviar el paquete:', error);
+            Swal.fire('Error', 'Ocurrió un problema al enviar el paquete.', 'error');
           }
-        );
-    
-    
-        //     console.log('Enviando datos al backend:', data);
-        //     // Aquí puedes usar un servicio HTTP para enviar los datos
+        });
       }
-    
-      mostrarSwal() {
-  Swal.fire({
-    title: 'Escanea o escribe el paquete',
-    html: `<input id="input-paquete" class="swal2-input" placeholder="Número de guía" autofocus>`,
-    showCancelButton: true,
-    confirmButtonText: 'Guardar',
-    cancelButtonText: 'Cancelar',
-    allowOutsideClick: false,
-    preConfirm: () => {
-      const input = document.getElementById('input-paquete') as HTMLInputElement;
-      const value = input?.value.trim();
-      if (!value) {
-        Swal.showValidationMessage('Debes ingresar un paquete');
-        return;
-      }
-      return value;
-    }
-  }).then((result) => {
-    if (result.isConfirmed && result.value) {
-      const paquete = result.value;
+    });
+  }
 
-      // 👇 Llamada al servicio con un solo paquete
-      this.pakage.addPackagesInDelivery(paquete, this.deliveryId).subscribe({
-        next: () => {
-          Swal.fire('¡Guardado!', `Paquete ${paquete} enviado correctamente.`, 'success');
-          this.getData(this.page, this.size);
-        },
-        error: (error) => {
-          console.error('Error al enviar el paquete:', error);
-          Swal.fire('Error', 'Ocurrió un problema al enviar el paquete.', 'error');
-        }
-      });
-    }
-  });
+
+  macheoPaquetes(): void {
+
+  }
+
+
 }
-
-      
-      macheoPaquetes(): void {
- 
-      }
-    
-    
-    }
-    

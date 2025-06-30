@@ -4,7 +4,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { RHService } from 'src/app/services/rh.service';
 import { ApiResponse } from 'src/app/models/ApiResponse';
 import Swal from 'sweetalert2';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FileTransferService } from 'src/app/services/file-transfer.service';
 import { take } from 'rxjs/operators';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
@@ -37,7 +37,7 @@ export class NewEmployeeComponent implements OnInit {
   catJobs: any[] = [];
   catSeguros: any[] = [];
   employeeId: any;
-  employeeIdPatch!: number | null;
+  employeeIdPatch!: any;
   isEditMode = false;
   isEditDocumentos = false;
   isEditUniformes = false;
@@ -68,6 +68,7 @@ export class NewEmployeeComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private rh: RHService,
     private router: Router,
+    private route: ActivatedRoute,
     private fileTransferService: FileTransferService
   ) {
 
@@ -76,19 +77,25 @@ export class NewEmployeeComponent implements OnInit {
   ngOnInit() {
     this.forms();
 
-    this.fileTransferService.currentIdTercero$
-      .pipe(take(1))  // <- solo se ejecuta una vez
-      .subscribe(id => {
-        if (id !== null) {
-          console.log('ID recibido:', id);
-          this.employeeIdPatch = id;
-          this.isEditMode = true;
-          this.loadEmployeeData(id); // solo una vez
+    // this.fileTransferService.currentIdTercero$
+    //   .pipe(take(1))  // <- solo se ejecuta una vez
+    //   .subscribe(id => {
+    //     if (id !== null) {
+    //       console.log('ID recibido:', id);
+    //       this.employeeIdPatch = id;
+    //       this.isEditMode = true;
+    //       this.loadEmployeeData(id); // solo una vez
 
-          // Limpiar el ID después de usarlo
-          this.fileTransferService.clearIdTercero();
-        }
-      });
+    //       // Limpiar el ID después de usarlo
+    //       this.fileTransferService.clearIdTercero();
+    //     }
+    //   });
+    let id = this.route.snapshot.paramMap.get('id')? Number(this.route.snapshot.paramMap.get('id')) : 0;
+    if(id !== 0){
+    this.employeeIdPatch = id
+    this.isEditMode = true;
+    this.loadEmployeeData(this.employeeIdPatch); 
+    }
 
     this.getData();
 

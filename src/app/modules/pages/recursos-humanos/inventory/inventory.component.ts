@@ -286,11 +286,11 @@ export class InventoryComponent {
     });
   }
 
-  onEditCar(data: any) {
-    console.log('Editar vehículo:', data.id);
-    const id = data.id; // Obtiene el ID del empleado
-    this.fileTransferService.setIdTercero(id); // Establece el ID del
-    this.router.navigate(['/pages/RH/Registrar-Automovil']);
+  onEditCar(id: any) {
+    // console.log('Editar vehículo:', data.id);
+    // const id = data.id; // Obtiene el ID del empleado
+    // this.fileTransferService.setIdTercero(id); // Establece el ID del
+    this.router.navigate(['/pages/RH/Registrar-Automovil/' + id]);
   }
 
   onEditMat(data: any) {

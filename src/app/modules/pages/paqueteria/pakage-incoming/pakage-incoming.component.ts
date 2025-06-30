@@ -3,11 +3,14 @@ import { ApiResponse } from 'src/app/models/ApiResponse';
 import { RHService } from 'src/app/services/rh.service';
 import { Cargamento, Persona } from 'src/app/shared/interfaces/utils';
 import Swal from 'sweetalert2';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PakageService } from 'src/app/services/pakage.service';
 import { FileTransferService } from 'src/app/services/file-transfer.service';
 import { take } from 'rxjs';
 import * as dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
 
 
 @Component({
@@ -20,73 +23,70 @@ export class PakageIncomingComponent implements OnInit {
   data: Cargamento[] = []; // Ya no usamos la interfaz Persona
   PackageOrgId: any; // ID de la organización de paquetería, puedes cambiarlo según sea necesario
   rango: { startDate: dayjs.Dayjs; endDate: dayjs.Dayjs } | null = null;
+  isLoadingDatos: boolean = false;
+  page: number = 0;
+  size: number = 5;
+  isLoading: boolean = false;
+  total: number = 0;
+
 
   constructor(private rh: RHService,
     private router: Router,
     private pakage: PakageService,
+    private route: ActivatedRoute,
     private fileTransferService: FileTransferService
   ) {
   }
 
   ngOnInit(): void {
 
-    this.fileTransferService.currentIdTercero$
-    // <- solo se ejecuta una vez
-      .subscribe(id => {
-        if (id !== null) {
-          console.log('ID recibido:', id);
-          this.PackageOrgId = id;
-          // this.fileTransferService.clearIdTercero();
-        }
-      });
+    // this.fileTransferService.currentIdTercero$
+    //   // <- solo se ejecuta una vez
+    //   .subscribe(id => {
+    //     if (id !== null) {
+    //       // console.log('ID recibido:', id);
+    //       this.PackageOrgId = id;
+    //       // Establecer fecha actual por defecto
+    //       this.rango = {
+    //         startDate: dayjs().startOf('day'),
+    //         endDate: dayjs().endOf('day')
+    //       };
 
+    //       this.getDatos(this.page, this.size);
+    //     }
+    //   });
+    this.PackageOrgId = this.route.snapshot.paramMap.get('id');
+         this.rango = {
+            startDate: dayjs().startOf('day'),
+            endDate: dayjs().endOf('day')
+          };
 
+          this.getDatos(this.page, this.size);
 
-    this.getDatos();
   }
 
-  getDatos() {
+  getDatos(page: number, size: number) {
+    console.log('Obteniendo datos para la página:', page, 'con tamaño:', size);
     if (!this.rango || !this.rango.startDate || !this.rango.endDate) return;
 
-  const desdeFormatted = this.rango.startDate.format('YYYY-MM-DD');
-  const hastaFormatted = this.rango.endDate.format('YYYY-MM-DD');
+    const desdeFormatted = this.rango.startDate.format('YYYY-MM-DD');
+    const hastaFormatted = this.rango.endDate.format('YYYY-MM-DD');
 
-    console.log('Fechas seleccionadas:', desdeFormatted, hastaFormatted);
+    this.isLoading = true; // 🔄 Inicia el spinner
 
-    this.pakage.getCargaById(this.PackageOrgId, desdeFormatted, hastaFormatted, 0, 50).subscribe(
+
+    this.pakage.getCargaById(this.PackageOrgId, desdeFormatted, hastaFormatted, page, size).subscribe(
       (response: ApiResponse) => {
+        this.total = Number(response.message) || 0;
+        console.log("este es el total", this.total);
         this.data = response.data;
+        this.isLoading = false;
       },
       (error) => {
         console.error('Ocurrió un error', error);
+        this.isLoading = false;
       }
     );
-
-
-    // 👉 Datos ficticios por mientras
-    // this.data = [
-    //   {
-    //     id: 1,
-    //     titulo: 'Cargamento 1',
-    //     fecha: '2025-06-17',
-    //     entregados: 80,
-    //     faltantes: 20
-    //   },
-    //   {
-    //     id: 2,
-    //     titulo: 'Cargamento 2',
-    //     fecha: '2025-06-16',
-    //     entregados: 45,
-    //     faltantes: 55
-    //   },
-    //   {
-    //     id: 3,
-    //     titulo: 'Cargamento 3',
-    //     fecha: '2025-06-15',
-    //     entregados: 20,
-    //     faltantes: 80
-    //   }
-    // ];
   }
 
   porcentaje(item: Cargamento): number {
@@ -95,9 +95,9 @@ export class PakageIncomingComponent implements OnInit {
   }
 
   infocard(id: number) {
-this.fileTransferService.clearIdTercero();
-this.fileTransferService.setIdTercero(id);
-    this.router.navigate(['/pages/Paqueteria/Registro-seguimiento']);
+    // this.fileTransferService.clearIdTercero();
+    // this.fileTransferService.setIdTercero(id);
+    this.router.navigate(['/pages/Paqueteria/Registro-seguimiento/'+ id]);
   }
 
   crearCargamento() {
@@ -110,15 +110,21 @@ this.fileTransferService.setIdTercero(id);
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        const pakageOrgId = 1; // o el que corresponda
-        const description = 'Cargamento generado desde Home'; // o algo dinámico
 
-        this.pakage.createIncoming(pakageOrgId, description).subscribe({
+        const description = 'Cargamento generado '; // o algo dinámico
+
+        this.pakage.createIncoming(this.PackageOrgId, description).subscribe({
           next: (res) => {
             Swal.fire('¡Cargamento creado!', '', 'success').then(() => {
-              this.router.navigate(['/pages/Paqueteria/Registro-seguimiento']);
+              // this.fileTransferService.clearIdTercero();
+              // this.fileTransferService.setIdTercero(res.data);
+              // console.log('Cargamento creado con ID:', res.data);
+              this.router.navigate(['/pages/Paqueteria/Registro-seguimiento/'+ res.data]);
             });
+            // this.fileTransferService.clearIdTercero();
+            this.getDatos(this.page, this.size); // Actualizar la lista de cargamentos
           },
+
           error: (err) => {
             console.error('Error al crear cargamento:', err);
             Swal.fire('Error al crear cargamento', err.error?.message || '', 'error');
@@ -126,6 +132,11 @@ this.fileTransferService.setIdTercero(id);
         });
       }
     });
+  }
+
+  cambiarPagina(pagina: number) {
+    this.page = pagina;
+    this.getDatos(this.page, this.size);
   }
 
 }

@@ -36,8 +36,9 @@ h2 {
   max-width: 250px;
 }
 
-.acciones {
+.botones-responsivos {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
 }
 
@@ -50,6 +51,22 @@ h2 {
   font-size: 0.9rem;
   color: #0066cc;
   transition: 0.3s ease;
+  
+}
+
+/* Cuando el ancho sea menor a 600px (pantallas pequeñas), los botones se apilan */
+@media (max-width: 600px) {
+  .botones-responsivos {
+    text-align: center;
+    justify-items: center;
+    flex-direction: column;
+    align-items: stretch; /* opcional: hace que los botones ocupen todo el ancho */
+  }
+
+  .botones-responsivos button {
+    width: 100%; /* para que se vean iguales */
+   margin: 0 0 12px 0 !important;/* quitar márgenes laterales como ms-2 */
+  }
 }
 
 .btn:hover {

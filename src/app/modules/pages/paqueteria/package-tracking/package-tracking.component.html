@@ -8,19 +8,26 @@
         <span>&nbsp;&nbsp;&nbsp;Total: {{this.total}}</span>
       </div>
       <input type="text" placeholder="Buscar..." class="buscador" />
-      <div class="acciones">
+      <div class="botones-responsivos">
         <input id="csvFile" type="file" (change)="onFileSelected($event)" accept=".csv" #fileInput
           style="display: none" />
 
-        <button class="btn btn-archivo" (click)="fileInput.click()" [disabled]="isMatch" [class.disabled-btn]="isMatch">
+        <button class="btn btn-archivo" (click)="fileInput.click()" [disabled]="isMatch || isCreateExel === true" [class.disabled-btn]="isMatch && isCreateExel">
           📁 Cargar Excel
         </button>
         <button class="btn btn-escanear" (click)="mostrarSwal()">
-          Comenzar a escanear
+          📦 Comenzar a escanear
         </button>
-        <button class="btn btn-escanear" (click)="macheoPaquetes()" [disabled]="isMatch" [class.disabled-btn]="isMatch">
-          Hacer macheo
+        <button class="btn btn-escanear" (click)="macheoPaquetes()" [disabled]="isMatch || total <=0" [class.disabled-btn]="isMatch">
+          🔄 Hacer macheo
         </button>
+        <button class="btn btn-escanear" (click)="machoteExelPaquetes()">
+          📊 Machote de excel
+        </button>
+        <button class="btn btn-escanear" (click)="descargarTxtDeGuiasPorBloques()">
+          📄 Copiar paquetes 
+        </button>
+
 
       </div>
     </div>

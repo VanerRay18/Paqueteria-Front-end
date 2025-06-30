@@ -68,8 +68,8 @@ this.filtrarPor('dia');
 
   irAEmpresa(id: any) {
     // console.log('ID de la empresa:', id); // Obtiene el ID del empleado
-  this.idService.setIdTercero(id);
-    this.router.navigate(['/pages/Paqueteria/Carga-paquetes']);
+  //this.idService.setIdTercero(id);
+    this.router.navigate(['/pages/Paqueteria/Carga-paquetes/' + id]);
   }
 
   irAsistencias() {

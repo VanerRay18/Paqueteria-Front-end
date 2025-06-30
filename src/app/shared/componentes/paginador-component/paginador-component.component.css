@@ -53,6 +53,23 @@
   border-top-color: #003366;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
+  }
+
+.title {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 1.8rem; /* tamaño base */
+  font-weight: 600;
+  padding: 0 10px;    /* padding lateral para que no se pegue a los bordes */
+  word-wrap: break-word; /* por si hay títulos largos */
+}
+
+/* Estilos responsivos para móviles */
+@media (max-width: 576px) {
+  .title {
+    font-size: 1.2rem; /* reducir tamaño en móvil */
+    margin-top: 10px;
+  }
 }
 
 @keyframes spin {

@@ -61,6 +61,10 @@ export class PakageService {
     return this.http.get<ApiResponse>(`${environment.baseService}${'/package/searchPackageByDeliveryId'}`, { headers });
   }
 
+  getConfigPackageOrg(headers: HttpHeaders): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/getConfigPackageOrg'}`, { headers });
+  }
+
   SentDataExel(data: any, incomingPackageId: any): Observable<ApiResponse> {//Trae la nomina actual
     let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId });
     return this.http.post<ApiResponse>(`${environment.baseService}${'/package/createDeliveryLoad'}`, data,
@@ -86,6 +90,7 @@ export class PakageService {
       { headers }
     );
   }
+
 
   MatchingPackage(incomingPackageId: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId });
