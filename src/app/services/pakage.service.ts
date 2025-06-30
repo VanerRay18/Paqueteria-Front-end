@@ -29,6 +29,11 @@ export class PakageService {
     return this.http.get<ApiResponse>(`${environment.baseService}${'/package/incomingPackagesByPackageOrgId'}`, { headers });
   }
 
+   getAllPackages(headers : HttpHeaders): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/getAllPackages'}`, { headers });
+  }
+
+
   getDeliveriesCar(): Observable<ApiResponse> {
     return this.http.get<ApiResponse>(`${environment.baseService}${'/package/deliveries'}`);
   }
