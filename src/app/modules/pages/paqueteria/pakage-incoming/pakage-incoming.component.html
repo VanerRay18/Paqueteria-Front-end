@@ -24,17 +24,15 @@
             <button type="button" class="btn btn-sm">DESCARGAR REPORTES</button>
           </a>
         </div>
-
-
-        <div *ngFor="let item of data" class="card-person" (click)="infocard(item.id)">
+        <div *ngFor="let item of data"  class="card-person" (click)="infocard(item.id)">
           <h3 class="title">Cargamento {{ item.id }}</h3>
 
           <div class="progress-container">
             <div class="progress-bar" [ngClass]="{
-        'green': porcentaje(item) > 70,
-        'yellow': porcentaje(item) <= 70 && porcentaje(item) >= 30,
-        'red': porcentaje(item) < 30
-       }" [style.width.%]="porcentaje(item)">
+              'green': porcentaje(item) > 70,
+              'yellow': porcentaje(item) <= 70 && porcentaje(item) >= 30,
+              'red': porcentaje(item) < 30
+            }" [style.width.%]="porcentaje(item)">
             </div>
           </div>
 

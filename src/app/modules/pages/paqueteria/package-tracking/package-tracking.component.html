@@ -53,10 +53,10 @@
           </div>
         </div>
 
-        <div class="etapas">
-          <span></span>
-          <span>{{paquete.status.name}} - {{ paquete.status.tiempo | date: 'dd-MM-yyyy HH:mm' }}</span> <span></span>
-        </div>
+              <div class="etapas">
+  <span >Intentos: {{paquete.totalEntregas}} Rutas: {{paquete.totalRutas}}</span>
+  <span class="center-info">{{paquete.status.name}} - {{ paquete.status.tiempo | date: 'dd-MM-yyyy HH:mm' }}</span>
+</div>
       </div>
     </div>
 
