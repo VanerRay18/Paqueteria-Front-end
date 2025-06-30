@@ -21,7 +21,7 @@ export class NewEmployeeComponent implements OnInit {
   pagoForm!: FormGroup;
   emergenciaForm!: FormGroup;
   bermedForm!: FormGroup;
-  fotoPreview: string = 'assets/default-user.png'; // Ruta de tu ícono por defecto
+  fotoPreview: string = ''; // Ruta de tu ícono por defecto
   draggedDocumentos: { id: number, name: string } | null = null;
   allDocumentos: { id: number, name: string }[] = [];
   assignedDocumentos: { id: number, name: string }[] = [];
@@ -50,6 +50,7 @@ export class NewEmployeeComponent implements OnInit {
   datosUniformesCargados = false;
   selectedFotoFile: File | null = null;
   fotoAntiguaId: number | null = null;   // El id de la foto actual (si la hay)
+  fotoAntigua: any;
 
 
   diasSemana = [
@@ -76,25 +77,11 @@ export class NewEmployeeComponent implements OnInit {
 
   ngOnInit() {
     this.forms();
-
-    // this.fileTransferService.currentIdTercero$
-    //   .pipe(take(1))  // <- solo se ejecuta una vez
-    //   .subscribe(id => {
-    //     if (id !== null) {
-    //       console.log('ID recibido:', id);
-    //       this.employeeIdPatch = id;
-    //       this.isEditMode = true;
-    //       this.loadEmployeeData(id); // solo una vez
-
-    //       // Limpiar el ID después de usarlo
-    //       this.fileTransferService.clearIdTercero();
-    //     }
-    //   });
-    let id = this.route.snapshot.paramMap.get('id')? Number(this.route.snapshot.paramMap.get('id')) : 0;
-    if(id !== 0){
-    this.employeeIdPatch = id
-    this.isEditMode = true;
-    this.loadEmployeeData(this.employeeIdPatch); 
+    let id = this.route.snapshot.paramMap.get('id') ? Number(this.route.snapshot.paramMap.get('id')) : 0;
+    if (id !== 0) {
+      this.employeeIdPatch = id
+      this.isEditMode = true;
+      this.loadEmployeeData(this.employeeIdPatch);
     }
 
     this.getData();
@@ -221,8 +208,8 @@ export class NewEmployeeComponent implements OnInit {
   getImageUrl(imagePath: string): string {
     if (!imagePath) return '';
     // Extrae el nombre de archivo desde la ruta local
-    const filename = imagePath.split('\\').pop() || '';
-    return `http://localhost:3000/uploads/images/${filename}`;
+    const filename = imagePath;
+    return `http://localhost:8080/${filename}`;
   }
 
   // 2️⃣ Método para cargar datos existentes y llenar los formularios
@@ -233,15 +220,20 @@ export class NewEmployeeComponent implements OnInit {
       // console.log('Datos del empleado:', resp.data);
       const personalesTieneDatos = e && Object.values(e).some(value => !!value);
       const diasNoSeleccionados: number[] = e?.config?.attendanceExeption ?? [];
-      this.fotoAntiguaId = resp.data?.images?.id || null;
+      this.fotoAntiguaId = resp.data.images.id;
       // Obtener URL pública de la imagen si existe
-      const imgData = resp.data.images;
-      if (imgData && imgData.path) {
-        this.fotoPreview = this.getImageUrl(imgData.path);
+      const paths = resp?.data?.images?.path;
+
+      if (Array.isArray(paths) && paths.length > 0) {
+        const imgData = paths[0];
+        console.log('Imagen del empleado:', imgData);
+        this.fotoAntigua = this.getImageUrl(imgData);
       } else {
-        this.fotoPreview = ''; // o imagen por defecto
+        console.log('No hay imágenes disponibles o path está vacío');
+        this.fotoAntigua = ''; // valor por defecto
       }
 
+      console.log('Foto antigua:', this.fotoAntigua);
       this.diasSemana = this.diasSemana.map(dia => ({
         ...dia,
         checked: !diasNoSeleccionados.includes(dia.valor)
@@ -450,15 +442,15 @@ export class NewEmployeeComponent implements OnInit {
           const subirFoto = () => {
             if (this.selectedFotoFile) {
               const formData = new FormData();
-              formData.append('files', this.selectedFotoFile);
-              this.rh.SaveFoto(formData, '', this.employeeIdPatch!, 'employee').subscribe({
+              formData.append('file', this.selectedFotoFile);
+              this.rh.SaveFoto(formData, '', this.employeeIdPatch, 'employee').subscribe({
                 next: () => {
                   Swal.fire('Actualizado', 'Empleado y foto actualizados correctamente.', 'success');
-                  this.router.navigate(['/pages/RH/Inventario']);
+
                 },
                 error: () => {
                   Swal.fire('Advertencia', 'Empleado actualizado, pero hubo un error al subir la foto.', 'warning');
-                  this.router.navigate(['/pages/RH/Inventario']);
+
                 }
               });
             } else {
@@ -491,15 +483,14 @@ export class NewEmployeeComponent implements OnInit {
 
           if (this.selectedFotoFile) {
             const formData = new FormData();
-            formData.append('files', this.selectedFotoFile);
+            formData.append('file', this.selectedFotoFile);
+            console.log(this.employeeIdPatch);
             this.rh.SaveFoto(formData, '', this.employeeId, 'employee').subscribe({
               next: () => {
                 Swal.fire('Guardado', 'Empleado y foto registrados correctamente.', 'success');
-                this.router.navigate(['/pages/RH/Inventario']);
               },
               error: () => {
                 Swal.fire('Advertencia', 'Empleado guardado, pero hubo un error al subir la foto.', 'warning');
-                this.router.navigate(['/pages/RH/Inventario']);
               }
             });
           } else {

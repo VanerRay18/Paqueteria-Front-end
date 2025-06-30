@@ -17,6 +17,11 @@
           Fotografía de la persona
         </label>
         <input type="file" id="foto" (change)="onFotoSelected($event)" hidden />
+        <div *ngIf="fotoAntigua" class="foto-preview mt-2">
+          <img [src]="fotoAntigua" alt="Foto del empleado"
+            style="max-width: 200px; border-radius: 8px;" />
+        </div>
+
       </div>
 
       <div class="group">

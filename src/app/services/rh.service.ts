@@ -69,10 +69,10 @@ export class RHService {
   SaveFoto(data: FormData, description: any, targetId: any, type: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({
       'description': description,
-      'carId': targetId.toString(),
+      'targetId': targetId.toString(),
       'type': type
     });
-    return this.http.post<ApiResponse>(`${environment.baseService}/files/saveFiles`, data, {
+    return this.http.post<ApiResponse>(`${environment.baseService}/files/saveFile`, data, {
       headers
     });
   }
