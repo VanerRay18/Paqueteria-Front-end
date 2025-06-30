@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
 import { formatDate } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { OrgItem } from 'src/app/shared/interfaces/utils';
 
 @Component({
   selector: 'app-delivery-packages',
@@ -89,12 +90,12 @@ export class DeliveryPackagesComponent implements OnInit {
             style="${commitDateValue ? '' : 'border: 1px solid #dc2626;'}"
           />
         </div>
-    
+
             <div style="display: flex; flex-direction: column;">
               <label><strong>Descripcion</strong></label>
               <textarea id="descripcion" class="swal2-textarea" rows="2">${paquete.delivery?.description || ''}</textarea>
             </div>
-    
+
             ${this.renderInput('trackingNo', consolidado.trackingNo)}
             ${this.renderInput('latestDeptLocation', consolidado.latestDeptLocation)}
             ${this.renderInput('latestDeptCntryCd', consolidado.latestDeptCntryCd)}
@@ -226,7 +227,7 @@ export class DeliveryPackagesComponent implements OnInit {
       title: `<strong>${guia} - ${commitDate}</strong>`,
       html: `
           <div style="display: flex; flex-direction: column; gap: 1.2rem; font-size: 14px;">
-    
+
             <!-- Consolidado -->
             <div style="padding: 12px; border-radius: 8px; background: #f1f5f9; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
               <h4 style="margin-bottom: 8px; color: #0f172a;">Consolidado</h4>
@@ -240,14 +241,14 @@ export class DeliveryPackagesComponent implements OnInit {
                 <p><strong>Referencias:</strong> ${d.shprRef}</p>
               ` : `<p>No hay información de consolidado</p>`}
             </div>
-    
+
             <!-- Status -->
             <div style="padding: 12px; border-radius: 8px; background: #fef9c3; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
               <h4 style="margin-bottom: 8px; color: #78350f;">Estado</h4>
               <p><strong>Nombre:</strong> ${s.name}</p>
               <p><strong>Fecha:</strong> ${s.tiempo ? formatDate(new Date(s.tiempo), 'dd-MM-yyyy HH:mm', 'en-US') : 'N/A'}</p>
             </div>
-    
+
             <!-- Delivery -->
             <div style="padding: 12px; border-radius: 8px; background: #e0f2fe; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
               <h4 style="margin-bottom: 8px; color: #0369a1;">Ruta</h4>
@@ -258,7 +259,7 @@ export class DeliveryPackagesComponent implements OnInit {
                 <p><strong>Creado:</strong> ${paquete.delivery.tsCreated ? formatDate(new Date(paquete.delivery.tsCreated), 'dd-MM-yyyy HH:mm', 'en-US') : 'N/A'}</p>
               ` : `<p>Sin ruta asignada</p>`}
             </div>
-    
+
             <!-- Cargamento -->
             <div style="padding: 12px; border-radius: 8px; background: #dcfce7; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
               <h4 style="margin-bottom: 8px; color: #065f46;">Cargamento</h4>
@@ -267,7 +268,7 @@ export class DeliveryPackagesComponent implements OnInit {
               <p><strong>Empleado:</strong> ${c?.employee.name} ${c?.employee.firstSurname}</p>
               <p><strong>Creado:</strong> ${c?.tsCreated ? formatDate(new Date(c.tsCreated), 'dd-MM-yyyy HH:mm', 'en-US') : 'N/A'}</p>
             </div>
-    
+
           </div>
         `,
       width: 650,
@@ -397,41 +398,170 @@ export class DeliveryPackagesComponent implements OnInit {
     //     // Aquí puedes usar un servicio HTTP para enviar los datos
   }
 
-  mostrarSwal() {
-    Swal.fire({
-      title: 'Escanea o escribe el paquete',
-      html: `<input id="input-paquete" class="swal2-input" placeholder="Número de guía" autofocus>`,
-      showCancelButton: true,
-      confirmButtonText: 'Guardar',
-      cancelButtonText: 'Cancelar',
-      allowOutsideClick: false,
-      preConfirm: () => {
-        const input = document.getElementById('input-paquete') as HTMLInputElement;
-        const value = input?.value.trim();
-        if (!value) {
-          Swal.showValidationMessage('Debes ingresar un paquete');
-          return;
-        }
-        return value;
-      }
-    }).then((result) => {
-      if (result.isConfirmed && result.value) {
-        const paquete = result.value;
+  // mostrarSwal() {
+  //   Swal.fire({
+  //     title: 'Escanea o escribe el paquete',
+  //     html: `<input id="input-paquete" class="swal2-input" placeholder="Número de guía" autofocus>`,
+  //     showCancelButton: true,
+  //     confirmButtonText: 'Guardar',
+  //     cancelButtonText: 'Cancelar',
+  //     allowOutsideClick: false,
+  //     preConfirm: () => {
+  //       const input = document.getElementById('input-paquete') as HTMLInputElement;
+  //       const value = input?.value.trim();
+  //       if (!value) {
+  //         Swal.showValidationMessage('Debes ingresar un paquete');
+  //         return;
+  //       }
+  //       return value;
+  //     }
+  //   }).then((result) => {
+  //     if (result.isConfirmed && result.value) {
+  //       const paquete = result.value;
 
-        // 👇 Llamada al servicio con un solo paquete
-        this.pakage.addPackagesInDelivery(paquete, this.deliveryId).subscribe({
-          next: () => {
-            Swal.fire('¡Guardado!', `Paquete ${paquete} enviado correctamente.`, 'success');
+  //       // 👇 Llamada al servicio con un solo paquete
+  //       this.pakage.addPackagesInDelivery(paquete, this.deliveryId).subscribe({
+  //         next: () => {
+  //           Swal.fire('¡Guardado!', `Paquete ${paquete} enviado correctamente.`, 'success');
+  //           this.getData(this.page, this.size);
+  //         },
+  //         error: (error) => {
+  //           console.error('Error al enviar el paquete:', error);
+  //           Swal.fire('Error', 'Ocurrió un problema al enviar el paquete.', 'error');
+  //         }
+  //       });
+  //     }
+  //   });
+  // }
+
+  mostrarSwal(): void {
+    this.paquetesEsc = [];
+
+    this.pakage.getCatPakageOrg().subscribe({
+      next: (response) => {
+        const organizaciones: OrgItem[] = response.data || [];
+
+        Swal.fire({
+          title: 'Selecciona la organización y comienza a escanear',
+          html: `
+          <select id="select-org" class="swal2-input" style="margin-bottom: 10px;">
+            <option value="">-- Selecciona organización --</option>
+            ${organizaciones.map((org: OrgItem) =>
+            `<option value="${org.id}" data-min="${org.config.config.minvalue}" data-max="${org.config.config.maxvalue}">
+                ${org.name}
+              </option>`
+          ).join('')}
+          </select>
+          <input id="input-paquete" class="swal2-input" placeholder="Escanea o escribe el paquete" autofocus>
+          <div id="alerta-error" style="color: red; font-size: 13px; margin-top: 4px;"></div>
+          <div id="lista-paquetes" style="
+            max-height: 250px;
+            overflow-y: auto;
+            text-align: left;
+            font-weight: 500;
+            font-family: sans-serif;
+            margin-top: 1rem;"></div>
+        `,
+          showCancelButton: true,
+          confirmButtonText: 'Finalizar',
+          cancelButtonText: 'Cancelar',
+          allowOutsideClick: false,
+          // 👉 Ya no necesitas preConfirm
+          didOpen: () => {
+            const select = document.getElementById('select-org') as HTMLSelectElement;
+            const input = document.getElementById('input-paquete') as HTMLInputElement;
+            const lista = document.getElementById('lista-paquetes');
+            const alerta = document.getElementById('alerta-error');
+            let minvalue = 0;
+            let maxvalue = 999;
+            let debounceTimer: any;
+
+            select?.addEventListener('change', () => {
+              const option = select.selectedOptions[0];
+              minvalue = parseInt(option.getAttribute('data-min') || '0', 10);
+              maxvalue = parseInt(option.getAttribute('data-max') || '999', 10);
+              alerta!.textContent = '';
+            });
+
+            const renderLista = () => {
+              if (!lista) return;
+              lista.innerHTML = this.paquetesEsc.map((p, i) =>
+                `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding: 4px 8px; border: 1px solid #ccc; border-radius: 6px;">
+                <span>${p}</span>
+                <button style="border: none; background: transparent; font-size: 16px; cursor: pointer; color: #b91c1c;"
+                  onclick="document.dispatchEvent(new CustomEvent('quitar-paquete', { detail: ${i} }))">✖</button>
+              </div>`
+              ).join('');
+            };
+
+            const agregarPaquete = (valor: string) => {
+              if (!select.value) {
+                alerta!.textContent = '⚠️ Selecciona primero una organización.';
+                return;
+              }
+              if (valor.length < minvalue) {
+                alerta!.textContent = `❌ El paquete debe tener al menos ${minvalue} caracteres.`;
+                return;
+              }
+              const recortado = valor.length > maxvalue ? valor.substring(0, maxvalue) : valor;
+              if (this.paquetesEsc.includes(recortado)) {
+                alerta!.textContent = `⚠️ El paquete "${recortado}" ya fue escaneado.`;
+                return;
+              }
+
+              alerta!.textContent = ''; // limpiar error
+              this.paquetesEsc.push(recortado);
+
+              // ✅ Enviar de inmediato al backend como string (uno por uno)
+              this.pakage.addPackagesInDelivery(recortado, this.deliveryId).subscribe({
+                next: () => {
+                  renderLista();
+                  input.value = ''; // limpiar input
+                },
+                error: (err) => {
+                  alerta!.textContent = `❌ No se pudo guardar el paquete: ${err.error?.message || 'Error desconocido'}`;
+                  // Opcional: quitarlo del array si no se guardó
+                  this.paquetesEsc.pop();
+                  renderLista();
+                }
+              });
+            };
+
+            input?.addEventListener('input', () => {
+              if (debounceTimer) clearTimeout(debounceTimer);
+              debounceTimer = setTimeout(() => {
+                const valor = input.value.trim();
+                if (valor) {
+                  agregarPaquete(valor);
+                }
+              }, 600);
+            });
+
+            document.addEventListener('quitar-paquete', (e: any) => {
+              const index = e.detail;
+              this.paquetesEsc.splice(index, 1);
+              renderLista();
+            });
+
+            input.focus();
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Aquí ya se enviaron todos de uno por uno; refrescar datos si quieres:
             this.getData(this.page, this.size);
-          },
-          error: (error) => {
-            console.error('Error al enviar el paquete:', error);
-            Swal.fire('Error', 'Ocurrió un problema al enviar el paquete.', 'error');
+            Swal.fire('¡Completado!', 'Se terminó el registro de paquetes.', 'success');
           }
         });
+      },
+      error: (err) => {
+        console.error('Error al obtener organizaciones:', err);
+        Swal.fire('Error', 'No se pudieron cargar las organizaciones.', 'error');
       }
     });
   }
+
+
+
 
 
   macheoPaquetes(): void {

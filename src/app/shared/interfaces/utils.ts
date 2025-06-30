@@ -24,10 +24,14 @@ export interface Persona {
 
 export interface VehicleCard {
   id: number; // identificador único del vehículo
+  idCard: number; // identificador único de la tarjeta del vehículo
   placa: string;
   modelo: string;
   conductor: string;
-  estado: 'En Ruta' | 'En Bodega' | 'Entregado'; // puedes ampliar
+  estado: {
+    id: number;
+    name: string;
+  }; // puedes ampliar
   entregados: number;
   faltantes: number;
   imagen: string; // ruta de la imagen del vehículo
@@ -41,6 +45,18 @@ export interface Justificacion {
   name: string;
   to_day: any; // fecha de la justificación
 }
+
+export interface OrgItem {
+  id: number;
+  name: string;
+  config: {
+    config: {
+      minvalue: number;
+      maxvalue: number;
+    }
+  };
+}
+
 
 
 export interface Oficio {
