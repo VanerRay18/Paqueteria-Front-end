@@ -12,7 +12,7 @@ export class PaginadorComponentComponent implements OnInit {
   @Input() isLoading: boolean = true;       // Total de registros
   @Input() message: String = "No hay registros que mostrar"; // Mensaje a mostrar cuando no hay registros
   @Output() pageChange = new EventEmitter<number>(); // Solo emite el nuevo `page`
-
+  @Input() visible: boolean = true; 
   maxButtons = 8;
 
   ngOnInit(): void {

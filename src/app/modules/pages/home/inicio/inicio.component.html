@@ -11,7 +11,7 @@
     <button (click)="filtrarPor('mes')">Mes</button>
   </div>
 
-  <div *ngIf="empresas">
+  <div *ngIf="empresas && !isLoading">
     <div class="empresa-card" *ngFor="let empresa of empresas" (click)="irAEmpresa(empresa.id)">
       <h4 class="empresa-nombre">{{ empresa.nombre }}</h4>
       <div class="progress-bar">
@@ -25,6 +25,10 @@
       </div>
     </div>
   </div>
+
+
+      <app-paginador-component [isLoading]="isLoading" [visible] = "false" [total]="10">
+    </app-paginador-component>
 </div>
 
 

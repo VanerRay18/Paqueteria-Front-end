@@ -1,6 +1,8 @@
 
   <div *ngIf="isLoading" class="loader-contenedor">
-    <div class="spinner"></div>
+    <!-- <div class="spinner"></div> -->
+    <img src="assets\package-animation.gif" alt="">
+    <h4>Cargando..</h4>
   </div>
 
   
@@ -9,7 +11,7 @@
   </div>
 
 
-<div *ngIf="!isLoading && total > 0" class="pagination d-flex justify-content-center mt-4 w-100">
+<div *ngIf="!isLoading && total > 0 && visible" class="pagination d-flex justify-content-center mt-4 w-100">
   <button
     class="btn btn-sm mx-1 rounded-circle btn-nav"
     (click)="cambiarPagina(page - 1)">

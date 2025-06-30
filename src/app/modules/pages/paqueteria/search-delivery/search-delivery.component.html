@@ -1,1 +1,58 @@
-<p>search-delivery works!</p>
+<div class="paquetes-container">
+  <h2>Registros de paquetes</h2>
+
+  <div class="paquetes-box">
+    <div class="paquetes-header">
+      <div class="left">
+        <strong>Paquetes registrados&nbsp;&nbsp;&nbsp;</strong>
+        <span>&nbsp;&nbsp;&nbsp;Total: {{this.total}}</span>
+      </div>
+      <select class="buscador" [(ngModel)]="packageOrg" (ngModelChange)="selectPackageOrg(packageOrg)">
+        <option [ngValue]="null">Todos</option>
+        <option *ngFor="let orgs of catOrgs" [value]="orgs.id">{{ orgs.name }}</option>
+      </select>
+
+      <div class="col-auto col-lg-2 ">
+        <input type="text" ngxDaterangepickerMd [(ngModel)]="rango" [showDropdowns]="true" [autoApply]="true"
+          class="form-control" placeholder="Seleccionar fechas" (ngModelChange)="getData(this.page, this.size)" />
+      </div>
+      <input type="text" placeholder="Buscar..." class="buscador" />
+    </div>
+
+    <div *ngFor="let grupo of paquetesAgrupados">
+      <div class="fecha-entrega-linea">
+        <span>{{ grupo.fecha }}</span>
+      </div>
+      <div class="paquete" *ngFor="let paquete of grupo.paquetes">
+        <div class="codigo">
+          <i class="fa fa-eye" style="cursor:pointer; margin-left: 10px;" (click)="verdetallesPaquete(paquete)"></i>
+          <i class="fa-solid fa-pen-to-square" style="cursor:pointer; margin-left: 10px;"
+            (click)="editarConsolidado(paquete)"></i>&nbsp;
+
+          <span [ngStyle]="{ color: paquete.color }">{{ paquete.guia }}</span>
+        </div>
+
+        <div class="barra-progreso">
+          <div class="segmento progreso" [ngStyle]="{
+        width: getBarraEstado(paquete),
+        backgroundColor: paquete.status.config.color
+      }">
+          </div>
+
+        </div>
+
+        <div class="etapas">
+          <span>{{paquete.nameOrg}} Intentos: {{paquete.totalEntregas}} Rutas: {{paquete.totalRutas}} </span>
+          <span class="center-info">{{paquete.status.name}} - {{ paquete.status.tiempo | date: 'dd-MM-yyyy HH:mm'
+            }}</span>
+        </div>
+
+      </div>
+    </div>
+
+    <app-paginador-component [isLoading]="isLoading" [visible]="true" [message]="'No hay paquetes que mostrar'"
+      [page]="page" [size]="size" [total]="total" (pageChange)="cambiarPagina($event)">
+    </app-paginador-component>
+
+  </div>
+</div>

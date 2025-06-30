@@ -87,9 +87,34 @@ h2 {
 .etapas {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-size: 0.85rem;
   color: #555555;
+  padding: 4px 10px;
+  flex-wrap: wrap; /* Permite salto si se necesita */
+  gap: 4px;
 }
+
+.etapas .center-info {
+  flex: 1 1 100%;
+  text-align: center;
+}
+
+/* En pantallas mayores, vuelve al modo original */
+@media (min-width: 576px) {
+  .etapas {
+    flex-wrap: nowrap;
+  }
+
+  .etapas .center-info {
+    flex: none;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+}
+
 
 .barra-progreso {
   background: #eee;

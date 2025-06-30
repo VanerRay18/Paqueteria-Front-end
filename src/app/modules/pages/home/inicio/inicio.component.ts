@@ -10,7 +10,7 @@ import { PakageService } from 'src/app/services/pakage.service';
 })
 export class InicioComponent implements OnInit {
 empresas: any[] = [];
-
+isLoading: boolean= true;
   alertas = [
     {
       dias: 3,
@@ -47,11 +47,12 @@ this.filtrarPor('dia');
 
   const desdeStr = desde.toISOString().split('T')[0]; // yyyy-mm-dd
   const hastaStr = hoy.toISOString().split('T')[0];   // yyyy-mm-dd
-
+        this.isLoading = true;
   this.pakage.getPaqueterias(desdeStr, hastaStr).subscribe({
     next: (res) => {
       this.empresas = res.data;
       this.empresas.forEach((empresa: any) => {
+        this.isLoading = false;
         empresa.nombre = empresa.name;
         empresa.faltantes = empresa.noEntregados;
         const total = empresa.entregados + empresa.faltantes;

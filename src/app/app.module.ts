@@ -23,6 +23,7 @@ import { PaqueteriaModule } from './modules/pages/paqueteria/paqueteria.module';
 import { RHRoutingModule } from './modules/pages/recursos-humanos/rh-routing.module';
 import { PaqueteriaRoutingModule } from './modules/pages/paqueteria/paqueteria-routing.module';
 import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
+import { HomeModule } from './modules/pages/home/home.module';
 
 
 
@@ -40,6 +41,7 @@ import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
     RouterModule,
     HttpClientModule,
     HomeRoutingModule,
+    HomeModule,
     ExtrasRoutingModule,
     LayoutModule,
     ReactiveFormsModule,
