@@ -56,18 +56,26 @@ export class PakageService {
     let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId, 'page': page, 'size': size });
     return this.http.get<ApiResponse>(`${environment.baseService}${'/package/packagesByIncomingPackageId'}`, { headers });
   }
-   getPackageByDelivery(deliveryId: any, page: any, size: any): Observable<ApiResponse> {
+  getPackageByDelivery(deliveryId: any, page: any, size: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'deliveryId': deliveryId, 'page': page, 'size': size });
     return this.http.get<ApiResponse>(`${environment.baseService}${'/package/packagesByDeliveryId'}`, { headers });
   }
 
-  searchPackageDelivery(guia : any, deliveryId: any): Observable<ApiResponse> {
+  searchPackageDelivery(guia: any, deliveryId: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'guia': guia, 'deliveryId': deliveryId });
     return this.http.get<ApiResponse>(`${environment.baseService}${'/package/searchPackageByDeliveryId'}`, { headers });
   }
 
   getConfigPackageOrg(headers: HttpHeaders): Observable<ApiResponse> {
     return this.http.get<ApiResponse>(`${environment.baseService}${'/package/getConfigPackageOrg'}`, { headers });
+  }
+
+  getCatPakageOrg(): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/getCatPackageOrg'}`);
+  }
+
+  getCatEmpl(): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/employees/catEmployee'}`);
   }
 
   SentDataExel(data: any, incomingPackageId: any): Observable<ApiResponse> {//Trae la nomina actual
@@ -82,8 +90,8 @@ export class PakageService {
       { headers });
   }
 
-    addPackagesInDelivery(guia: any, deliveryId: any): Observable<ApiResponse> {//Trae la nomina actual
-    let headers = new HttpHeaders({ 'deliveryId': deliveryId ,'guia':guia});
+  addPackagesInDelivery(guia: any, deliveryId: any): Observable<ApiResponse> {//Trae la nomina actual
+    let headers = new HttpHeaders({ 'deliveryId': deliveryId, 'guia': guia });
     console.log(headers)
     return this.http.post<ApiResponse>(`${environment.baseService}${'/package/addPackagesInDelivery'}`, null,
       { headers });
@@ -109,7 +117,7 @@ export class PakageService {
     );
   }
 
-  addPackagesCar(guia : any, deliveryId: any): Observable<ApiResponse> {
+  addPackagesCar(guia: any, deliveryId: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'deliveryId': deliveryId, 'guia': guia });
     return this.http.post<ApiResponse>(`${environment.baseService}${'/package/addPackagesInDelivery'}`, null,
       { headers }
@@ -124,22 +132,22 @@ export class PakageService {
     );
   }
 
-    updateDeliveryStatus(deliveryId: any, catStatusId: any, description: any): Observable<ApiResponse> {
+  updateDeliveryStatus(deliveryId: any, catStatusId: any, description: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'deliveryId': deliveryId, 'catStatusId': catStatusId, 'description': description });
     return this.http.post<ApiResponse>(`${environment.baseService}${'/package/changeStatusDelivery'}`, null,
       { headers }
     );
   }
 
-    createPackageWithConsolidado(packageId:any, description:any, data: any): Observable<ApiResponse> {
-    let headers = new HttpHeaders({ 'packageId': packageId ,'description':description});
+  createPackageWithConsolidado(packageId: any, description: any, data: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'packageId': packageId, 'description': description });
     return this.http.post<ApiResponse>(`${environment.baseService}${'/package/createPackageWithConsolidado'}`, data,
       { headers }
     );
   }
 
-      updatePackageWithConsolidado(packageId:any, description:any, data: any): Observable<ApiResponse> {
-    let headers = new HttpHeaders({ 'packageId': packageId ,'description':description});
+  updatePackageWithConsolidado(packageId: any, description: any, data: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'packageId': packageId, 'description': description });
     return this.http.patch<ApiResponse>(`${environment.baseService}${'/package/createPackageWithConsolidado'}`, data,
       { headers }
     );
