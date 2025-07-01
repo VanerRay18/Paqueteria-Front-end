@@ -129,14 +129,16 @@
 }
 
 .preview {
-  width: 120px;
-  height: 140px;
-  background-color: #e9edf3;
+  width: 210px;
+  height: 230px;
+  background-color: #f0f0f0; /* Gris claro */
   background-size: cover;
   background-position: center;
-  border-radius: 12px;
-  margin-bottom: 0.5rem;
-  border: 1px solid #ccc;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
 }
 
 .foto-label {

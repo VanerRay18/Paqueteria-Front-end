@@ -205,12 +205,6 @@ export class NewEmployeeComponent implements OnInit {
     return `${horas}:${minutos}`;
   }
 
-  getImageUrl(imagePath: string): string {
-    if (!imagePath) return '';
-    // Extrae el nombre de archivo desde la ruta local
-    const filename = imagePath;
-    return `http://localhost:8080/${filename}`;
-  }
 
   // 2️⃣ Método para cargar datos existentes y llenar los formularios
   loadEmployeeData(id: number) {
@@ -223,15 +217,10 @@ export class NewEmployeeComponent implements OnInit {
       this.fotoAntiguaId = resp.data.images.id;
       // Obtener URL pública de la imagen si existe
       const paths = resp?.data?.images?.path;
-
-      if (Array.isArray(paths) && paths.length > 0) {
-        const imgData = paths[0];
+        const imgData = paths;
         console.log('Imagen del empleado:', imgData);
-        this.fotoAntigua = this.getImageUrl(imgData);
-      } else {
-        console.log('No hay imágenes disponibles o path está vacío');
-        this.fotoAntigua = ''; // valor por defecto
-      }
+        this.fotoAntigua = imgData;
+
 
       console.log('Foto antigua:', this.fotoAntigua);
       this.diasSemana = this.diasSemana.map(dia => ({
@@ -459,6 +448,7 @@ export class NewEmployeeComponent implements OnInit {
           };
 
           if (this.fotoAntiguaId) {
+            console.log('Eliminando foto antigua con ID:', [this.fotoAntiguaId]);
             this.rh.deleteFile([this.fotoAntiguaId]).subscribe({
               next: subirFoto,
               error: (err) => {
@@ -506,6 +496,7 @@ export class NewEmployeeComponent implements OnInit {
   }
 
   editarDatosPersonales() {
+    console.log(this.isEditMode);
     if (this.employeeIdPatch) {
       this.isEditMode = true;
 

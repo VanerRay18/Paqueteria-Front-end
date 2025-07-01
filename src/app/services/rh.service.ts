@@ -78,9 +78,11 @@ export class RHService {
   }
 
 
-  deleteFile(targetIds: any): Observable<ApiResponse> {
-    let headers = new HttpHeaders({ 'targetIds ': targetIds });
-    return this.http.patch<ApiResponse>(`${environment.baseService}${'/files/softdelete'}`, { headers });
+  deleteFile(targetIds: number[]): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'targetIds': targetIds });
+    console.log('Eliminando archivos con IDs:', targetIds);
+    return this.http.patch<ApiResponse>(`${environment.baseService}${'/files/softdelete'}`,null, { headers });
+
   }
 
 
