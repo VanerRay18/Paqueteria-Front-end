@@ -72,7 +72,7 @@ export class PackageTrackingCarComponent implements OnInit {
           conductor: conductor || 'Sin conductor',
           entregados: entregados,
           faltantes: noEntregados,
-          imagen: 'assets/nissan1.png', // 🔁 Cambia según imagen real
+          imagen: item.images.path, // 🔁 Cambia según imagen real
           destino: item.destino || 'Sin destino asignado', // 🔁 Usa tu lógica real aquí
           porcentaje: porcentaje,
           kmIniciales: 0, // Agrega si lo tienes

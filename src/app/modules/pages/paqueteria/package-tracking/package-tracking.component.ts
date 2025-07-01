@@ -143,6 +143,7 @@ export class PackageTrackingComponent implements OnInit {
         const date = new Date(dateStr);
 
         const body = {
+          guia: paquete.guia,
           trackingNo: getVal('trackingNo'),
           latestDeptLocation: getVal('latestDeptLocation'),
           latestDeptCntryCd: getVal('latestDeptCntryCd'),
@@ -161,7 +162,7 @@ export class PackageTrackingComponent implements OnInit {
           recipState: getVal('recipState'),
           recipCntry: getVal('recipCntry'),
           recipPostal: getVal('recipPostal'),
-          commitDate: `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`,
+commitDate: `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}/${date.getFullYear()}`,
           service: getVal('service'),
           commitTime: getVal('commitTime'),
           shprPhone: getVal('shprPhone'),
@@ -189,6 +190,7 @@ export class PackageTrackingComponent implements OnInit {
           this.pakage.createPackageWithConsolidado(headers.packageId, headers.description, body).subscribe(
             response => {
               Swal.fire('¡Éxito!', `El consolidado fue ${esNuevo ? 'creado' : 'actualizado'} correctamente.`, 'success');
+              this.getData(this.page, this.size);
             },
             error => {
               console.error('Error al obtener los datos:', error);
@@ -735,6 +737,7 @@ export class PackageTrackingComponent implements OnInit {
 
     this.pakage.MatchingPackage(this.incomingPackageId).subscribe({
       next: (response) => {
+        this.getData(this.page, this.size); // Actualiza la lista después del macheo
         Swal.fire({
           icon: 'success',
           title: '¡Macheo completo!',

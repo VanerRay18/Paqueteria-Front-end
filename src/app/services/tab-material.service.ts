@@ -16,6 +16,13 @@ export class TabMaterialService {
     return this.http.get<ApiResponse>(`${environment.baseService}${'/materials/quantityMaterial'}`);
   }
 
+  getMaterialById(catMaterialId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'catMaterialId': catMaterialId });
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/materials/getAQuantityMaterial'}`, { headers });
+  }
+
+
+
   quantityMaterial(catMaterialId: any, quantity: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'catMaterialId': catMaterialId, 'quantity': quantity });
     return this.http.post<ApiResponse>(`${environment.baseService}${'/materials/quantityMaterial'}`, null,
@@ -34,16 +41,16 @@ export class TabMaterialService {
     );
   }
 
-  deleteMaterial(materialId: any): Observable<ApiResponse> {
-    let headers = new HttpHeaders({ 'materialId': materialId });
-    return this.http.patch<ApiResponse>(`${environment.baseService}${'/cat/softdelete'}`, null,
+  deleteMaterial(catMaterialId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'catMaterialId': catMaterialId });
+    return this.http.patch<ApiResponse>(`${environment.baseService}${'/materials/cat/softdelete'}`, null,
       { headers }
     );
   }
 
-  UpdateQuantityMaterial(catMaterialId: any, quantity: any): Observable<ApiResponse> {
+  UpdateQuantityMaterial(catMaterialId: number, quantity: number): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'catMaterialId': catMaterialId, 'quantity': quantity });
-    return this.http.patch<ApiResponse>(`${environment.baseService}${'materials/quantityMaterial'}`, null,
+    return this.http.patch<ApiResponse>(`${environment.baseService}${'/materials/quantityMaterial'}`, null,
       { headers }
     );
   }

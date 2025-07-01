@@ -89,12 +89,40 @@ export class InventoryComponent {
   }
 
   onDeleteMaterial(materialId: any) {
-
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Este material será eliminado.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.tabMaterial.deleteMaterial(materialId.id).subscribe({
+          next: () => {
+            this.tabMaterial.DeleteQuantityMaterial(materialId.id).subscribe({
+              next: () => {
+                Swal.fire('Eliminado', 'El material fue eliminado correctamente.', 'success');
+                this.getData(); // Recargar tabla
+              },
+              error: (error) => {
+                console.error('Error al eliminar cantidad de material:', error);
+              }
+            });
+          },
+          error: (error) => {
+            console.error('Error al eliminar material:', error);
+            Swal.fire('Error', 'No se pudo eliminar el material.', 'error');
+          }
+        });
+      }
+    });
   }
+
 
   getData() {
     this.tabMaterial.getMateriales().subscribe((response: ApiResponse) => {
-      // console.log('Datos obtenidos:', response.data);
+      console.log('Datos obtenidos:', response.data);
       const fecha = response.data.ts_created
       this.dataC = response.data.map((item: any) => ({
         ...item,
@@ -245,19 +273,19 @@ export class InventoryComponent {
               return false;
             }
 
-          return {
-            odometro: Number(odometro)+row.km,
-            litros: parseFloat(litros),
-            precio: parseFloat(precio),
-            comentarios
-          };
-        }
-      }).then(result => {
-        if (result.isConfirmed && result.value) {
-          const datos = {
-            ...result.value,
-            carId: row.id
-          };
+            return {
+              odometro: Number(odometro) + row.km,
+              litros: parseFloat(litros),
+              precio: parseFloat(precio),
+              comentarios
+            };
+          }
+        }).then(result => {
+          if (result.isConfirmed && result.value) {
+            const datos = {
+              ...result.value,
+              carId: row.id
+            };
 
             this.cars.createFuelLog(datos).subscribe({
               next: () => {
@@ -287,63 +315,71 @@ export class InventoryComponent {
   }
 
   addMaterial() {
-  Swal.fire({
-    title: 'Agregar nuevo material',
-    html:
-      '<input id="swal-name" class="swal2-input" placeholder="Nombre">' +
-      '<input id="swal-description" class="swal2-input" placeholder="Descripción">' +
-      `<select id="swal-assignable" class="swal2-input">
-          <option value="true">Asignable al usuario</option>
-          <option value="false">No asignable</option>
-       </select>` +
-      '<input id="swal-quantity" type="number" min="1" class="swal2-input" placeholder="Cantidad">',
-    focusConfirm: false,
-    showCancelButton: true,
-    confirmButtonText: 'Guardar',
-    preConfirm: () => {
-      const name = (document.getElementById('swal-name') as HTMLInputElement).value.trim();
-      const description = (document.getElementById('swal-description') as HTMLInputElement).value.trim();
-      const is_assignable = (document.getElementById('swal-assignable') as HTMLSelectElement).value === 'true';
-      const quantity = parseInt((document.getElementById('swal-quantity') as HTMLInputElement).value, 10);
+    Swal.fire({
+      title: 'Agregar nuevo material',
+      html: `
+      <div style="display: flex; flex-direction: column; gap: 12px; text-align: left;">
+        <input id="swal-name" class="swal2-input" placeholder="📝 Nombre del material">
+        <input id="swal-description" class="swal2-input" placeholder="📄 Descripción">
+        
+        <div>
+          <label style="font-weight: 600; margin-left: 5px;">📦 ¿Asignable al usuario?</label>
+          <select id="swal-assignable" class="swal2-input" style="padding: 10px; font-size: 16px; height: auto;">
+            <option value="true">✅ Sí, asignable</option>
+            <option value="false">❌ No asignable</option>
+          </select>
+        </div>
 
-      if (!name || !description || isNaN(quantity) || quantity <= 0) {
-        Swal.showValidationMessage('Por favor llena todos los campos correctamente');
-        return;
-      }
-      return { name, description, is_assignable, quantity };
-    }
-  }).then((result) => {
-    if (result.isConfirmed && result.value) {
-      const { name, description, is_assignable, quantity } = result.value;
+        <input id="swal-quantity" type="number" min="1" class="swal2-input" placeholder="🔢 Cantidad">
+      </div>
+    `,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Guardar',
+      cancelButtonText: 'Cancelar',
+      preConfirm: () => {
+        const name = (document.getElementById('swal-name') as HTMLInputElement).value.trim();
+        const description = (document.getElementById('swal-description') as HTMLInputElement).value.trim();
+        const is_assignable = (document.getElementById('swal-assignable') as HTMLSelectElement).value === 'true';
+        const quantity = parseInt((document.getElementById('swal-quantity') as HTMLInputElement).value, 10);
 
-      // Crear el material primero
-      this.tabMaterial.createMaterial({
-        name,
-        description,
-        is_assignable
-      }).subscribe((response: ApiResponse) => {
-        console.log('Material creado:', response);
-        const catMaterialId = response.data.catMaterialId; // Ajusta al nombre real si es diferente
-
-        if (catMaterialId) {
-          // Llamar al segundo endpoint para registrar la cantidad
-          this.tabMaterial.quantityMaterial(catMaterialId, quantity).subscribe(() => {
-            Swal.fire('Éxito', 'Material agregado correctamente', 'success');
-            this.getData(); // Recargar los datos de la tabla
-          }, (error) => {
-            console.error('Error al agregar cantidad:', error);
-            Swal.fire('Error', 'No se pudo agregar la cantidad', 'error');
-          });
-        } else {
-          Swal.fire('Error', 'No se recibió el ID del material creado', 'error');
+        if (!name || !description || isNaN(quantity) || quantity <= 0) {
+          Swal.showValidationMessage('Por favor llena todos los campos correctamente');
+          return;
         }
-      }, (error) => {
-        console.error('Error al crear material:', error);
-        Swal.fire('Error', 'No se pudo crear el material', 'error');
-      });
-    }
-  });
-}
+
+        return { name, description, is_assignable, quantity };
+      }
+    }).then((result) => {
+      if (result.isConfirmed && result.value) {
+        const { name, description, is_assignable, quantity } = result.value;
+
+        this.tabMaterial.createMaterial({
+          name,
+          description,
+          is_assignable
+        }).subscribe((response: ApiResponse) => {
+          const catMaterialId = response.data;
+
+          if (catMaterialId) {
+            this.tabMaterial.quantityMaterial(catMaterialId, quantity).subscribe(() => {
+              Swal.fire('Éxito', 'Material agregado correctamente', 'success');
+              this.getData();
+            }, (error) => {
+              console.error('Error al agregar cantidad:', error);
+              Swal.fire('Error', 'No se pudo agregar la cantidad', 'error');
+            });
+          } else {
+            Swal.fire('Error', 'No se recibió el ID del material creado', 'error');
+          }
+        }, (error) => {
+          console.error('Error al crear material:', error);
+          Swal.fire('Error', 'No se pudo crear el material', 'error');
+        });
+      }
+    });
+  }
+
 
 
   onEditCar(id: any) {
@@ -353,10 +389,122 @@ export class InventoryComponent {
     this.router.navigate(['/pages/RH/Registrar-Automovil/' + id]);
   }
 
-  onEditMat(data: any) {
-    //AAGP790513HH4
+  onEditMat(materialId: any) {
+  // Llamada al servicio para obtener los datos del material
+  this.tabMaterial.getMaterialById(materialId.id).subscribe(response => {
+    if (response.success) {
+      const { quantity, catMaterial } = response.data;
+      const quantityMaterialId  = quantity.id;
+      // Llenar los campos del modal con la respuesta
+      Swal.fire({
+        title: 'Editar Material',
+        html: `
+        <div style="display: flex; flex-direction: column; gap: 14px; width: 100%; box-sizing: border-box; text-align: center;">
+          <!-- Sección de material -->
+          <div>
+            <label for="swal-material-name" style="font-weight: 600; margin-bottom: 5px; display: block;">Nombre del Material:</label>
+            <input id="swal-material-name" class="swal2-input" value="${catMaterial.name}" placeholder="Nombre del material" style="padding: 10px; text-align: center;"/>
+          </div>
+          <div>
+            <label for="swal-material-description" style="font-weight: 600; margin-bottom: 5px; display: block;">Descripción:</label>
+            <input id="swal-material-description" class="swal2-input" value="${catMaterial.description || ''}" placeholder="Descripción" style="padding: 10px; text-align: center;"/>
+          </div>
+          <div>
+            <label for="swal-material-assignable" style="font-weight: 600; margin-bottom: 5px; display: block;">Asignable al Usuario:</label>
+            <select id="swal-material-assignable" class="swal2-input" style="padding: 10px; text-align: center;">
+              <option value="true" ${catMaterial.isAssignable ? 'selected' : ''}>Asignable</option>
+              <option value="false" ${!catMaterial.isAssignable ? 'selected' : ''}>No Asignable</option>
+            </select>
+          </div>
+          <button id="saveMaterialBtn" class="swal2-confirm swal2-styled" style="background-color: #28a745; color: white; padding: 10px 20px; border-radius: 5px; margin-top: 15px;">Guardar Material</button>
+          <hr />
+          
+          <!-- Sección de cantidad -->
+          <div>
+            <label for="swal-material-quantity" style="font-weight: 600; margin-bottom: 5px; display: block;">Cantidad:</label>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 15px;">
+              <button id="swal-quantity-minus" class="swal2-input" style="font-size: 20px; padding: 10px 15px; border-radius: 5px; background-color: #f44336; color: white;" type="button">-</button>
+              <input id="swal-material-quantity" type="number" class="swal2-input" value="${quantity.quantity}" min="0" placeholder="Cantidad" style="width: 80px; padding: 10px; text-align: center;"/>
+              <button id="swal-quantity-plus" class="swal2-input" style="font-size: 20px; padding: 10px 15px; border-radius: 5px; background-color: #4caf50; color: white;" type="button">+</button>
+            </div>
+            <button id="saveQuantityBtn" class="swal2-confirm swal2-styled" style="background-color: #007bff; color: white; padding: 10px 20px; border-radius: 5px; margin-top: 15px;">Guardar Cantidad</button>
+          </div>
+        </div>
+        `,
+        showCancelButton: true,
+        cancelButtonText: 'Cerrar',
+        focusConfirm: false,
+        showLoaderOnConfirm: true,
+        preConfirm: () => {
+          const name = (document.getElementById('swal-material-name') as HTMLInputElement).value.trim();
+          const description = (document.getElementById('swal-material-description') as HTMLInputElement).value.trim();
+          const isAssignable = (document.getElementById('swal-material-assignable') as HTMLSelectElement).value === 'true';
+          const quantity = parseInt((document.getElementById('swal-material-quantity') as HTMLInputElement).value, 10);
 
-  }
+          if (!name || !description || isNaN(quantity) || quantity < 0) {
+            Swal.showValidationMessage('Por favor, llena todos los campos correctamente.');
+            return;
+          }
+
+          return { name, description, isAssignable, quantity };
+        },
+        didOpen: () => {
+          // Botón de incrementar
+          const quantityInput = document.getElementById('swal-material-quantity') as HTMLInputElement;
+          document.getElementById('swal-quantity-plus')?.addEventListener('click', () => {
+            quantityInput.value = (parseInt(quantityInput.value, 10) + 1).toString();
+          });
+
+          // Botón de decrementar
+          document.getElementById('swal-quantity-minus')?.addEventListener('click', () => {
+            if (parseInt(quantityInput.value, 10) > 0) {
+              quantityInput.value = (parseInt(quantityInput.value, 10) - 1).toString();
+            }
+          });
+
+          // Guardar Material
+          const saveMaterialBtn = document.getElementById('saveMaterialBtn');
+          saveMaterialBtn?.addEventListener('click', () => {
+            const name = (document.getElementById('swal-material-name') as HTMLInputElement).value.trim();
+            const description = (document.getElementById('swal-material-description') as HTMLInputElement).value.trim();
+            const isAssignable = (document.getElementById('swal-material-assignable') as HTMLSelectElement).value === 'true';
+
+            // Actualizar el material
+            this.tabMaterial.createMaterial({ name, description, isAssignable }).subscribe({
+              next: (response) => {
+                console.log('Material actualizado:', response);
+                Swal.fire('Éxito', 'Material actualizado correctamente.', 'success');
+                this.getData(); // Recargar los datos de la tabla
+              },
+              error: (error) => {
+                console.error('Error al actualizar material:', error);
+                Swal.fire('Error', 'No se pudo actualizar el material', 'error');
+              }
+            });
+          });
+
+          // Guardar Cantidad
+          const saveQuantityBtn = document.getElementById('saveQuantityBtn');
+          saveQuantityBtn?.addEventListener('click', () => {
+            const quantity = parseInt((document.getElementById('swal-material-quantity') as HTMLInputElement).value, 10);            // Actualizar la cantidad
+            this.tabMaterial.UpdateQuantityMaterial(quantityMaterialId, quantity).subscribe({
+              next: () => {
+                Swal.fire('Éxito', 'Cantidad actualizada correctamente.', 'success');
+                this.getData(); // Recargar los datos de la tabla
+              },
+              error: (error) => {
+                console.error('Error al actualizar cantidad:', error);
+                Swal.fire('Error', 'No se pudo actualizar la cantidad', 'error');
+              }
+            });
+          });
+        }
+      });
+    }
+  });
+}
+
+
 
   setActiveTab(tabId: string) {
     this.activeTab = tabId; // Cambia la pestaña activa
