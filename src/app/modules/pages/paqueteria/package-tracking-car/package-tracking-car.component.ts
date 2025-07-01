@@ -17,6 +17,11 @@ export class PackageTrackingCarComponent implements OnInit {
   vehicleCards: VehicleCard[] = [];
   catEmployees: any;
 
+    page: number = 0;
+  size: number = 4;
+  isLoading: boolean = true;
+  total: number = 0;
+
   constructor(
     private Pk: PakageService,
     private fileTransferService: FileTransferService,
@@ -24,15 +29,22 @@ export class PackageTrackingCarComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.getData(); // Cargar los datos al iniciar el componente
+    this.getData(this.page, this.size); // Cargar los datos al iniciar el componente
     // Aquí podrías cargar los datos iniciales si es necesario
   }
+ cambiarPagina(pagina: number) {
+    this.page = pagina;
+    this.getData(this.page, this.size);
+  }
 
-
-  getData(): void {
+  getData(page:any,size:any): void {
+    this.isLoading = true;
     this.Pk.getCatEmpl().subscribe({
       next: (response) => {
+        
+
         this.catEmployees = response.data;
+
         // console.log('Datos de todos los empleados:', response);
       },
       error: (err) => {
@@ -40,10 +52,11 @@ export class PackageTrackingCarComponent implements OnInit {
       }
     });
 
-    this.Pk.getDeliveriesCar().subscribe((response: ApiResponse) => {
+    this.Pk.getDeliveriesCar(page, size).subscribe((response: ApiResponse) => {
       console.log('Datos de entregas de vehículos:', response);
       // Verifica el ID
-
+    this.isLoading = false;
+            this.total = Number(response.message);
       // 🔁 Mapear los datos recibidos al modelo VehicleCard
       this.vehicleCards = response.data.map((item: any) => {
         const conductor = `${item.employee?.name || ''} ${item.employee?.firstSurname || ''} ${item.employee?.secondSurname || ''}`.trim();
@@ -141,7 +154,7 @@ export class PackageTrackingCarComponent implements OnInit {
         // Mandar la data al backend
         this.Pk.createDeliveryCar(result.value).subscribe({
           next: () => {
-            this.getData();
+            this.getData(this.page,this.size);
             this.router.navigate(['/pages/Paqueteria/Paquetes-vehiculo/' + vehicle.id]);
           },
           error: () => {

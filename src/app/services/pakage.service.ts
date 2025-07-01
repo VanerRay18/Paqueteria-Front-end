@@ -34,8 +34,9 @@ export class PakageService {
   }
 
 
-  getDeliveriesCar(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/deliveries'}`);
+  getDeliveriesCar(page:any,size:any): Observable<ApiResponse> {
+            let headers = new HttpHeaders({'page': page, 'size': size });
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/deliveries'}`,{headers});
   }
 
   getPackagesDeliveryById(deliveryId: any, page: any, size: any): Observable<ApiResponse> {
