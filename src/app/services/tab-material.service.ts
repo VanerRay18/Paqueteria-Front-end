@@ -18,18 +18,18 @@ export class TabMaterialService {
 
   quantityMaterial(catMaterialId: any, quantity: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'catMaterialId': catMaterialId, 'quantity': quantity });
-    return this.http.post<ApiResponse>(`${environment.baseService}${'materials/quantityMaterial'}`, null,
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/materials/quantityMaterial'}`, null,
       { headers }
     );
   }
 
   createMaterial(data: any): Observable<ApiResponse> {//Trae la nomina actual
-    return this.http.post<ApiResponse>(`${environment.baseService}${'materials/cat'}`, data);
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/materials/cat'}`, data);
   }
 
   updateMaterial(data: any, materialId: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'materialId': materialId });
-    return this.http.patch<ApiResponse>(`${environment.baseService}${'materials/cat'}`, data,
+    return this.http.patch<ApiResponse>(`${environment.baseService}${'/materials/cat'}`, data,
       { headers }
     );
   }
