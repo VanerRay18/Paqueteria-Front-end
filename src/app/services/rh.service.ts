@@ -69,18 +69,20 @@ export class RHService {
   SaveFoto(data: FormData, description: any, targetId: any, type: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({
       'description': description,
-      'carId': targetId.toString(),
+      'targetId': targetId.toString(),
       'type': type
     });
-    return this.http.post<ApiResponse>(`${environment.baseService}/files/saveFiles`, data, {
+    return this.http.post<ApiResponse>(`${environment.baseService}/files/saveFile`, data, {
       headers
     });
   }
 
 
-  deleteFile(targetIds: any): Observable<ApiResponse> {
-    let headers = new HttpHeaders({ 'targetIds ': targetIds });
-    return this.http.patch<ApiResponse>(`${environment.baseService}${'/files/softdelete'}`, { headers });
+  deleteFile(targetIds: number[]): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'targetIds': targetIds });
+    console.log('Eliminando archivos con IDs:', targetIds);
+    return this.http.patch<ApiResponse>(`${environment.baseService}${'/files/softdelete'}`,null, { headers });
+
   }
 
 

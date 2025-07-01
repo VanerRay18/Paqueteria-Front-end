@@ -70,9 +70,10 @@ export class CarsService {
   SaveFoto(data: FormData, description: any, targetId: any, type: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({
       'description': description,
-      'carId': targetId.toString(),
+      'targetId': targetId.toString(),
       'type': type
     });
+    console.log('Subiendo foto con targetId:', targetId);
     return this.http.post<ApiResponse>(`${environment.baseService}/files/saveFiles`, data, {
       headers
     });

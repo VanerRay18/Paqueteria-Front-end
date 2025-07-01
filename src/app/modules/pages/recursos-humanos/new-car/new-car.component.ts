@@ -31,6 +31,7 @@ export class NewCarComponent implements OnInit {
   historialServicios: any[] = [];
   kmActualDelCoche: number = 0;
   canService = false; // Variable para controlar si se puede agregar un servicio
+  fotosAntiguas: any;
 
   constructor(
     private fb: FormBuilder,
@@ -42,19 +43,6 @@ export class NewCarComponent implements OnInit {
 
   ngOnInit(): void {
     this.forms();
-    // this.fileTransferService.currentIdTercero$
-    //   .pipe(take(1))  // <- solo se ejecuta una vez
-    //   .subscribe(id => {
-    //     if (id !== null) {
-    //       console.log('ID recibido:', id);
-    //       this.carID = id;
-    //       this.isEditMode = true;
-    //       this.loadEmployeeData(id); // solo una vez
-
-    //       // Limpiar el ID después de usarlo
-    //       this.fileTransferService.clearIdTercero();
-    //     }
-    //   });
     let id = this.route.snapshot.paramMap.get('id') ? Number(this.route.snapshot.paramMap.get('id')) : 0;
     if (id !== 0) {
       this.carID = id
@@ -89,6 +77,10 @@ export class NewCarComponent implements OnInit {
     return `${year}-${month}-${day}`;
   }
 
+  get todasLasFotos(): string[] {
+    return this.fotosPreview.length > 0 ? this.fotosPreview : this.fotosAntiguas;
+  }
+
 
   loadEmployeeData(carId: any) {
     if (this.isEditMode) {
@@ -96,17 +88,19 @@ export class NewCarComponent implements OnInit {
       this.cargarHistorialServicios();
       this.car.getCarById(this.carID).subscribe({
         next: (response) => {
-          // console.log('Datos del vehículo:', response);
+
+          console.log('Datos del vehículo:', response);
           const carData = response.data.car;
           const carTieneDatos = carData && Object.values(carData).some(value => !!value);
 
           if (!carTieneDatos) return;
           // 👉 Llenar las fotos antiguas
-          this.fotosPreview = response.data.images.map((img: any) => {
-            const fileName = img.path.split('\\').pop();
-            return `http://localhost:3000/uploads/images/${fileName}`; // Ajusta base URL real
-          });
-          this.fotoActual = 0;
+        this.fotosAntiguas = response.data.images.map((img: any) => img.path);
+          console.log('Fotos antiguas:', this.fotosAntiguas);
+
+          setTimeout(() => {
+            this.fotoActual = 0;
+          }, 0);
           this.kmActualDelCoche = carData.km || 0;
           this.carForm.patchValue({
             foto: response.data.images,
@@ -162,39 +156,43 @@ export class NewCarComponent implements OnInit {
     });
   }
 
-  onFotoSelected(event: any): void {
-    const files: FileList = event.target.files;
 
-    if (files && files.length > 0) {
-      Array.from(files).forEach((file) => {
-        const reader = new FileReader();
-        reader.onload = (e: any) => {
-          this.fotosPreview.push(e.target.result);
-        };
-        reader.readAsDataURL(file);
-      });
+onFotoSelected(event: any): void {
+  const files: FileList = event.target.files;
 
-      // 👉 Guardar los archivos para enviar después
-      this.fotosSeleccionadas = Array.from(files);
+  if (files && files.length > 0) {
+    Array.from(files).forEach((file) => {
+      // Previsualización
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.fotosPreview.push(e.target.result);
+      };
+      reader.readAsDataURL(file);
 
-      if (this.fotoActual >= this.fotosPreview.length) {
-        this.fotoActual = 0;
-      }
+      // Acumular archivos seleccionados
+      this.fotosSeleccionadas.push(file);
+    });
+
+    if (this.fotoActual >= this.fotosPreview.length) {
+      this.fotoActual = 0;
     }
   }
+}
 
 
 
   anteriorFoto(): void {
-    if (this.fotosPreview.length > 0) {
-      this.fotoActual =
-        (this.fotoActual - 1 + this.fotosPreview.length) % this.fotosPreview.length;
+    console.log('Fotos disponibles:', this.todasLasFotos);
+    const total = this.todasLasFotos.length;
+    if (total > 0) {
+      this.fotoActual = (this.fotoActual - 1 + total) % total;
     }
   }
 
   siguienteFoto(): void {
-    if (this.fotosPreview.length > 0) {
-      this.fotoActual = (this.fotoActual + 1) % this.fotosPreview.length;
+    const total = this.todasLasFotos.length;
+    if (total > 0) {
+      this.fotoActual = (this.fotoActual + 1) % total;
     }
   }
 
@@ -249,44 +247,31 @@ export class NewCarComponent implements OnInit {
           });
         }
       });
-
-    } else {
-      // 🆕 Modo creación
-      this.car.createNewCar(dto).subscribe({
-        next: (response) => {
-          const carId = response.data;
-
-          if (!carId) {
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: 'No se pudo obtener el ID del vehículo creado.',
-            });
-            return;
-          }
-
-          this.subirFotos(carId, false);
-        },
-        error: (err) => {
-          console.error('Error al crear vehículo', err);
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Ocurrió un error al guardar los datos del vehículo.',
-          });
+  } else {
+    this.car.createNewCar(dto).subscribe({
+      next: (response) => {
+        const carId = response.data; // Asegúrate que sea el ID directo
+        if (!carId) {
+          Swal.fire('Error', 'No se pudo obtener el ID del vehículo creado.', 'error');
+          return;
         }
-      });
-    }
+        this.subirFotos(carId, false);
+      },
+      error: (err) => {
+        console.error('Error al crear vehículo', err);
+        Swal.fire('Error', 'Ocurrió un error al guardar los datos del vehículo.', 'error');
+      }
+    });
   }
-
+}
   subirFotos(carId: number, esEdicion: boolean) {
     if (this.fotosSeleccionadas.length > 0) {
       const formData = new FormData();
       this.fotosSeleccionadas.forEach((file) => {
         formData.append('files', file);
       });
-
-      this.car.SaveFoto(formData, '', carId, 'car').subscribe({
+      console.log('Subiendo fotos para el vehículo con ID:', carId);
+      this.car.SaveFoto(formData, '', this.carID, 'car').subscribe({
         next: () => {
           Swal.fire({
             icon: 'success',
@@ -295,7 +280,7 @@ export class NewCarComponent implements OnInit {
               ? 'El vehículo y las fotos fueron actualizados correctamente.'
               : 'El vehículo fue registrado correctamente.',
           });
-          this.router.navigate(['/pages/RH/Inventario']);
+
         },
         error: (err) => {
           console.error('Error al subir fotos', err);
@@ -304,7 +289,7 @@ export class NewCarComponent implements OnInit {
             title: esEdicion ? 'Vehículo actualizado, pero...' : 'Vehículo guardado, pero...',
             text: 'No se pudieron subir las fotos.',
           });
-          this.router.navigate(['/pages/RH/Inventario']);
+
         }
       });
     } else {

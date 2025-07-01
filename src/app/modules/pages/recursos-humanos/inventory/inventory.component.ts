@@ -286,6 +286,66 @@ export class InventoryComponent {
     });
   }
 
+  addMaterial() {
+  Swal.fire({
+    title: 'Agregar nuevo material',
+    html:
+      '<input id="swal-name" class="swal2-input" placeholder="Nombre">' +
+      '<input id="swal-description" class="swal2-input" placeholder="Descripción">' +
+      `<select id="swal-assignable" class="swal2-input">
+          <option value="true">Asignable al usuario</option>
+          <option value="false">No asignable</option>
+       </select>` +
+      '<input id="swal-quantity" type="number" min="1" class="swal2-input" placeholder="Cantidad">',
+    focusConfirm: false,
+    showCancelButton: true,
+    confirmButtonText: 'Guardar',
+    preConfirm: () => {
+      const name = (document.getElementById('swal-name') as HTMLInputElement).value.trim();
+      const description = (document.getElementById('swal-description') as HTMLInputElement).value.trim();
+      const is_assignable = (document.getElementById('swal-assignable') as HTMLSelectElement).value === 'true';
+      const quantity = parseInt((document.getElementById('swal-quantity') as HTMLInputElement).value, 10);
+
+      if (!name || !description || isNaN(quantity) || quantity <= 0) {
+        Swal.showValidationMessage('Por favor llena todos los campos correctamente');
+        return;
+      }
+      return { name, description, is_assignable, quantity };
+    }
+  }).then((result) => {
+    if (result.isConfirmed && result.value) {
+      const { name, description, is_assignable, quantity } = result.value;
+
+      // Crear el material primero
+      this.tabMaterial.createMaterial({
+        name,
+        description,
+        is_assignable
+      }).subscribe((response: ApiResponse) => {
+        console.log('Material creado:', response);
+        const catMaterialId = response.data.catMaterialId; // Ajusta al nombre real si es diferente
+
+        if (catMaterialId) {
+          // Llamar al segundo endpoint para registrar la cantidad
+          this.tabMaterial.quantityMaterial(catMaterialId, quantity).subscribe(() => {
+            Swal.fire('Éxito', 'Material agregado correctamente', 'success');
+            this.getData(); // Recargar los datos de la tabla
+          }, (error) => {
+            console.error('Error al agregar cantidad:', error);
+            Swal.fire('Error', 'No se pudo agregar la cantidad', 'error');
+          });
+        } else {
+          Swal.fire('Error', 'No se recibió el ID del material creado', 'error');
+        }
+      }, (error) => {
+        console.error('Error al crear material:', error);
+        Swal.fire('Error', 'No se pudo crear el material', 'error');
+      });
+    }
+  });
+}
+
+
   onEditCar(id: any) {
     // console.log('Editar vehículo:', data.id);
     // const id = data.id; // Obtiene el ID del empleado

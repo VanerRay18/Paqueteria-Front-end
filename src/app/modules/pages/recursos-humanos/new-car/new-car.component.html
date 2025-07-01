@@ -19,8 +19,9 @@
 
         <div class="foto-container">
           <div class="carousel">
-            <div class="carousel-item" *ngFor="let foto of fotosPreview; let i = index"
-              [ngStyle]="{ 'background-image': 'url(' + foto + ')' }" [class.active]="i === fotoActual"></div>
+            <div class="carousel-item" *ngFor="let foto of todasLasFotos; let i = index"
+              [ngStyle]="{ 'background-image': 'url(' + foto + ')' }" [class.active]="i === fotoActual">
+            </div>
             <span class="carousel-control prev" (click)="anteriorFoto()">‹</span>
             <span class="carousel-control next" (click)="siguienteFoto()">›</span>
           </div>
@@ -30,6 +31,7 @@
           </label>
           <input type="file" id="foto" (change)="onFotoSelected($event)" hidden multiple />
         </div>
+
 
         <div class="group">
           <label>
@@ -194,4 +196,4 @@
 
 
 
-</div>
+  </div>
