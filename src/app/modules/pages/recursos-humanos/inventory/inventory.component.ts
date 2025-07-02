@@ -122,7 +122,7 @@ export class InventoryComponent {
 
   getData() {
     this.tabMaterial.getMateriales().subscribe((response: ApiResponse) => {
-      console.log('Datos obtenidos:', response.data);
+    
       const fecha = response.data.ts_created
       this.dataC = response.data.map((item: any) => ({
         ...item,
@@ -390,10 +390,12 @@ export class InventoryComponent {
   }
 
   onEditMat(materialId: any) {
+    console.log('Editar material con ID:', materialId);
   // Llamada al servicio para obtener los datos del material
   this.tabMaterial.getMaterialById(materialId.id).subscribe(response => {
     if (response.success) {
       const { quantity, catMaterial } = response.data;
+      console.log('Datos del material:', catMaterial, quantity);
       const quantityMaterialId  = quantity.id;
       // Llenar los campos del modal con la respuesta
       Swal.fire({

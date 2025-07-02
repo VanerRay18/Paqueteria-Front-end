@@ -57,6 +57,11 @@ export interface OrgItem {
   };
 }
 
+export interface Documento {
+  id: number;
+  name: string;
+  selected?: boolean;
+}
 
 
 export interface Oficio {

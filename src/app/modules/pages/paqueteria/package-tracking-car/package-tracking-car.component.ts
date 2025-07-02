@@ -77,7 +77,7 @@ export class PackageTrackingCarComponent implements OnInit {
           porcentaje: porcentaje,
           kmIniciales: 0, // Agrega si lo tienes
           id: id, // Asegúrate de incluir el ID
-          idCard: item.car.idCard || 0, // Asegúrate de que el ID de la tarjeta esté presente
+          idCard: item.car.id, // Asegúrate de que el ID de la tarjeta esté presente
           estado: {
             id: item.catStatus?.id,
             name: item.catStatus?.name || 'Sin estado'
@@ -105,7 +105,7 @@ export class PackageTrackingCarComponent implements OnInit {
 
 
   mostrarSwalFormularioPrevio(vehicle: VehicleCard): void {
-
+    console.log(vehicle)
     // Generar las opciones del dropdown con los empleados
     const opcionesConductor = this.catEmployees.map((emp: any) =>
       `<option value="${emp.id}">${emp.name} ${emp.first_surname} ${emp.second_surname}</option>`

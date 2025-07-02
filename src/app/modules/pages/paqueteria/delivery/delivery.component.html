@@ -2,36 +2,37 @@
   <h2 class="titulo">Ruta Asignada</h2>
 
   <!-- Tarjeta de vehículo -->
-<div class="tarjeta-principal">
-  <div class="tarjeta-vehiculo">
-    <div class="vehiculo-header">
-      <img src="assets/nissan1.jpg" alt="Vehículo" class="vehiculo-img" />
-      <div class="info-vehiculo">
-        <h3>{{ car.marca }} {{ car.modelo }} {{ car.color }}</h3>
-        <p class="placa">Placa: {{ car.placa || 'Sin placa' }}</p>
-        <p>Destino: <strong>{{ deliveryInfo.destino || 'Sin destino asignado' }}</strong></p>
-        <p>Conductor: <strong>{{ conductor.name }} {{ conductor.firstSurname }} {{ conductor.secondSurname }}</strong></p>
-        <p>Total de paquetes: <strong>{{ packageInformation.paquetesTotal || 0 }}</strong></p>
+  <div class="tarjeta-principal">
+    <div class="tarjeta-vehiculo">
+      <div class="vehiculo-header">
+        <img src="assets/nissan1.jpg" alt="Vehículo" class="vehiculo-img" />
+        <div class="info-vehiculo">
+          <h3>{{ car.marca }} {{ car.modelo }} {{ car.color }}</h3>
+          <p class="placa">Placa: {{ car.placa || 'Sin placa' }}</p>
+          <p>Destino: <strong>{{ deliveryInfo.destino || 'Sin destino asignado' }}</strong></p>
+          <p>Conductor: <strong>{{ conductor.name }} {{ conductor.firstSurname }} {{ conductor.secondSurname }}</strong>
+          </p>
+          <p>Total de paquetes: <strong>{{ packageInformation.paquetesTotal || 0 }}</strong></p>
+        </div>
       </div>
-    </div>
 
-    <div class="progress-container">
-      <div class="progress-bar-bg">
-        <div class="progress-bar-fill" [style.width.%]="packageInformation.barra"></div>
+      <div class="progress-container">
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" [style.width.%]="packageInformation.barra"></div>
+        </div>
+        <div class="progress-labels">
+          <div>📦 Entregados: <small>{{ packageInformation.entregados }}</small></div>
+          <div>📦 Faltantes: <small>{{ packageInformation.noEntregados }}</small></div>
+        </div>
       </div>
-      <div class="progress-labels">
-        <div>📦 Entregados: <small>{{ packageInformation.entregados }}</small></div>
-        <div>📦 Faltantes: <small>{{ packageInformation.noEntregados }}</small></div>
-      </div>
-    </div>
 
-    <div class="estado-ruta">
-      <span class="badge bodega">🚚 {{ status.name }}</span>
-      <button *ngIf=" status.id === 5" class="btn-comenzar" (click)="empezarRuta()">Comenzar ruta</button>
-      <button *ngIf=" status.id === 7" class="btn-comenzar" (click)="terminarRuta()">Terminar ruta</button>
+      <div class="estado-ruta">
+        <span class="badge bodega">🚚 {{ status.name }}</span>
+        <button *ngIf=" status.id === 5" class="btn-comenzar" (click)="empezarRuta()">Comenzar ruta</button>
+        <button *ngIf=" status.id === 7" class="btn-comenzar" (click)="terminarRuta()">Terminar ruta</button>
+      </div>
     </div>
   </div>
-</div>
 
 
   <!-- Paquetes -->
@@ -39,17 +40,28 @@
     <h4>Paquetes en mi ruta</h4>
 
     <div class="buscador">
-  <input type="text" placeholder="Buscar paquete..." class="input-busqueda" [(ngModel)]="searchGuia" (keyup.enter)="buscarPaquete()" />
-</div>
+      <select id="select-org" class="input-busqueda" [(ngModel)]="selectedOrg" (change)="onOrgChange()">
+        <option value="">-- Selecciona organización --</option>
+        <option *ngFor="let org of organizaciones" [value]="org.id" [attr.data-min]="org.config.config.minvalue"
+          [attr.data-max]="org.config.config.maxvalue">
+          {{ org.name }}
+        </option>
+      </select>
 
-<div *ngIf="paqueteEncontrado" class="paquete-item">
-  <span class="guia">{{ paqueteEncontrado.guia }}</span>
-  <div class="estado">
-    <span class="entregado" (click)="marcarEntregado(paqueteEncontrado)">✔️ Entregado</span>
-    <span class="no-entregado" (click)="marcarNoEntregado(paqueteEncontrado)">❌ Sin entregar</span>
+      <input type="text" placeholder="Buscar paquete..." class="input-busqueda" [(ngModel)]="searchGuia"
+        (keyup.enter)="buscarPaquete()" />
+    </div>
   </div>
-</div>
 
-    <!-- Agrega más paquetes si lo necesitas -->
+
+
+  <div *ngIf="paqueteEncontrado" class="paquete-item">
+    <span class="guia">{{ paqueteEncontrado.guia }}</span>
+    <div class="estado">
+      <span class="entregado" (click)="marcarEntregado(paqueteEncontrado)">✔️ Entregado</span>
+      <span class="no-entregado" (click)="marcarNoEntregado(paqueteEncontrado)">❌ Sin entregar</span>
+    </div>
   </div>
+
+  <!-- Agrega más paquetes si lo necesitas -->
 </div>

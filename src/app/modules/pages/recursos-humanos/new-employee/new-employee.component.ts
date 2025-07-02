@@ -217,9 +217,9 @@ export class NewEmployeeComponent implements OnInit {
       this.fotoAntiguaId = resp.data.images.id;
       // Obtener URL pública de la imagen si existe
       const paths = resp?.data?.images?.path;
-        const imgData = paths;
-        console.log('Imagen del empleado:', imgData);
-        this.fotoAntigua = imgData;
+      const imgData = paths;
+      console.log('Imagen del empleado:', imgData);
+      this.fotoAntigua = imgData;
 
 
       console.log('Foto antigua:', this.fotoAntigua);
@@ -447,9 +447,10 @@ export class NewEmployeeComponent implements OnInit {
             }
           };
 
-          if (this.fotoAntiguaId) {
-            console.log('Eliminando foto antigua con ID:', [this.fotoAntiguaId]);
-            this.rh.deleteFile([this.fotoAntiguaId]).subscribe({
+          if (this.selectedFotoFile) {
+            // console.log('Eliminando foto antigua con ID:', [this.fotoAntiguaId]);
+            const idsToDelete = this.fotoAntiguaId !== null ? [this.fotoAntiguaId] : [];
+            this.rh.deleteFile(idsToDelete).subscribe({
               next: subirFoto,
               error: (err) => {
                 console.error('Error al eliminar foto antigua', err);
@@ -564,10 +565,7 @@ export class NewEmployeeComponent implements OnInit {
       return;
     }
 
-    const documentos$ = this.datosDocumentosCargados
-      ? this.rh.UpdateDocuments(documents, idEmpleado)
-      : this.rh.SaveDocuments(documents, idEmpleado);
-    documentos$.subscribe({
+    this.rh.SaveDocuments(documents, idEmpleado).subscribe({
       next: () => {
         Swal.fire('Documentos guardados', 'Se guardaron correctamente.', 'success');
         this.isEditDocumentos = false;

@@ -271,7 +271,8 @@ onFotoSelected(event: any): void {
         formData.append('files', file);
       });
       console.log('Subiendo fotos para el vehículo con ID:', carId);
-      this.car.SaveFoto(formData, '', this.carID, 'car').subscribe({
+      this.car.SaveFoto(formData, '', carId, 'car').subscribe({
+        
         next: () => {
           Swal.fire({
             icon: 'success',
@@ -280,7 +281,7 @@ onFotoSelected(event: any): void {
               ? 'El vehículo y las fotos fueron actualizados correctamente.'
               : 'El vehículo fue registrado correctamente.',
           });
-
+this.router.navigate(['/pages/RH/Inventario']);
         },
         error: (err) => {
           console.error('Error al subir fotos', err);
