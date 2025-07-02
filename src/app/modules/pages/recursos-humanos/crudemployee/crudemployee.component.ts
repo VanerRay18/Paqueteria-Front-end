@@ -85,8 +85,14 @@ export class CRUDEmployeeComponent {
 getData() {
   this.rh.getEmployees().subscribe((response: ApiResponse) => {
 // console.log('Datos obtenidos:', response.data);
-   this.dataB = response.data.individual;
-   this.dataC = response.data.honorarios;
+   this.dataB = response.data.individual.map((item: any) => ({
+           ...item,
+           active: item.active ? 'Activo' : 'Inactivo',
+         }));
+   this.dataC = response.data.honorarios.map((item: any) => ({
+           ...item,
+           active: item.active ? 'Activo' : 'Inactivo',
+         }));
     // console.log('Datos obtenidos:', this.data);
   },
     (error) => {

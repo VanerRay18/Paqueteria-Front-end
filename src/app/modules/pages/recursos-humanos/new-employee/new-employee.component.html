@@ -333,7 +333,7 @@
       </div>
     </div>
     <div class="col-auto d-flex justify-content-end mt-auto  botones-responsivos">
-      <button type="submit" class="btn  btn-sm" (click)="guardarEmpleo()">Guardar sección</button>
+      <button type="submit" class="btn  btn-sm" (click)="guardarEmpleo()" [disabled]="(bandera == true && isEditMode == false)||(bandera == false && isEditMode == true)">Guardar sección</button>
       <button type="button" class="btn btn-outline-secondary btn-sm ms-2" *ngIf="isEditMode" (click)="editarEmpleo()">
         Editar sección
       </button>

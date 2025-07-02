@@ -34,8 +34,8 @@ export class TabMaterialService {
     return this.http.post<ApiResponse>(`${environment.baseService}${'/materials/cat'}`, data);
   }
 
-  updateMaterial(data: any, materialId: any): Observable<ApiResponse> {
-    let headers = new HttpHeaders({ 'materialId': materialId });
+  updateMaterial(data: any, catMaterialId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'catMaterialId': catMaterialId });
     return this.http.patch<ApiResponse>(`${environment.baseService}${'/materials/cat'}`, data,
       { headers }
     );

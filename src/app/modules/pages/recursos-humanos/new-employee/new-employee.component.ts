@@ -51,6 +51,7 @@ export class NewEmployeeComponent implements OnInit {
   selectedFotoFile: File | null = null;
   fotoAntiguaId: number | null = null;   // El id de la foto actual (si la hay)
   fotoAntigua: any;
+  bandera: boolean = false;  
 
 
   diasSemana = [
@@ -209,7 +210,7 @@ export class NewEmployeeComponent implements OnInit {
   // 2️⃣ Método para cargar datos existentes y llenar los formularios
   loadEmployeeData(id: number) {
     this.rh.getEmployeeById(id).subscribe((resp: ApiResponse) => {
-      console.log('Datos del empleado:', resp.data);
+      // console.log('Datos del empleado:', resp.data);
       const e = resp.data.dataUser;
       // console.log('Datos del empleado:', resp.data);
       const personalesTieneDatos = e && Object.values(e).some(value => !!value);
@@ -218,11 +219,10 @@ export class NewEmployeeComponent implements OnInit {
       // Obtener URL pública de la imagen si existe
       const paths = resp?.data?.images?.path;
       const imgData = paths;
-      console.log('Imagen del empleado:', imgData);
       this.fotoAntigua = imgData;
 
 
-      console.log('Foto antigua:', this.fotoAntigua);
+    
       this.diasSemana = this.diasSemana.map(dia => ({
         ...dia,
         checked: !diasNoSeleccionados.includes(dia.valor)
@@ -336,7 +336,7 @@ export class NewEmployeeComponent implements OnInit {
 
 
       // 👕 Uniformes entregados
-      const unis = resp.data.catEmployeeUniforms || [];
+      const unis = resp.data.catEmployeeMaterials || [];
       this.assignedUniforms = unis;
       this.uniforms = unis.map((u: any) => u.id);
       this.allUniforms = this.allUniforms.filter(u => !this.uniforms.includes(u.id));
@@ -389,12 +389,12 @@ export class NewEmployeeComponent implements OnInit {
 
   // Métodos para enviar cada formulario
   guardarDatosPersonales() {
-    this.datosPersonalesForm.enable()
+   
     const formValue = this.datosPersonalesForm.value;
 
     const { name, firstSurname, secondSurname } = this.separarNombreCompleto(formValue.nombreCompleto);
     const noSeleccionados = this.getDiasNoSeleccionados();
-    console.log('Días no seleccionados:', noSeleccionados);
+    // console.log('Días no seleccionados:', noSeleccionados);
 
     const formatHorario = (horaStr: string) => {
       if (!horaStr) return null;
@@ -419,8 +419,8 @@ export class NewEmployeeComponent implements OnInit {
         attendanceExeption: noSeleccionados.length > 0 ? noSeleccionados : []
       },
       isAttendance: formValue.usaChecador,
-      catJobId: Number(formValue.puestoLaboral),
-      catEmploymentId: Number(formValue.tipoContratacion),
+      catJobId: Number(formValue.tipoContratacion),
+      catEmploymentId: Number(formValue.puestoLaboral),
       catSeguroId: Number(formValue.tipoSeguro),
     };
 
@@ -435,15 +435,17 @@ export class NewEmployeeComponent implements OnInit {
               this.rh.SaveFoto(formData, '', this.employeeIdPatch, 'employee').subscribe({
                 next: () => {
                   Swal.fire('Actualizado', 'Empleado y foto actualizados correctamente.', 'success');
+                   this.datosPersonalesForm.disable();
 
                 },
                 error: () => {
                   Swal.fire('Advertencia', 'Empleado actualizado, pero hubo un error al subir la foto.', 'warning');
-
+                  this.datosPersonalesForm.disable();
                 }
               });
             } else {
               Swal.fire('Actualizado', 'Empleado actualizado correctamente.', 'success');
+               this.datosPersonalesForm.disable();
             }
           };
 
@@ -475,21 +477,25 @@ export class NewEmployeeComponent implements OnInit {
           if (this.selectedFotoFile) {
             const formData = new FormData();
             formData.append('file', this.selectedFotoFile);
-            console.log(this.employeeIdPatch);
+            
             this.rh.SaveFoto(formData, '', this.employeeId, 'employee').subscribe({
               next: () => {
                 Swal.fire('Guardado', 'Empleado y foto registrados correctamente.', 'success');
+                this.datosPersonalesForm.disable();
               },
               error: () => {
                 Swal.fire('Advertencia', 'Empleado guardado, pero hubo un error al subir la foto.', 'warning');
+                this.datosPersonalesForm.disable();
               }
             });
           } else {
             Swal.fire('Guardado', 'Empleado registrado correctamente.', 'success');
+            this.datosPersonalesForm.disable();
           }
         },
         error: () => {
           Swal.fire('Error', 'Ocurrió un error al guardar los datos.', 'error');
+
         }
       });
 
@@ -497,10 +503,8 @@ export class NewEmployeeComponent implements OnInit {
   }
 
   editarDatosPersonales() {
-    console.log(this.isEditMode);
     if (this.employeeIdPatch) {
       this.isEditMode = true;
-
       this.datosPersonalesForm.enable();
       Swal.fire('Edición activada', 'Puedes modificar los datos y volver a guardar.', 'info');
     }
@@ -569,6 +573,7 @@ export class NewEmployeeComponent implements OnInit {
       next: () => {
         Swal.fire('Documentos guardados', 'Se guardaron correctamente.', 'success');
         this.isEditDocumentos = false;
+        this.bandera = false;
       },
       error: (err) => {
         Swal.fire('Error', 'Ocurrió un error al guardar los documentos.', 'error');
@@ -581,14 +586,11 @@ export class NewEmployeeComponent implements OnInit {
       return;
     }
 
-    const uniforms$ = this.datosUniformesCargados
-      ? this.rh.UpdateUniforms(uniforms, idEmpleado)
-      : this.rh.SaveUniforms(uniforms, idEmpleado);
-
-    uniforms$.subscribe({
+   this.rh.SaveUniforms(uniforms, idEmpleado).subscribe({
       next: () => {
         Swal.fire('Uniformes guardados', 'Se guardaron correctamente.', 'success');
         this.isEditUniformes = false;
+        this.bandera = false;
       },
       error: (err) => {
         Swal.fire('Error', 'Ocurrió un error al guardar los uniformes.', 'error');
@@ -601,6 +603,7 @@ export class NewEmployeeComponent implements OnInit {
   editarEmpleo() {
     if (this.employeeIdPatch) {
       this.isEditMode = true;
+      this.bandera = true;
       Swal.fire('Edición activada', 'Puedes modificar los datos y volver a guardar.', 'info');
     }
   }

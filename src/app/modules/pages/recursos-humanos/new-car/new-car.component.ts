@@ -89,14 +89,13 @@ export class NewCarComponent implements OnInit {
       this.car.getCarById(this.carID).subscribe({
         next: (response) => {
 
-          console.log('Datos del vehículo:', response);
           const carData = response.data.car;
           const carTieneDatos = carData && Object.values(carData).some(value => !!value);
 
           if (!carTieneDatos) return;
           // 👉 Llenar las fotos antiguas
         this.fotosAntiguas = response.data.images.map((img: any) => img.path);
-          console.log('Fotos antiguas:', this.fotosAntiguas);
+         
 
           setTimeout(() => {
             this.fotoActual = 0;
@@ -182,7 +181,7 @@ onFotoSelected(event: any): void {
 
 
   anteriorFoto(): void {
-    console.log('Fotos disponibles:', this.todasLasFotos);
+
     const total = this.todasLasFotos.length;
     if (total > 0) {
       this.fotoActual = (this.fotoActual - 1 + total) % total;
@@ -270,7 +269,7 @@ onFotoSelected(event: any): void {
       this.fotosSeleccionadas.forEach((file) => {
         formData.append('files', file);
       });
-      console.log('Subiendo fotos para el vehículo con ID:', carId);
+
       this.car.SaveFoto(formData, '', carId, 'car').subscribe({
         
         next: () => {
@@ -435,7 +434,6 @@ this.router.navigate(['/pages/RH/Inventario']);
   cargarServiciosActuales() {
     if (!this.carID) return;
     this.car.getActualService(this.carID).subscribe(res => {
-      console.log('Servicios actuales:', res.data);
       this.serviciosActuales = res.data;
     });
   }
@@ -444,7 +442,7 @@ this.router.navigate(['/pages/RH/Inventario']);
   cargarHistorialServicios() {
     if (!this.carID) return;
     this.car.getHistoryService(this.carID).subscribe(res => {
-      console.log('Historial de servicios:', res.data);
+
       this.historialServicios = res.data;
     });
   }

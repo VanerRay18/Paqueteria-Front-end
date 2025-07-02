@@ -18,7 +18,7 @@ export class InventoryComponent {
 
   searchTerm: string = '';
   headersB = ['Placa', 'Modelo', 'Marca', 'Submarca', 'Km', 'No. serie', 'color', 'verificacion', 'seguro', 'vigencia', 'Status', 'Bitacora', 'Acciones'];
-  displayedColumnsB = ['placa', 'anio ', 'marca', 'modelo', 'km', 'vin', 'color', 'verificacion', 'seguro', 'vigencia', 'active'];
+  displayedColumnsB = ['placa', 'anio', 'marca', 'modelo', 'km', 'vin', 'color', 'verificacion', 'seguro', 'vigencia', 'active'];
   dataB: any[] = [];
   headersC = ['Articulo', 'Descripcion', 'Cantidad', 'para empleado', 'creado', 'Acciones'];
   displayedColumnsC = ['name', 'description', 'quantity', 'is_assignable', "ts_created"];
@@ -48,7 +48,7 @@ export class InventoryComponent {
   }
 
   onDeleteCar(car: any) {
-    console.log('ID del coche a eliminar:', car.id);
+    // console.log('ID del coche a eliminar:', car.id);
     Swal.fire({
       title: '¿Estás seguro?',
       text: "¡No podrás deshacer esta acción!",
@@ -126,7 +126,8 @@ export class InventoryComponent {
       const fecha = response.data.ts_created
       this.dataC = response.data.map((item: any) => ({
         ...item,
-        ts_created: formatDate(new Date(item.ts_created), 'yyyy-MM-dd', 'en-US')
+        ts_created: formatDate(new Date(item.ts_created), 'yyyy-MM-dd', 'en-US'),
+        is_assignable: item.active ? 'Si' : 'No',
       }));
     },
       (error) => {
@@ -134,7 +135,13 @@ export class InventoryComponent {
       });
 
     this.cars.getAllCars().subscribe((response: ApiResponse) => {
-      this.dataB = response.data
+     
+      this.dataB = response.data.map((item: any) => ({
+        ...item,
+        vigencia : formatDate(new Date(item.vigencia), 'yyyy-MM-dd', 'en-US'),
+        active: item.active ? 'Activo' : 'Inactivo',
+      }));
+
     })
 
 
@@ -272,9 +279,15 @@ export class InventoryComponent {
               Swal.showValidationMessage('Todos los campos excepto comentarios son obligatorios');
               return false;
             }
+            if(odometro <= row.km){
+              Swal.showValidationMessage('El odómetro debe ser mayor que el kilometraje actual: '+row.km);
+              return false;
+            }
+
+            
 
             return {
-              odometro: Number(odometro) + row.km,
+              odometro: Number(odometro),
               litros: parseFloat(litros),
               precio: parseFloat(precio),
               comentarios
@@ -296,6 +309,7 @@ export class InventoryComponent {
                 }).then(() => {
                   this.showDetails(row);
                 });
+                this.getData(); // Recargar tabla de vehículos
               },
               error: (err) => {
                 Swal.fire({
@@ -340,7 +354,7 @@ export class InventoryComponent {
       preConfirm: () => {
         const name = (document.getElementById('swal-name') as HTMLInputElement).value.trim();
         const description = (document.getElementById('swal-description') as HTMLInputElement).value.trim();
-        const is_assignable = (document.getElementById('swal-assignable') as HTMLSelectElement).value === 'true';
+        const isAssignable = (document.getElementById('swal-assignable') as HTMLSelectElement).value === 'true';
         const quantity = parseInt((document.getElementById('swal-quantity') as HTMLInputElement).value, 10);
 
         if (!name || !description || isNaN(quantity) || quantity <= 0) {
@@ -348,16 +362,17 @@ export class InventoryComponent {
           return;
         }
 
-        return { name, description, is_assignable, quantity };
+
+        return { name, description, isAssignable, quantity };
       }
     }).then((result) => {
       if (result.isConfirmed && result.value) {
-        const { name, description, is_assignable, quantity } = result.value;
+        const { name, description, isAssignable, quantity } = result.value;
 
         this.tabMaterial.createMaterial({
           name,
           description,
-          is_assignable
+          isAssignable
         }).subscribe((response: ApiResponse) => {
           const catMaterialId = response.data;
 
@@ -390,13 +405,13 @@ export class InventoryComponent {
   }
 
   onEditMat(materialId: any) {
-    console.log('Editar material con ID:', materialId);
+
   // Llamada al servicio para obtener los datos del material
   this.tabMaterial.getMaterialById(materialId.id).subscribe(response => {
     if (response.success) {
       const { quantity, catMaterial } = response.data;
-      console.log('Datos del material:', catMaterial, quantity);
-      const quantityMaterialId  = quantity.id;
+   
+      const quantityMaterialId  = catMaterial.id;
       // Llenar los campos del modal con la respuesta
       Swal.fire({
         title: 'Editar Material',
@@ -472,9 +487,9 @@ export class InventoryComponent {
             const isAssignable = (document.getElementById('swal-material-assignable') as HTMLSelectElement).value === 'true';
 
             // Actualizar el material
-            this.tabMaterial.createMaterial({ name, description, isAssignable }).subscribe({
+            this.tabMaterial.updateMaterial({ name, description, isAssignable }, quantityMaterialId).subscribe({
               next: (response) => {
-                console.log('Material actualizado:', response);
+
                 Swal.fire('Éxito', 'Material actualizado correctamente.', 'success');
                 this.getData(); // Recargar los datos de la tabla
               },
