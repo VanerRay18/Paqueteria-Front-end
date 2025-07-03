@@ -4,9 +4,9 @@ type AppEnvironment = {
   authUrl: string;
 };
 export const environment: AppEnvironment = {
-  baseService: 'http://localhost:8080',
- // baseService: 'https://softnova.dev/api',
-  // baseService: 'http://217.196.50.77:8082',
+  //baseService: 'http://localhost:8080',
+ baseService: 'https://softnova.dev/api',//Test
+//  baseService: 'https://softnova.com.mx/api',//Produccion
   logoutTime: 10680000,
   authUrl: 'https://www.google.com'
 };
