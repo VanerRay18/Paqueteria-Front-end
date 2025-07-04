@@ -498,7 +498,7 @@ commitDate: `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate
               }
 
               const recortado = paquete.length > maxvalue
-                ? paquete.substring(0, maxvalue)
+                ? paquete.substring(paquete.length - maxvalue)
                 : paquete;
 
               if (this.paquetesEsc.includes(recortado)) {

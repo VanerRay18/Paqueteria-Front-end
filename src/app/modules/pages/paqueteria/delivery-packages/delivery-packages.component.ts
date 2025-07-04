@@ -503,7 +503,7 @@ export class DeliveryPackagesComponent implements OnInit {
                 alerta!.textContent = `❌ El paquete debe tener al menos ${minvalue} caracteres.`;
                 return;
               }
-              const recortado = valor.length > maxvalue ? valor.substring(0, maxvalue) : valor;
+              const recortado = valor.length > maxvalue ? valor.substring(valor.length - maxvalue) : valor;
               if (this.paquetesEsc.includes(recortado)) {
                 alerta!.textContent = `⚠️ El paquete "${recortado}" ya fue escaneado.`;
                 return;
