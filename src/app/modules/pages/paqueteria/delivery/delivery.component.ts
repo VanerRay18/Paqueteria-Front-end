@@ -18,12 +18,17 @@ export class DeliveryComponent implements OnInit {
   packageInformation: any = null;
   status: any;
   deliveryId: any;
-
+  catDex: any;
   selectedOrg: string = '';
   organizaciones: OrgItem[] = []; // Aquí se almacenan las organizaciones
   paquetesEsc: string[] = []; // Aquí puedes almacenar los paquetes encontrados
-  minvalue: number = 0;
-  maxvalue: number = 999;
+  isLoading: boolean = false;
+  page: number = 0;
+  size: number = 20;
+  total: number = 0;
+  rutaIniciada: boolean = false;
+  paqueteStatus: any; // Aquí puedes almacenar el estado del paquete
+  paquetes: any[] = []; // Aquí se almacenan los paquetes de la entrega
 
   constructor(
     private pakage: PakageService // Replace with actual service type
@@ -31,20 +36,52 @@ export class DeliveryComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargarDeliveryInfo();
-    this.getOrganizaciones(); // Cargar organizaciones al iniciar el componente
+
+     // Verificar el estado de la ruta al iniciar
+    // Cargar los paquetes al iniciar el componente
+    // Cargar organizaciones al iniciar el componente
   }
 
-  getOrganizaciones() {
-    this.pakage.getCatPakageOrg().subscribe({
-      next: (response) => {
-        const organizaciones: OrgItem[] = response.data || [];
-        this.organizaciones = organizaciones;
-      },
-      error: (error) => {
-        console.error('Error al obtener las organizaciones:', error);
-      }
-    });
+  get paquetesFiltrados() {
+  if (!this.searchGuia || this.searchGuia.trim() === '') {
+    return this.paquetes;
   }
+  const filtro = this.searchGuia.toLowerCase();
+  return this.paquetes.filter(p =>
+    p.guia?.toLowerCase().includes(filtro)
+  );
+}
+
+  verificarEstadoRuta() {
+    this.rutaIniciada = this.deliveryInfo?.status?.id === 7;
+  }
+
+
+  getData(page: number, size: number): void {
+    this.isLoading = true;
+    console.log(this.deliveryId)
+    this.pakage.getPackageByDelivery(this.deliveryId, page, size).subscribe(
+      response => {
+        this.total = response.data.total
+        this.paquetes = response.data.paquetes;
+
+        console.log(response.data.paquetes.status)// Asignar el estado del paquete
+        console.log('Paquetes:', this.paquetes); // Asignar los datos recibidos a la variable paquetes
+        this.isLoading = false;
+      },
+      error => {
+        console.error('Error al obtener los datos:', error);
+        this.isLoading = false;
+      }
+    );
+  }
+
+  cambiarPagina(pagina: number) {
+    this.page = pagina;
+    this.getData(this.page, this.size);
+  }
+
+
 
   cargarDeliveryInfo() {
     this.pakage.getDeliveryByEmployeeId().subscribe(
@@ -57,30 +94,33 @@ export class DeliveryComponent implements OnInit {
           this.packageInformation = this.deliveryInfo.packageInformation;
           this.status = this.deliveryInfo.status;
           console.log('Delivery info:', this.deliveryInfo);
+          this.verificarEstadoRuta();
+          this.getData(this.page, this.size);
+
         }
       },
       (error) => {
         console.error('Error al obtener delivery info:', error);
       }
     );
+
+    this.pakage.getPDex().subscribe(
+      (response: ApiResponse) => {
+        if (response && response.data) {
+          this.catDex = response.data;
+          console.log('Categorías Dex:', this.catDex);
+        } else {
+          console.warn('No se encontraron categorías Dex');
+        }
+      }
+    );
+
   }
 
-
-  onOrgChange() {
-    const selectedOrgData = this.organizaciones.find(org => org.id === Number(this.selectedOrg)); // Convierte selectedOrg a número
-    if (selectedOrgData) {
-      this.minvalue = selectedOrgData.config.config.minvalue;
-      this.maxvalue = selectedOrgData.config.config.maxvalue;
-    }
-  }
-
-  // Buscar el paquete
   buscarPaquete() {
     if (!this.searchGuia) return;
 
-    const paqueteRecortado = this.searchGuia.length > this.maxvalue ? this.searchGuia.substring(0, this.maxvalue) : this.searchGuia;
-
-    this.pakage.searchPackageDelivery(paqueteRecortado, this.deliveryId).subscribe(
+    this.pakage.searchPackageDelivery(this.searchGuia, this.deliveryId).subscribe(
       (response) => {
         if (response.data) {
           this.paqueteEncontrado = response.data;
@@ -115,6 +155,15 @@ export class DeliveryComponent implements OnInit {
   }
 
   terminarRuta() {
+    const pendientes = this.paquetes.filter(p =>
+      p.status?.id !== 8 && p.status?.id !== 9
+    );
+
+    if (pendientes.length > 0) {
+      Swal.fire('Ruta incompleta', 'Debes entregar o marcar todos los paquetes antes de finalizar la ruta.', 'error');
+      return;
+    }
+
     let catStatusId = 10;
     let packageId = this.deliveryId; // Asegúrate de que el paquete tenga un ID
     console.log('Terminar ruta con ID de paquete:', packageId);
@@ -124,6 +173,7 @@ export class DeliveryComponent implements OnInit {
         console.log('Marcado como no entregado:', response);
         Swal.fire('Éxito', 'Paquete marcado como no entregado.', 'success');
         this.cargarDeliveryInfo();
+        this.ngOnInit(); // Recargar la información de entrega
         // Aquí iría la lógica para actualizar el estado en el backend si aplica
       },
       (error) => {
@@ -135,10 +185,15 @@ export class DeliveryComponent implements OnInit {
   marcarEntregado(paquete: any) {
     let catStatusId = 8; // Asumiendo que 1 es el ID para "Entregado"
     let packageId = paquete.id; // Asegúrate de que el paquete tenga un ID
-    let description = 'Paquete entregado'; // Descripción de la acción
+    let description = 'Paquete entregado';
+    if (!this.rutaIniciada) {
+      Swal.fire('Ruta no iniciada', 'Debes iniciar la ruta antes de marcar como entregado.', 'warning');
+      return;
+    } // Descripción de la acción
     this.pakage.updatePackageStatus(packageId, catStatusId, description).subscribe(
       (response) => {
         // console.log('Marcado como entregado:', paquete);
+
         Swal.fire('Éxito', 'Paquete marcado como entregado.', 'success');
         this.cargarDeliveryInfo(); // Recargar la información de entrega
         this.paqueteEncontrado = null;
@@ -154,18 +209,61 @@ export class DeliveryComponent implements OnInit {
     let catStatusId = 9;
     let packageId = paquete.id; // Asegúrate de que el paquete tenga un ID
     let description = 'Paquete no entregado'; // Descripción de la acción
-    this.pakage.updatePackageStatus(packageId, catStatusId, description).subscribe(
-      (response) => {
-        console.log('Marcado como no entregado:', paquete);
-        Swal.fire('Éxito', 'Paquete marcado como no entregado.', 'success');
-        this.cargarDeliveryInfo(); // Recargar la información de entrega
-        this.paqueteEncontrado = null;
-        // Aquí iría la lógica para actualizar el estado en el backend si aplica
-      },
-      (error) => {
-        console.error('Error al marcar como no entregado:', error);
+    const catDex = this.catDex || []; // Asegúrate de que catDex esté definido
+    if (!this.rutaIniciada) {
+      Swal.fire('Ruta no iniciada', 'Debes iniciar la ruta antes de marcar como entregado.', 'warning');
+      return;
+    }
+    const selectHtml = `
+    <select id="tipoSeguroSelect" style="
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+        appearance: none;
+      ">
+      <option value="">Seleccione</option>
+      ${catDex.map((dex: { id: any; description: any; }) => `
+        <option value="${dex.id}">${dex.description}</option>
+      `).join('')}
+    </select>
+  `;
+    Swal.fire({
+      title: 'Selecciona el motivo por el cual no se entregó el paquete',
+      html: selectHtml,
+      confirmButtonText: 'Aceptar',
+      focusConfirm: false,
+      preConfirm: () => {
+        const selectedValue = (document.getElementById('tipoSeguroSelect') as HTMLSelectElement)?.value;
+        if (!selectedValue) {
+          Swal.showValidationMessage('Debes seleccionar un tipo de seguro');
+          return false;
+        }
+        return selectedValue;
       }
-    );
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const selectedId = result.value;
+        console.log('ID seleccionado:', selectedId);
+        this.pakage.updatePackageStatus(packageId, catStatusId, description).subscribe(
+          (response) => {
+            console.log('Marcado como no entregado:', paquete);
+
+            Swal.fire('Éxito', 'Paquete marcado como no entregado.', 'success');
+            this.cargarDeliveryInfo(); // Recargar la información de entrega
+            this.paqueteEncontrado = null;
+            // Aquí iría la lógica para actualizar el estado en el backend si aplica
+          },
+          (error) => {
+            console.error('Error al marcar como no entregado:', error);
+          }
+        );
+        // Puedes actualizar tu formGroup aquí si lo necesitas
+      }
+    });
+
   }
 
 

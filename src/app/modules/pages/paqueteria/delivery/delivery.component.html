@@ -22,7 +22,7 @@
         </div>
         <div class="progress-labels">
           <div>📦 Entregados: <small>{{ packageInformation.entregados }}</small></div>
-          <div>📦 Faltantes: <small>{{ packageInformation.noEntregados }}</small></div>
+          <div>📦 No entregados: <small>{{ packageInformation.noEntregados }}</small></div>
         </div>
       </div>
 
@@ -40,28 +40,27 @@
     <h4>Paquetes en mi ruta</h4>
 
     <div class="buscador">
-      <select id="select-org" class="input-busqueda" [(ngModel)]="selectedOrg" (change)="onOrgChange()">
-        <option value="">-- Selecciona organización --</option>
-        <option *ngFor="let org of organizaciones" [value]="org.id" [attr.data-min]="org.config.config.minvalue"
-          [attr.data-max]="org.config.config.maxvalue">
-          {{ org.name }}
-        </option>
-      </select>
-
       <input type="text" placeholder="Buscar paquete..." class="input-busqueda" [(ngModel)]="searchGuia"
-        (keyup.enter)="buscarPaquete()" />
+     />
     </div>
+
+    <div class="paquete-item" *ngFor="let paquete of paquetes">
+      <span class="guia">{{ paquete.guia }}</span>
+      <div class="estado">
+        <span class="entregado"  [ngClass]="{'disabled': paquete.status?.id === 8 || paquete.status?.id === 9}" (click)="marcarEntregado(paquete)">✔️ Entregado</span>
+        <span class="no-entregado" [ngClass]="{'disabled': paquete.status?.id === 8 || paquete.status?.id === 9}" (click)="marcarNoEntregado(paquete)">❌ Sin entregar</span>
+      </div>
+    </div>
+
+    <app-paginador-component [isLoading]="isLoading" [page]="page" [size]="size" [total]="total"
+      (pageChange)="cambiarPagina($event)">
+    </app-paginador-component>
+
   </div>
 
 
 
-  <div *ngIf="paqueteEncontrado" class="paquete-item">
-    <span class="guia">{{ paqueteEncontrado.guia }}</span>
-    <div class="estado">
-      <span class="entregado" (click)="marcarEntregado(paqueteEncontrado)">✔️ Entregado</span>
-      <span class="no-entregado" (click)="marcarNoEntregado(paqueteEncontrado)">❌ Sin entregar</span>
-    </div>
-  </div>
+
 
   <!-- Agrega más paquetes si lo necesitas -->
 </div>

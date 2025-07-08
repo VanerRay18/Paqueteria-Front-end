@@ -62,6 +62,10 @@ export class PakageService {
     return this.http.get<ApiResponse>(`${environment.baseService}${'/package/packagesByDeliveryId'}`, { headers });
   }
 
+  getPDex(): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/getDex'}`);
+  }
+
   searchPackageDelivery(guia: any, deliveryId: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'guia': guia, 'deliveryId': deliveryId });
     return this.http.get<ApiResponse>(`${environment.baseService}${'/package/searchPackageByDeliveryId'}`, { headers });
