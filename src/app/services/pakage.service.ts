@@ -29,14 +29,14 @@ export class PakageService {
     return this.http.get<ApiResponse>(`${environment.baseService}${'/package/incomingPackagesByPackageOrgId'}`, { headers });
   }
 
-   getAllPackages(headers : HttpHeaders): Observable<ApiResponse> {
+  getAllPackages(headers: HttpHeaders): Observable<ApiResponse> {
     return this.http.get<ApiResponse>(`${environment.baseService}${'/package/getAllPackages'}`, { headers });
   }
 
 
-  getDeliveriesCar(page:any,size:any): Observable<ApiResponse> {
-            let headers = new HttpHeaders({'page': page, 'size': size });
-    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/deliveries'}`,{headers});
+  getDeliveriesCar(page: any, size: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'page': page, 'size': size });
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/deliveries'}`, { headers });
   }
 
   getPackagesDeliveryById(deliveryId: any, page: any, size: any): Observable<ApiResponse> {
@@ -88,6 +88,7 @@ export class PakageService {
     return this.http.post<ApiResponse>(`${environment.baseService}${'/package/createDeliveryLoad'}`, data,
       { headers });
   }
+
 
   paquetesEscaneados(data: any, incomingPackageId: any): Observable<ApiResponse> {//Trae la nomina actual
     let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId });
@@ -147,6 +148,19 @@ export class PakageService {
   createPackageWithConsolidado(packageId: any, description: any, data: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'packageId': packageId, 'description': description });
     return this.http.post<ApiResponse>(`${environment.baseService}${'/package/createPackageWithConsolidado'}`, data,
+      { headers }
+    );
+  }
+
+  SentDataExelCost(data: any, incomingPackageId: any): Observable<ApiResponse> {//Trae la nomina actual
+    let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId });
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/createCostLoad'}`, data,
+      { headers });
+  }
+
+  MatchingPackageCost(incomingPackageId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId });
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/matchCost'}`, null,
       { headers }
     );
   }

@@ -51,7 +51,7 @@ h2 {
   font-size: 0.9rem;
   color: #0066cc;
   transition: 0.3s ease;
-  
+
 }
 
 /* Cuando el ancho sea menor a 600px (pantallas pequeñas), los botones se apilan */
@@ -195,3 +195,20 @@ h2 {
   }
 }
 
+.tabs {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.tabs button {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  background: #e2e8f0;
+  cursor: pointer;
+}
+
+.tabs button.active {
+  background: #0066cc;
+  color: white;
+}

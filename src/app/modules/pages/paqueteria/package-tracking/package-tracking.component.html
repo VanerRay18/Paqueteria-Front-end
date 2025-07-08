@@ -8,59 +8,110 @@
         <span>&nbsp;&nbsp;&nbsp;Total: {{this.total}}</span>
       </div>
       <input type="text" placeholder="Buscar..." class="buscador" />
+
       <div class="botones-responsivos">
-        <input id="csvFile" type="file" (change)="onFileSelected($event)" accept=".csv" #fileInput
+        <input id="csvFile" type="file"
+          (change)="onFileSelected($event, 'normal')" accept=".csv"
+          #fileInputNomal
           style="display: none" />
 
-        <button class="btn btn-archivo" (click)="fileInput.click()" [disabled]="isMatch || isCreateExel === true" [class.disabled-btn]="isMatch && isCreateExel">
+        <button class="btn btn-archivo" (click)="fileInputNomal.click()"
+          [disabled]="isMatch || isCreateExel === true"
+          [class.disabled-btn]="isMatch && isCreateExel">
           📁 Cargar Excel
+        </button>
+        <input id="csvFile" type="file"
+          (change)="onFileSelected($event, 'costos')" accept=".csv"
+          #fileInputCostos
+          style="display: none" />
+
+        <button class="btn btn-archivo" (click)="fileInputCostos.click()"
+          [disabled]="isMatchPrice || isPriceExel === true"
+          [class.disabled-btn]="isMatchPrice && isPriceExel">
+          🗂️ Cargar Excel de Costos
         </button>
         <button class="btn btn-escanear" (click)="mostrarSwal()">
           📦 Comenzar a escanear
         </button>
-        <button class="btn btn-escanear" (click)="macheoPaquetes()" [disabled]="isMatch || total <=0" [class.disabled-btn]="isMatch">
+        <button class="btn btn-escanear" (click)="macheoPaquetes()"
+          [disabled]="isMatch || total <=0" [class.disabled-btn]="isMatch">
           🔄 Hacer macheo
+        </button>
+        <button class="btn btn-escanear" (click)="macheoPaquetesCostos()"
+          [disabled]="isMatchPrice || total <=0" [class.disabled-btn]="isMatch">
+          🔄🪙 Macheo de costos
         </button>
         <button class="btn btn-escanear" (click)="machoteExelPaquetes()">
           📊 Machote de excel
         </button>
-        <button class="btn btn-escanear" (click)="descargarTxtDeGuiasPorBloques()">
-          📄 Copiar paquetes 
+        <button class="btn btn-escanear"
+          (click)="descargarTxtDeGuiasPorBloques()">
+          📄 Copiar paquetes
         </button>
-
 
       </div>
     </div>
 
-    <div *ngFor="let grupo of paquetesAgrupados">
-      <div class="fecha-entrega-linea">
-        <span>{{ grupo.fecha }}</span>
+    <div class="tabs">
+      <button [class.active]="activeTab === 'normales'"
+        (click)="activeTab = 'normales'">📦 Normales</button>
+      <button [class.active]="activeTab === 'costos'"
+        (click)="activeTab = 'costos'">💰 Con costo</button>
+    </div>
+    <div *ngIf="activeTab === 'normales'">
+      <div *ngFor="let grupo of paquetesAgrupados">
+        <div class="fecha-entrega-linea">
+          <span>{{ grupo.fecha }}</span>
+        </div>
+        <ng-container *ngFor="let paquete of grupo.paquetes">
+          <ng-container
+            *ngTemplateOutlet="paqueteTemplate; context:{ $implicit: paquete }"></ng-container>
+        </ng-container>
       </div>
-      <div class="paquete" *ngFor="let paquete of grupo.paquetes">
-        <div class="codigo">
-          <i class="fa fa-eye" style="cursor:pointer; margin-left: 10px;" (click)="verdetallesPaquete(paquete)"></i>
-          <i class="fa-solid fa-pen-to-square" style="cursor:pointer; margin-left: 10px;"
-            (click)="editarConsolidado(paquete)"></i>&nbsp;
+    </div>
 
+    <div *ngIf="activeTab === 'costos'">
+      <div *ngFor="let paquete of paquetesConCosto">
+        <ng-container
+          *ngTemplateOutlet="paqueteTemplate; context:{ $implicit: paquete, esCosto: true }"></ng-container>
+      </div>
+    </div>
+
+    <!-- Template único para renderizar un paquete -->
+    <ng-template #paqueteTemplate let-paquete let-esCosto="esCosto">
+      <div class="paquete">
+        <div class="codigo">
+          <i class="fa fa-eye" style="cursor:pointer; margin-left: 10px;"
+            (click)="verdetallesPaquete(paquete)"></i>
+          <i class="fa-solid fa-pen-to-square"
+            style="cursor:pointer; margin-left: 10px;"
+            (click)="editarConsolidado(paquete)"></i>&nbsp;
           <span [ngStyle]="{ color: paquete.color }">{{ paquete.guia }}</span>
+        </div>
+
+        <div *ngIf="esCosto" style="margin-top:5px; color:#16a34a;">
+          <strong>Costo:</strong> {{ paquete.costLoad.price ? '$' + paquete.costLoad.price :
+          'N/A' }}
         </div>
 
         <div class="barra-progreso">
           <div class="segmento progreso" [ngStyle]="{
         width: getBarraEstado(paquete),
         backgroundColor: paquete.status.config.color
-      }">
-          </div>
+      }"></div>
         </div>
 
-              <div class="etapas">
-  <span >{{paquete.nameOrg}}&nbsp;&nbsp; Intentos: {{paquete.totalEntregas}}&nbsp;  Rutas: {{paquete.totalRutas}}</span>
-  <span class="center-info">{{paquete.status.name}} - {{ paquete.status.tiempo | date: 'dd-MM-yyyy HH:mm' }}</span>
-</div>
+        <div class="etapas">
+          <span>{{paquete.nameOrg}}&nbsp;&nbsp; Intentos:
+            {{paquete.totalEntregas}}&nbsp; Rutas: {{paquete.totalRutas}}</span>
+          <span class="center-info">{{paquete.status.name}} - {{
+            paquete.status.tiempo | date: 'dd-MM-yyyy HH:mm' }}</span>
+        </div>
       </div>
-    </div>
+    </ng-template>
 
-    <app-paginador-component [isLoading]="isLoading" [page]="page" [size]="size" [total]="total"
+    <app-paginador-component [isLoading]="isLoading" [page]="page" [size]="size"
+      [total]="total"
       (pageChange)="cambiarPagina($event)">
     </app-paginador-component>
 

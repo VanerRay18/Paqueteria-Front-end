@@ -27,6 +27,12 @@ export class PackageTrackingComponent implements OnInit {
   isLoading: boolean = false;
   page: number = 0;
   size: number = 20;
+  isMatchPrice: boolean = false;
+  isPriceExel: boolean = false;
+  isCost: boolean = false; // Para controlar el estado del botón de macheo de costos
+  paquetesNormales: any[] = [];
+  paquetesConCosto: any[] = [];
+  activeTab: string = 'normales'; // o 'costos'
 
 
   paquetesAgrupados: any[] = []; // Agrupados y paginados
@@ -34,21 +40,12 @@ export class PackageTrackingComponent implements OnInit {
   constructor(
     private pakage: PakageService,
     private fileTransferService: FileTransferService,
-        private route: ActivatedRoute
-    
+    private route: ActivatedRoute
+
   ) {
 
   }
   ngOnInit(): void {
-    // this.fileTransferService.currentIdTercero$
-    //   // <- solo se ejecuta una vez
-    //   .subscribe(id => {
-    //     if (id !== null) {
-
-    //       this.incomingPackageId = id;
-
-    //     }
-    //   });
     this.incomingPackageId = this.route.snapshot.paramMap.get('id');
     this.getData(this.page, this.size);
 
@@ -162,7 +159,7 @@ export class PackageTrackingComponent implements OnInit {
           recipState: getVal('recipState'),
           recipCntry: getVal('recipCntry'),
           recipPostal: getVal('recipPostal'),
-commitDate: `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}/${date.getFullYear()}`,
+          commitDate: `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}/${date.getFullYear()}`,
           service: getVal('service'),
           commitTime: getVal('commitTime'),
           shprPhone: getVal('shprPhone'),
@@ -313,12 +310,22 @@ commitDate: `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate
         this.total = response.data.total
         this.isMatch = response.data.cargamento.isMatch
         this.cargamento = response.data.cargamento
-        this.paquetes = response.data.packages; // Asignar los datos recibidos a la variable paquetes
-        // console.log(response.data.packages);
-        this.agruparPorFechaDeEntrega(this.paquetes);
+        const todosLosPaquetes = response.data.packages;
+
+        // Dividir paquetes
+        this.paquetesNormales = todosLosPaquetes.filter((p: { isCost: any; }) => !p.isCost);
+        this.paquetesConCosto = todosLosPaquetes.filter((p: { isCost: any; }) => p.isCost);
+        // console.log('Paquetes con costo:', this.paquetesConCosto);
+
+        // Agrupamos si quieres seguir usando paquetesAgrupados
+        this.agruparPorFechaDeEntrega(this.paquetesNormales);
+
         this.isLoading = false;
-        this.isCreateExel = response.data.cargamento.isExel; // Actualizar el estado de isCreateExel
-        console.log('isCreateExel:', this.isCreateExel);
+        this.isCreateExel = response.data.cargamento.isExel;
+        this.isCost = response.data.cargamento.isCost;
+        this.isMatchPrice = response.data.cargamento.isMatchPrice;
+        this.isPriceExel = response.data.cargamento.isPriceExel;
+        // console.log('isCreateExel:', this.isCreateExel);
       },
       error => {
         console.error('Error al obtener los datos:', error);
@@ -355,7 +362,7 @@ commitDate: `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate
     });
   }
 
-  onFileSelected(event: any): void {
+  onFileSelected(event: any, tipo: string): void {
     const file: File = event.target.files[0];
 
     if (file) {
@@ -402,8 +409,12 @@ commitDate: `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate
           return newRow;
         });
 
-        // console.log('JSON limpio con títulos en camelCase:', jsonData);
-        this.enviarAlBackend(jsonData);
+        console.log('Tipo de archivo:', tipo);
+        if (tipo === 'normal') {
+          this.enviarAlBackend(jsonData);
+        } else if (tipo === 'costos') {
+          this.enviarAlBackendCostos(jsonData);
+        }
       };
 
 
@@ -437,9 +448,33 @@ commitDate: `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate
       }
     );
 
+  }
 
-    //     console.log('Enviando datos al backend:', data);
-    //     // Aquí puedes usar un servicio HTTP para enviar los datos
+  enviarAlBackendCostos(data: any): void {
+    console.log(data) // Reemplaza con el ID real del paquete entrante
+    Swal.fire({
+      title: 'Cargando consolidado...',
+      html: '<b>Por favor espera</b>',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading(); // icono de carga
+      }
+    });
+    this.pakage.SentDataExelCost(data, this.incomingPackageId).subscribe(
+      response => {
+        // console.log(response.data);
+        this.getData(this.page, this.size); // Actualiza la lista después de enviar los datos
+        Swal.fire({
+          title: '¡Éxito!',
+          text: 'Se cargo el consolidado correctamente.',
+          icon: 'success',
+          showConfirmButton: false,
+          timer: 1500,
+          timerProgressBar: true
+        });
+      }
+    );
+
   }
 
   mostrarSwal(): void {
@@ -736,6 +771,41 @@ commitDate: `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate
     });
 
     this.pakage.MatchingPackage(this.incomingPackageId).subscribe({
+      next: (response) => {
+        this.getData(this.page, this.size); // Actualiza la lista después del macheo
+        Swal.fire({
+          icon: 'success',
+          title: '¡Macheo completo!',
+          html: `
+          <p>El proceso se completó correctamente.</p>
+          <pre style="text-align:left; background:#f4f4f4; padding:10px; border-radius:6px;">${JSON.stringify(response.data, null, 2)}</pre>
+        `,
+          width: 600
+        });
+      },
+      error: (error) => {
+        console.error('Error al hacer macheo:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error en el macheo',
+          text: 'Ocurrió un error al procesar el macheo de paquetes.'
+        });
+      }
+    });
+  }
+
+    macheoPaquetesCostos(): void {
+    Swal.fire({
+      title: 'Macheo en proceso...',
+      html: 'Por favor espera mientras se realiza el macheo de los paquetes.',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    this.pakage.MatchingPackageCost(this.incomingPackageId).subscribe({
       next: (response) => {
         this.getData(this.page, this.size); // Actualiza la lista después del macheo
         Swal.fire({
