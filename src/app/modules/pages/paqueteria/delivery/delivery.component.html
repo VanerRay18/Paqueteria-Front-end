@@ -5,7 +5,7 @@
   <div class="tarjeta-principal">
     <div class="tarjeta-vehiculo">
       <div class="vehiculo-header">
-        <img src="assets/nissan1.jpg" alt="Vehículo" class="vehiculo-img" />
+        <img [src]="image" alt="Vehículo" class="vehiculo-img" />
         <div class="info-vehiculo">
           <h3>{{ car.marca }} {{ car.modelo }} {{ car.color }}</h3>
           <p class="placa">Placa: {{ car.placa || 'Sin placa' }}</p>
@@ -13,6 +13,7 @@
           <p>Conductor: <strong>{{ conductor.name }} {{ conductor.firstSurname }} {{ conductor.secondSurname }}</strong>
           </p>
           <p>Total de paquetes: <strong>{{ packageInformation.paquetesTotal || 0 }}</strong></p>
+          <p>Dinero total de paquetes: <strong>{{this.cost | currency:'USD':'symbol':'1.2-2'}}</strong></p>
         </div>
       </div>
 

@@ -30,6 +30,8 @@ export class DeliveryComponent implements OnInit {
   paqueteStatus: any; // Aquí puedes almacenar el estado del paquete
   paquetes: any[] = []; // Aquí se almacenan los paquetes de la entrega
   searchTerm: string = '';
+  image: any;
+  cost: any;
 
   constructor(
     private pakage: PakageService // Replace with actual service type
@@ -90,6 +92,8 @@ export class DeliveryComponent implements OnInit {
           console.log('Delivery Info:', this.deliveryInfo);
           this.deliveryId = this.deliveryInfo.id; // Assuming the delivery ID is in the response
           this.car = this.deliveryInfo.car;
+          this.cost = this.deliveryInfo.costoTotal;
+          this.image = this.deliveryInfo.images;
           this.conductor = this.deliveryInfo.conductor;
           this.packageInformation = this.deliveryInfo.packageInformation;
           this.status = this.deliveryInfo.status;
