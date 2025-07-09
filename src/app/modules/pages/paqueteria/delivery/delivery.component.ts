@@ -29,6 +29,7 @@ export class DeliveryComponent implements OnInit {
   rutaIniciada: boolean = false;
   paqueteStatus: any; // Aquí puedes almacenar el estado del paquete
   paquetes: any[] = []; // Aquí se almacenan los paquetes de la entrega
+  searchTerm: string = '';
 
   constructor(
     private pakage: PakageService // Replace with actual service type
@@ -37,20 +38,20 @@ export class DeliveryComponent implements OnInit {
   ngOnInit(): void {
     this.cargarDeliveryInfo();
 
-     // Verificar el estado de la ruta al iniciar
+    // Verificar el estado de la ruta al iniciar
     // Cargar los paquetes al iniciar el componente
     // Cargar organizaciones al iniciar el componente
   }
 
   get paquetesFiltrados() {
-  if (!this.searchGuia || this.searchGuia.trim() === '') {
-    return this.paquetes;
+    if (!this.searchGuia || this.searchGuia.trim() === '') {
+      return this.paquetes;
+    }
+    const filtro = this.searchGuia.toLowerCase();
+    return this.paquetes.filter(p =>
+      p.guia?.toLowerCase().includes(filtro)
+    );
   }
-  const filtro = this.searchGuia.toLowerCase();
-  return this.paquetes.filter(p =>
-    p.guia?.toLowerCase().includes(filtro)
-  );
-}
 
   verificarEstadoRuta() {
     this.rutaIniciada = this.deliveryInfo?.status?.id === 7;
@@ -64,7 +65,7 @@ export class DeliveryComponent implements OnInit {
       response => {
         this.total = response.data.total
         this.paquetes = response.data.paquetes;
-        // console.log('Paquetes:', this.paquetes); 
+        // console.log('Paquetes:', this.paquetes);
         this.isLoading = false;
       },
       error => {
@@ -86,6 +87,7 @@ export class DeliveryComponent implements OnInit {
       (response: ApiResponse) => {
         if (response && response.data) {
           this.deliveryInfo = response.data;
+          console.log('Delivery Info:', this.deliveryInfo);
           this.deliveryId = this.deliveryInfo.id; // Assuming the delivery ID is in the response
           this.car = this.deliveryInfo.car;
           this.conductor = this.deliveryInfo.conductor;
@@ -134,16 +136,16 @@ export class DeliveryComponent implements OnInit {
     );
   }
 
-    verdetallesPaquete(paquete: any): void {
-      const guia = paquete.guia;
-  
-      const d = paquete.consolidado;
-  
-      Swal.fire({
-        title: `<strong>Datos del paquete</strong>`,
-        html: `
+  verdetallesPaquete(paquete: any): void {
+    const guia = paquete.guia;
+
+    const d = paquete.consolidado;
+
+    Swal.fire({
+      title: `<strong>Datos del paquete</strong>`,
+      html: `
             <div style="display: flex; flex-direction: column; gap: 1.2rem; font-size: 14px;">
-  
+
               <!-- Consolidado -->
               <div style="padding: 12px; border-radius: 8px; background: #f1f5f9; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                 <h4 style="margin-bottom: 8px; color: #0f172a;">${guia}</h4>
@@ -154,18 +156,18 @@ export class DeliveryComponent implements OnInit {
                   <p><strong>Referencias:</strong> ${d.shprRef}</p>
                 ` : `<p>No hay información de consolidado</p>`}
               </div>
-  
+
             </div>
           `,
-        width: 650,
-        showCloseButton: true,
-        confirmButtonText: 'Cerrar',
-        focusConfirm: false,
-        customClass: {
-          popup: 'custom-swal-popup'
-        }
-      });
-    }
+      width: 650,
+      showCloseButton: true,
+      confirmButtonText: 'Cerrar',
+      focusConfirm: false,
+      customClass: {
+        popup: 'custom-swal-popup'
+      }
+    });
+  }
 
   empezarRuta() {
     let catStatusId = 7; // Asumiendo que 1 es el ID para "Entregado"

@@ -14,7 +14,6 @@ import { OrgItem } from 'src/app/shared/interfaces/utils';
   styleUrls: ['./delivery-packages.component.css']
 })
 export class DeliveryPackagesComponent implements OnInit {
-  searchGuia: string = '';
   paqueteEncontrado: any = null;
   deliveryInfo: any = null;
   car: any;
@@ -27,10 +26,11 @@ export class DeliveryPackagesComponent implements OnInit {
   paquetes: any[] = [];
   cargamento: any = null;
   total: number = 0;
-
+  cost: any = 0;
   isLoading: boolean = false;
   page: number = 0;
   size: number = 20;
+  searchTerm: string = '';
 
 
   paquetesAgrupados: any[] = []; // Agrupados y paginados
@@ -41,14 +41,6 @@ export class DeliveryPackagesComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // this.fileTransferService.currentIdTercero$
-    //   .subscribe(id => {
-    //     if (id !== null) {
-    //       console.log('ID recibido:', id);
-    //       this.deliveryId = id;
-    //       //  this.fileTransferService.clearIdTercero();
-    //     }
-    //   });
     this.deliveryId = this.route.snapshot.paramMap.get('id');
     this.getData(this.page, this.size);
 
@@ -308,8 +300,9 @@ export class DeliveryPackagesComponent implements OnInit {
     this.pakage.getPackageByDelivery(this.deliveryId, page, size).subscribe(
       response => {
         this.total = response.data.total
-        // this.isMatch = response.data.cargamento.isMatch
         this.cargamento = response.data.cargamento
+        console.log(response.data);
+        this.cost = response.data.cost;
         this.paquetes = response.data.paquetes; // Asignar los datos recibidos a la variable paquetes
         // console.log(response.data.packages);
         this.agruparPorFechaDeEntrega(this.paquetes);
@@ -398,41 +391,6 @@ export class DeliveryPackagesComponent implements OnInit {
     //     // Aquí puedes usar un servicio HTTP para enviar los datos
   }
 
-  // mostrarSwal() {
-  //   Swal.fire({
-  //     title: 'Escanea o escribe el paquete',
-  //     html: `<input id="input-paquete" class="swal2-input" placeholder="Número de guía" autofocus>`,
-  //     showCancelButton: true,
-  //     confirmButtonText: 'Guardar',
-  //     cancelButtonText: 'Cancelar',
-  //     allowOutsideClick: false,
-  //     preConfirm: () => {
-  //       const input = document.getElementById('input-paquete') as HTMLInputElement;
-  //       const value = input?.value.trim();
-  //       if (!value) {
-  //         Swal.showValidationMessage('Debes ingresar un paquete');
-  //         return;
-  //       }
-  //       return value;
-  //     }
-  //   }).then((result) => {
-  //     if (result.isConfirmed && result.value) {
-  //       const paquete = result.value;
-
-  //       // 👇 Llamada al servicio con un solo paquete
-  //       this.pakage.addPackagesInDelivery(paquete, this.deliveryId).subscribe({
-  //         next: () => {
-  //           Swal.fire('¡Guardado!', `Paquete ${paquete} enviado correctamente.`, 'success');
-  //           this.getData(this.page, this.size);
-  //         },
-  //         error: (error) => {
-  //           console.error('Error al enviar el paquete:', error);
-  //           Swal.fire('Error', 'Ocurrió un problema al enviar el paquete.', 'error');
-  //         }
-  //       });
-  //     }
-  //   });
-  // }
 
   mostrarSwal(): void {
     this.paquetesEsc = [];

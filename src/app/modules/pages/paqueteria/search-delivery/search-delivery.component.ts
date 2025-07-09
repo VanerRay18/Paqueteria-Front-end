@@ -15,7 +15,7 @@ import { ApiResponse } from 'src/app/models/ApiResponse';
   styleUrls: ['./search-delivery.component.css']
 })
 export class SearchDeliveryComponent implements OnInit {
-  searchGuia: string = '';
+  searchTerm: string = '';
   paqueteEncontrado: any = null;
   deliveryInfo: any = null;
   rango: { startDate: dayjs.Dayjs; endDate: dayjs.Dayjs } | null = null;
@@ -133,12 +133,12 @@ export class SearchDeliveryComponent implements OnInit {
             style="${commitDateValue ? '' : 'border: 1px solid #dc2626;'}"
           />
         </div>
-    
+
             <div style="display: flex; flex-direction: column;">
               <label><strong>Descripcion</strong></label>
               <textarea id="descripcion" class="swal2-textarea" rows="2">${paquete.delivery?.description || ''}</textarea>
             </div>
-    
+
             ${this.renderInput('trackingNo', consolidado.trackingNo)}
             ${this.renderInput('latestDeptLocation', consolidado.latestDeptLocation)}
             ${this.renderInput('latestDeptCntryCd', consolidado.latestDeptCntryCd)}
@@ -270,7 +270,7 @@ export class SearchDeliveryComponent implements OnInit {
       title: `<strong>${guia} - ${commitDate}</strong>`,
       html: `
           <div style="display: flex; flex-direction: column; gap: 1.2rem; font-size: 14px;">
-    
+
             <!-- Consolidado -->
             <div style="padding: 12px; border-radius: 8px; background: #f1f5f9; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
               <h4 style="margin-bottom: 8px; color: #0f172a;">Consolidado</h4>
@@ -284,14 +284,14 @@ export class SearchDeliveryComponent implements OnInit {
                 <p><strong>Referencias:</strong> ${d.shprRef}</p>
               ` : `<p>No hay información de consolidado</p>`}
             </div>
-    
+
             <!-- Status -->
             <div style="padding: 12px; border-radius: 8px; background: #fef9c3; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
               <h4 style="margin-bottom: 8px; color: #78350f;">Estado</h4>
               <p><strong>Nombre:</strong> ${s.name}</p>
               <p><strong>Fecha:</strong> ${s.tiempo ? formatDate(new Date(s.tiempo), 'dd-MM-yyyy HH:mm', 'en-US') : 'N/A'}</p>
             </div>
-    
+
             <!-- Delivery -->
             <div style="padding: 12px; border-radius: 8px; background: #e0f2fe; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
               <h4 style="margin-bottom: 8px; color: #0369a1;">Ruta</h4>
@@ -302,7 +302,7 @@ export class SearchDeliveryComponent implements OnInit {
                 <p><strong>Creado:</strong> ${paquete.delivery.tsCreated ? formatDate(new Date(paquete.delivery.tsCreated), 'dd-MM-yyyy HH:mm', 'en-US') : 'N/A'}</p>
               ` : `<p>Sin ruta asignada</p>`}
             </div>
-    
+
             <!-- Cargamento -->
             <div style="padding: 12px; border-radius: 8px; background: #dcfce7; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
               <h4 style="margin-bottom: 8px; color: #065f46;">Cargamento</h4>
@@ -311,7 +311,7 @@ export class SearchDeliveryComponent implements OnInit {
               <p><strong>Empleado:</strong> ${c?.employee.name} ${c?.employee.firstSurname}</p>
               <p><strong>Creado:</strong> ${c?.tsCreated ? formatDate(new Date(c.tsCreated), 'dd-MM-yyyy HH:mm', 'en-US') : 'N/A'}</p>
             </div>
-    
+
           </div>
         `,
       width: 650,

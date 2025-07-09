@@ -61,7 +61,7 @@
             <small><strong>Naranja:</strong> Se entregan hoy</small>
           </li>
           <li class="d-flex align-items-center">
-            <span class="me-2 rounded-circle" style="width: 14px; height: 14px; background-color: rgb(204, 1, 1);"></span>  
+            <span class="me-2 rounded-circle" style="width: 14px; height: 14px; background-color: rgb(204, 1, 1);"></span>
             <small><strong>Rojo:</strong> Entrega atrasada</small>
           </li>
         </ul>
@@ -74,11 +74,11 @@
       <button [class.active]="activeTab === 'costos'" (click)="activeTab = 'costos'">💰 Con costo</button>
     </div>
     <div *ngIf="activeTab === 'normales'">
-      <div *ngFor="let grupo of paquetesAgrupados | filter: searchTerm">
+      <div *ngFor="let grupo of paquetesAgrupados">
         <div class="fecha-entrega-linea">
           <span>{{ grupo.fecha }}</span>
         </div>
-        <ng-container *ngFor="let paquete of grupo.paquetes">
+        <ng-container *ngFor="let paquete of grupo.paquetes | filter: searchTerm">
           <ng-container *ngTemplateOutlet="paqueteTemplate; context:{ $implicit: paquete }"></ng-container>
         </ng-container>
       </div>

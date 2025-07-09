@@ -7,35 +7,78 @@
         <strong>Paquetes registrados&nbsp;&nbsp;&nbsp;</strong>
         <span>&nbsp;&nbsp;&nbsp;Total: {{this.total}}</span>
       </div>
-      <select class="buscador" [(ngModel)]="packageOrg" (ngModelChange)="selectPackageOrg(packageOrg)">
+      <select class="buscador" [(ngModel)]="packageOrg"
+        (ngModelChange)="selectPackageOrg(packageOrg)">
         <option [ngValue]="null">Todos</option>
-        <option *ngFor="let orgs of catOrgs" [value]="orgs.id">{{ orgs.name }}</option>
+        <option *ngFor="let orgs of catOrgs" [value]="orgs.id">{{ orgs.name
+          }}</option>
       </select>
 
-      <select class="buscador" [(ngModel)]="packageDex" (ngModelChange)="selectPackageDex(packageDex)">
+      <select class="buscador" [(ngModel)]="packageDex"
+        (ngModelChange)="selectPackageDex(packageDex)">
         <option [ngValue]="null">Todos</option>
-        <option *ngFor="let dex of catDex" [value]="dex.id">{{ dex.type }} - {{ dex.description }}</option>
+        <option *ngFor="let dex of catDex" [value]="dex.id">{{ dex.type }} - {{
+          dex.description }}</option>
       </select>
-
 
       <div class="col-auto col-lg-2 ">
-        <input type="text" ngxDaterangepickerMd [(ngModel)]="rango" [showDropdowns]="true" [autoApply]="true"
-          class="form-control" placeholder="Seleccionar fechas" (ngModelChange)="getData(this.page, this.size)" />
+        <input type="text" ngxDaterangepickerMd [(ngModel)]="rango"
+          [showDropdowns]="true" [autoApply]="true"
+          class="form-control" placeholder="Seleccionar fechas"
+          (ngModelChange)="getData(this.page, this.size)" />
       </div>
-      <input type="text" placeholder="Buscar..." class="buscador" />
+      <input type="text" placeholder="Buscar..." class="buscador"
+        [(ngModel)]="searchTerm" />
+    </div>
+
+    <!-- Tarjeta de Colores -->
+    <div class="card mt-3 col-auto col-lg-2 p-3 shadow-sm">
+      <h5 class="card-title">Significado de Colores</h5>
+      <ul class="list-unstyled mt-2 mb-0">
+        <li class="d-flex align-items-center mb-2">
+          <span class="me-2 rounded-circle"
+            style="width: 14px; height: 14px; background-color: rgb(243, 205, 35);"></span>
+          <small><strong>Amarillo:</strong> No tiene consolidados</small>
+        </li>
+        <li class="d-flex align-items-center mb-2">
+          <span class="me-2 rounded-circle"
+            style="width: 14px; height: 14px; background-color: rgb(42, 121, 212);"></span>
+          <small><strong>Azul:</strong> Sin fecha o no reconocido</small>
+        </li>
+        <li class="d-flex align-items-center mb-2">
+          <span class="me-2 rounded-circle"
+            style="width: 14px; height: 14px; background-color: orange;"></span>
+          <small><strong>Naranja:</strong> Se entregan hoy</small>
+        </li>
+        <li class="d-flex align-items-center">
+          <span class="me-2 rounded-circle"
+            style="width: 14px; height: 14px; background-color: rgb(204, 1, 1);"></span>
+          <small><strong>Rojo:</strong> Entrega atrasada</small>
+        </li>
+      </ul>
     </div>
 
     <div *ngFor="let grupo of paquetesAgrupados">
       <div class="fecha-entrega-linea">
         <span>{{ grupo.fecha }}</span>
       </div>
-      <div class="paquete" *ngFor="let paquete of grupo.paquetes">
+      <div class="paquete"
+        *ngFor="let paquete of grupo.paquetes | filter: searchTerm">
         <div class="codigo">
-          <i class="fa fa-eye" style="cursor:pointer; margin-left: 10px;" (click)="verdetallesPaquete(paquete)"></i>
-          <i class="fa-solid fa-pen-to-square" style="cursor:pointer; margin-left: 10px;"
+          <i class="fa fa-eye" style="cursor:pointer; margin-left: 10px;"
+            (click)="verdetallesPaquete(paquete)"></i>
+          <i class="fa-solid fa-pen-to-square"
+            style="cursor:pointer; margin-left: 10px;"
             (click)="editarConsolidado(paquete)"></i>&nbsp;
 
           <span [ngStyle]="{ color: paquete.color }">{{ paquete.guia }}</span>
+        </div>
+
+        <div *ngIf="paquete.isCost === true"
+          style="margin-top:5px; color:#16a34a;">
+          <strong>Costo:</strong> {{ paquete.costLoad.price ? '$' +
+          paquete.costLoad.price :
+          'N/A' }}
         </div>
 
         <div class="barra-progreso">
@@ -48,17 +91,21 @@
         </div>
 
         <div class="etapas">
-          <span>{{paquete.nameOrg}}&nbsp;&nbsp; Intentos: {{paquete.totalEntregas}}&nbsp; Rutas:
+          <span>{{paquete.nameOrg}}&nbsp;&nbsp; Intentos:
+            {{paquete.totalEntregas}}&nbsp; Rutas:
             {{paquete.totalRutas}}</span>
-          <span class="center-info">{{paquete.status.name}} - {{ paquete.status.tiempo | date: 'dd-MM-yyyy HH:mm'
+          <span class="center-info">{{paquete.status.name}} - {{
+            paquete.status.tiempo | date: 'dd-MM-yyyy HH:mm'
             }} - {{ paquete.dex || 'No tiene DEX asignado'}}</span>
         </div>
 
       </div>
     </div>
 
-    <app-paginador-component [isLoading]="isLoading" [visible]="true" [message]="'No hay paquetes que mostrar'"
-      [page]="page" [size]="size" [total]="total" (pageChange)="cambiarPagina($event)">
+    <app-paginador-component [isLoading]="isLoading" [visible]="true"
+      [message]="'No hay paquetes que mostrar'"
+      [page]="page" [size]="size" [total]="total"
+      (pageChange)="cambiarPagina($event)">
     </app-paginador-component>
 
   </div>
