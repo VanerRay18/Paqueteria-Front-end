@@ -145,6 +145,13 @@ export class PakageService {
     );
   }
 
+  updatePackageDex(packageId: any, catDexId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'packageId': packageId, 'catDexId': catDexId });
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/changeDexPackage'}`, null,
+      { headers }
+    );
+  }
+
   createPackageWithConsolidado(packageId: any, description: any, data: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'packageId': packageId, 'description': description });
     return this.http.post<ApiResponse>(`${environment.baseService}${'/package/createPackageWithConsolidado'}`, data,

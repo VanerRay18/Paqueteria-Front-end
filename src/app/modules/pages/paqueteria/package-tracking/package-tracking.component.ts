@@ -33,6 +33,7 @@ export class PackageTrackingComponent implements OnInit {
   paquetesNormales: any[] = [];
   paquetesConCosto: any[] = [];
   activeTab: string = 'normales'; // o 'costos'
+  searchTerm: string = '';
 
 
   paquetesAgrupados: any[] = []; // Agrupados y paginados
@@ -794,7 +795,7 @@ export class PackageTrackingComponent implements OnInit {
     });
   }
 
-    macheoPaquetesCostos(): void {
+  macheoPaquetesCostos(): void {
     Swal.fire({
       title: 'Macheo en proceso...',
       html: 'Por favor espera mientras se realiza el macheo de los paquetes.',

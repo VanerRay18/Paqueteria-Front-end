@@ -64,9 +64,7 @@ export class DeliveryComponent implements OnInit {
       response => {
         this.total = response.data.total
         this.paquetes = response.data.paquetes;
-
-        console.log(response.data.paquetes.status)// Asignar el estado del paquete
-        console.log('Paquetes:', this.paquetes); // Asignar los datos recibidos a la variable paquetes
+        // console.log('Paquetes:', this.paquetes); 
         this.isLoading = false;
       },
       error => {
@@ -93,7 +91,7 @@ export class DeliveryComponent implements OnInit {
           this.conductor = this.deliveryInfo.conductor;
           this.packageInformation = this.deliveryInfo.packageInformation;
           this.status = this.deliveryInfo.status;
-          console.log('Delivery info:', this.deliveryInfo);
+          // console.log('Delivery info:', this.deliveryInfo);
           this.verificarEstadoRuta();
           this.getData(this.page, this.size);
 
@@ -108,7 +106,6 @@ export class DeliveryComponent implements OnInit {
       (response: ApiResponse) => {
         if (response && response.data) {
           this.catDex = response.data;
-          console.log('Categorías Dex:', this.catDex);
         } else {
           console.warn('No se encontraron categorías Dex');
         }
@@ -136,6 +133,39 @@ export class DeliveryComponent implements OnInit {
       }
     );
   }
+
+    verdetallesPaquete(paquete: any): void {
+      const guia = paquete.guia;
+  
+      const d = paquete.consolidado;
+  
+      Swal.fire({
+        title: `<strong>Datos del paquete</strong>`,
+        html: `
+            <div style="display: flex; flex-direction: column; gap: 1.2rem; font-size: 14px;">
+  
+              <!-- Consolidado -->
+              <div style="padding: 12px; border-radius: 8px; background: #f1f5f9; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h4 style="margin-bottom: 8px; color: #0f172a;">${guia}</h4>
+                ${d ? `
+                  <p><strong>Destino:</strong> ${d.destinationLocId} - ${d.recipCity}, ${d.recipState}</p>
+                  <p><strong>Persona que recibe:</strong> ${d.recipName}</p>
+                  <p><strong>Numero de Telefono:</strong> ${d.recipPhone}</p>
+                  <p><strong>Referencias:</strong> ${d.shprRef}</p>
+                ` : `<p>No hay información de consolidado</p>`}
+              </div>
+  
+            </div>
+          `,
+        width: 650,
+        showCloseButton: true,
+        confirmButtonText: 'Cerrar',
+        focusConfirm: false,
+        customClass: {
+          popup: 'custom-swal-popup'
+        }
+      });
+    }
 
   empezarRuta() {
     let catStatusId = 7; // Asumiendo que 1 es el ID para "Entregado"
@@ -225,8 +255,8 @@ export class DeliveryComponent implements OnInit {
         appearance: none;
       ">
       <option value="">Seleccione</option>
-      ${catDex.map((dex: { id: any; description: any; }) => `
-        <option value="${dex.id}">${dex.description}</option>
+      ${catDex.map((dex: { id: any; description: any; type: any; }) => `
+        <option value="${dex.id}">${dex.type} - ${dex.description}</option>
       `).join('')}
     </select>
   `;
@@ -247,7 +277,7 @@ export class DeliveryComponent implements OnInit {
       if (result.isConfirmed) {
         const selectedId = result.value;
         console.log('ID seleccionado:', selectedId);
-        this.pakage.updatePackageStatus(packageId, catStatusId, description).subscribe(
+        this.pakage.updatePackageDex(packageId, selectedId).subscribe(
           (response) => {
             console.log('Marcado como no entregado:', paquete);
 

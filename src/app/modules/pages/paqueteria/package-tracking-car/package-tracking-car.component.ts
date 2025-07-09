@@ -155,7 +155,7 @@ export class PackageTrackingCarComponent implements OnInit {
         this.Pk.createDeliveryCar(result.value).subscribe({
           next: () => {
             this.getData(this.page,this.size);
-            this.router.navigate(['/pages/Paqueteria/Paquetes-vehiculo/' + vehicle.id]);
+            this.router.navigate(['/pages/Paqueteria/Paquetes-vehiculo/' + vehicle.idCard]);
           },
           error: () => {
             Swal.fire('Error', 'No se pudo guardar la información del vehículo.', 'error');

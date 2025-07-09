@@ -8,6 +8,7 @@ import { formatDate } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import dayjs from 'dayjs';
 import { HttpHeaders } from '@angular/common/http';
+import { ApiResponse } from 'src/app/models/ApiResponse';
 @Component({
   selector: 'app-search-delivery',
   templateUrl: './search-delivery.component.html',
@@ -18,7 +19,7 @@ export class SearchDeliveryComponent implements OnInit {
   paqueteEncontrado: any = null;
   deliveryInfo: any = null;
   rango: { startDate: dayjs.Dayjs; endDate: dayjs.Dayjs } | null = null;
-
+  catDex: any;
   car: any;
   conductor: any;
   packageInformation: any = null;
@@ -35,6 +36,8 @@ export class SearchDeliveryComponent implements OnInit {
   size: number = 15;
 
   packageOrg: any = null;
+  packageDex: any = null; // Dex seleccionado
+  packageCat: any = null; // Estado seleccionado
 
 
   paquetesAgrupados: any[] = []; // Agrupados y paginados
@@ -68,6 +71,17 @@ export class SearchDeliveryComponent implements OnInit {
       startDate: dayjs().startOf('day'),
       endDate: dayjs().endOf('day')
     };
+
+    this.pakage.getPDex().subscribe(
+      (response: ApiResponse) => {
+        if (response && response.data) {
+          this.catDex = response.data;
+        } else {
+          console.warn('No se encontraron categorías Dex');
+        }
+      }
+    );
+
     this.getData(this.page, this.size);
 
   }
@@ -76,6 +90,12 @@ export class SearchDeliveryComponent implements OnInit {
     this.getData(this.page, this.size);
 
   }
+
+  selectPackageDex(object: any) {
+    this.getData(this.page, this.size);
+
+  }
+
   cambiarPagina(pagina: number) {
     this.page = pagina;
     this.getData(this.page, this.size);
@@ -326,7 +346,6 @@ export class SearchDeliveryComponent implements OnInit {
 
   getData(page: number, size: number): void {
     this.paquetesAgrupados = [];
-    console.log(this.deliveryId)
     if (!this.rango || !this.rango.startDate || !this.rango.endDate) { return; }
 
     const desdeFormatted = this.rango.startDate.format('YYYY-MM-DD');
@@ -339,9 +358,13 @@ export class SearchDeliveryComponent implements OnInit {
     } else {
       headers = new HttpHeaders({ 'PackageOrgId': this.packageOrg, 'desde': desdeFormatted, 'hasta': hastaFormatted, 'page': page, 'size': size });
     }
+    if (this.packageDex != null) {
+      headers = new HttpHeaders({ 'dexId': this.packageDex, 'desde': desdeFormatted, 'hasta': hastaFormatted, 'page': page, 'size': size });
+    }
     this.isLoading = true;
     this.pakage.getAllPackages(headers).subscribe(
       response => {
+        console.log(response.data);
         this.total = Number(response.message);
         this.paquetes = response.data;
         this.agruparPorFechaDeEntrega(this.paquetes);

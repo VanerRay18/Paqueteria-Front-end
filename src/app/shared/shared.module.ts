@@ -30,7 +30,8 @@ import { PaginadorComponentComponent } from './componentes/paginador-component/p
     BusquedaComponent,
     TablesComponent,
     PaginadorComponentComponent,
-    FooterComponent
+    FooterComponent,
+    FilterPipe
   ]
 })
 export class SharedModule { }

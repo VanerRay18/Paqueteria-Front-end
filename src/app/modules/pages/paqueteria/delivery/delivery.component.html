@@ -40,15 +40,16 @@
     <h4>Paquetes en mi ruta</h4>
 
     <div class="buscador">
-      <input type="text" placeholder="Buscar paquete..." class="input-busqueda" [(ngModel)]="searchGuia"
-     />
+      <input type="text" placeholder="Buscar paquete..." class="input-busqueda" [(ngModel)]="searchGuia" />
     </div>
 
     <div class="paquete-item" *ngFor="let paquete of paquetes">
-      <span class="guia">{{ paquete.guia }}</span>
+      <span class="guia"> <i class="fa fa-eye" style="cursor:pointer; margin-left: 10px;" (click)="verdetallesPaquete(paquete)"></i> {{ paquete.guia }}</span>
       <div class="estado">
-        <span class="entregado"  [ngClass]="{'disabled': paquete.status?.id === 8 || paquete.status?.id === 9}" (click)="marcarEntregado(paquete)">✔️ Entregado</span>
-        <span class="no-entregado" [ngClass]="{'disabled': paquete.status?.id === 8 || paquete.status?.id === 9}" (click)="marcarNoEntregado(paquete)">❌ Sin entregar</span>
+        <span class="entregado" [ngClass]="{'disabled': paquete.status?.id === 8 || paquete.status?.id === 9}"
+          (click)="marcarEntregado(paquete)">✔️ Entregado</span>
+        <span class="no-entregado" [ngClass]="{'disabled': paquete.status?.id === 8 || paquete.status?.id === 9}"
+          (click)="marcarNoEntregado(paquete)">❌ Sin entregar</span>
       </div>
     </div>
 

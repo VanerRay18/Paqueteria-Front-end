@@ -12,6 +12,12 @@
         <option *ngFor="let orgs of catOrgs" [value]="orgs.id">{{ orgs.name }}</option>
       </select>
 
+      <select class="buscador" [(ngModel)]="packageDex" (ngModelChange)="selectPackageDex(packageDex)">
+        <option [ngValue]="null">Todos</option>
+        <option *ngFor="let dex of catDex" [value]="dex.id">{{ dex.type }} - {{ dex.description }}</option>
+      </select>
+
+
       <div class="col-auto col-lg-2 ">
         <input type="text" ngxDaterangepickerMd [(ngModel)]="rango" [showDropdowns]="true" [autoApply]="true"
           class="form-control" placeholder="Seleccionar fechas" (ngModelChange)="getData(this.page, this.size)" />
@@ -42,9 +48,10 @@
         </div>
 
         <div class="etapas">
-  <span >{{paquete.nameOrg}}&nbsp;&nbsp; Intentos: {{paquete.totalEntregas}}&nbsp;  Rutas: {{paquete.totalRutas}}</span>
+          <span>{{paquete.nameOrg}}&nbsp;&nbsp; Intentos: {{paquete.totalEntregas}}&nbsp; Rutas:
+            {{paquete.totalRutas}}</span>
           <span class="center-info">{{paquete.status.name}} - {{ paquete.status.tiempo | date: 'dd-MM-yyyy HH:mm'
-            }}</span>
+            }} - {{ paquete.dex || 'No tiene DEX asignado'}}</span>
         </div>
 
       </div>
