@@ -410,7 +410,6 @@ export class PackageTrackingComponent implements OnInit {
           return newRow;
         });
 
-        console.log('Tipo de archivo:', tipo);
         if (tipo === 'normal') {
           this.enviarAlBackend(jsonData);
         } else if (tipo === 'costos') {
@@ -451,8 +450,7 @@ export class PackageTrackingComponent implements OnInit {
 
   }
 
-  enviarAlBackendCostos(data: any): void {
-    console.log(data) // Reemplaza con el ID real del paquete entrante
+  enviarAlBackendCostos(data: any): void { // Reemplaza con el ID real del paquete entrante
     Swal.fire({
       title: 'Cargando consolidado...',
       html: '<b>Por favor espera</b>',

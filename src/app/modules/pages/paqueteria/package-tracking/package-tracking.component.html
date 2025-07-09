@@ -87,6 +87,7 @@
     <div *ngIf="activeTab === 'costos'">
       <div *ngFor="let paquete of paquetesConCosto | filter: searchTerm">
         <ng-container *ngTemplateOutlet="paqueteTemplate; context:{ $implicit: paquete, esCosto: true }"></ng-container>
+
       </div>
     </div>
 
