@@ -62,7 +62,7 @@ export class DeliveryComponent implements OnInit {
 
   getData(page: number, size: number): void {
     this.isLoading = true;
-    this.pakage.getPackageByDelivery(this.deliveryId, page, size).subscribe(
+    this.pakage.getPackageByDelivery(this.deliveryId, page, size, '').subscribe(
       response => {
         this.total = response.data.total
         this.paquetes = response.data.paquetes;

@@ -31,7 +31,12 @@ export class DeliveryPackagesComponent implements OnInit {
   page: number = 0;
   size: number = 20;
   searchTerm: string = '';
-
+  Typepakage: any = null;
+  typeP = [
+    { id: 1, name: 'Normal' },
+    { id: 2, name: 'Costo' },
+  ];
+  paquetesCost: any;
 
   paquetesAgrupados: any[] = []; // Agrupados y paginados
   constructor(
@@ -48,6 +53,16 @@ export class DeliveryPackagesComponent implements OnInit {
   cambiarPagina(pagina: number) {
     this.page = pagina;
     this.getData(this.page, this.size);
+  }
+
+  selectTypepakage(object: any) {
+
+    if (object.id === 1) {
+        this.getData(this.page, this.size);
+    }else{
+         this.getPakagesCost(this.page, this.size);
+    }
+
   }
 
   renderInput(id: string, value: string = ''): string {
@@ -296,11 +311,10 @@ export class DeliveryPackagesComponent implements OnInit {
   getData(page: number, size: number): void {
     this.isLoading = true;
     this.paquetesAgrupados = [];
-    this.pakage.getPackageByDelivery(this.deliveryId, page, size).subscribe(
+    this.pakage.getPackageByDelivery(this.deliveryId, page, size, 'false').subscribe(
       response => {
         this.total = response.data.total
         this.cargamento = response.data.cargamento
-        console.log(response.data);
         this.cost = response.data.cost;
         this.paquetes = response.data.paquetes; // Asignar los datos recibidos a la variable paquetes
         // console.log(response.data.packages);
@@ -313,6 +327,25 @@ export class DeliveryPackagesComponent implements OnInit {
       }
     );
   }
+
+  getPakagesCost(page: number, size: number): void {
+    this.pakage.getPackageByDelivery(this.deliveryId, page, size, 'true').subscribe(
+      response => {
+        this.total = response.data.total
+        this.cargamento = response.data.cargamento
+        this.cost = response.data.cost;
+        this.paquetesCost = response.data.paquetes; // Asignar los datos recibidos a la variable paquetes
+        // console.log(response.data.packages);
+        this.agruparPorFechaDeEntrega(this.paquetes);
+        this.isLoading = false;
+      },
+      error => {
+        console.error('Error al obtener los datos:', error);
+        this.isLoading = false;
+      }
+    );
+  }
+
 
   getBarraEstado(paquete: any): string {
     const value = paquete.status.config?.value || 0;

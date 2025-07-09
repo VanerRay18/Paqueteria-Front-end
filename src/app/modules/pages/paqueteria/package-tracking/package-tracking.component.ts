@@ -50,6 +50,7 @@ export class PackageTrackingComponent implements OnInit {
   ngOnInit(): void {
     this.incomingPackageId = this.route.snapshot.paramMap.get('id');
     this.getData(this.page, this.size);
+    this.getPakagesByCost(this.page, this.size);
 
   }
 
@@ -306,21 +307,15 @@ export class PackageTrackingComponent implements OnInit {
   getData(page: number, size: number): void {
     this.isLoading = true;
     this.paquetesAgrupados = [];
-    this.pakage.getPackageByCarga(this.incomingPackageId, page, size).subscribe(
+        this.pakage.getPackageByCarga(this.incomingPackageId, page, size, "false").subscribe(
       response => {
 
         this.total = response.data.total;
         this.isMatch = response.data.cargamento.isMatch;
         this.cargamento = response.data.cargamento;
         this.isPrice = response.data.cargamento.isPrice;
-        const todosLosPaquetes = response.data.packages;
 
-        // Dividir paquetes
-        this.paquetesNormales = todosLosPaquetes.filter((p: { isCost: any; }) => !p.isCost);
-        this.paquetesConCosto = todosLosPaquetes.filter((p: { isCost: any; }) => p.isCost);
-        // console.log('Paquetes con costo:', this.paquetesConCosto);
-
-        // Agrupamos si quieres seguir usando paquetesAgrupados
+        this.paquetesNormales = response.data.packages;
         this.agruparPorFechaDeEntrega(this.paquetesNormales);
 
         this.isLoading = false;
@@ -329,6 +324,21 @@ export class PackageTrackingComponent implements OnInit {
         this.isMatchPrice = response.data.cargamento.isMatchPrice;
         this.isPriceExel = response.data.cargamento.isPriceExel;
         // console.log('isCreateExel:', this.isCreateExel);
+      },
+      error => {
+        console.error('Error al obtener los datos:', error);
+        this.isLoading = false;
+      }
+    );
+
+  }
+
+  getPakagesByCost(page: number, size: number): void{
+        this.pakage.getPackageByCarga(this.incomingPackageId, page, size, "true").subscribe(
+      response => {
+
+        this.paquetesConCosto = response.data.packages;
+
       },
       error => {
         console.error('Error al obtener los datos:', error);

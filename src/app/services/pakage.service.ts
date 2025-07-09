@@ -53,12 +53,12 @@ export class PakageService {
     return this.http.get<ApiResponse>(`${environment.baseService}${'/package/deliveryByEmployeeId'}`);
   }
 
-  getPackageByCarga(incomingPackageId: any, page: any, size: any): Observable<ApiResponse> {
-    let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId, 'page': page, 'size': size });
+  getPackageByCarga(incomingPackageId: any, page: any, size: any, isCost: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId, 'page': page, 'size': size , 'isCost': isCost});
     return this.http.get<ApiResponse>(`${environment.baseService}${'/package/packagesByIncomingPackageId'}`, { headers });
   }
-  getPackageByDelivery(deliveryId: any, page: any, size: any): Observable<ApiResponse> {
-    let headers = new HttpHeaders({ 'deliveryId': deliveryId, 'page': page, 'size': size });
+  getPackageByDelivery(deliveryId: any, page: any, size: any, isCost: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'deliveryId': deliveryId, 'page': page, 'size': size, 'isCost': isCost});
     return this.http.get<ApiResponse>(`${environment.baseService}${'/package/packagesByDeliveryId'}`, { headers });
   }
 
