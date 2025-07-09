@@ -62,7 +62,6 @@ export class DeliveryComponent implements OnInit {
 
   getData(page: number, size: number): void {
     this.isLoading = true;
-    console.log(this.deliveryId)
     this.pakage.getPackageByDelivery(this.deliveryId, page, size).subscribe(
       response => {
         this.total = response.data.total
@@ -89,7 +88,6 @@ export class DeliveryComponent implements OnInit {
       (response: ApiResponse) => {
         if (response && response.data) {
           this.deliveryInfo = response.data;
-          console.log('Delivery Info:', this.deliveryInfo);
           this.deliveryId = this.deliveryInfo.id; // Assuming the delivery ID is in the response
           this.car = this.deliveryInfo.car;
           this.cost = this.deliveryInfo.costoTotal;
@@ -177,10 +175,8 @@ export class DeliveryComponent implements OnInit {
     let catStatusId = 7; // Asumiendo que 1 es el ID para "Entregado"
     let packageId = this.deliveryId; // Asegúrate de que el paquete tenga un ID
     let description = 'Paquetes en ruta'; // Descripción de la acción
-    console.log('Empezar ruta con ID de paquete:', packageId);
     this.pakage.updateDeliveryStatus(packageId, catStatusId, description).subscribe(
       (response) => {
-        console.log('Marcado como en ruta:', response);
         this.cargarDeliveryInfo();
         // Aquí iría la lógica para actualizar el estado en el backend si aplica
       },
@@ -202,14 +198,14 @@ export class DeliveryComponent implements OnInit {
 
     let catStatusId = 10;
     let packageId = this.deliveryId; // Asegúrate de que el paquete tenga un ID
-    console.log('Terminar ruta con ID de paquete:', packageId);
     let description = 'ruta terminada'; // Descripción de la acción
     this.pakage.updateDeliveryStatus(packageId, catStatusId, description).subscribe(
       (response) => {
         console.log('Marcado como no entregado:', response);
-        Swal.fire('Éxito', 'Paquete marcado como no entregado.', 'success');
         this.cargarDeliveryInfo();
-        this.ngOnInit(); // Recargar la información de entrega
+        this.ngOnInit();
+        Swal.fire('Éxito', 'Ha terminado su ruta.', 'success');
+        // Recargar la información de entrega
         // Aquí iría la lógica para actualizar el estado en el backend si aplica
       },
       (error) => {
@@ -282,13 +278,13 @@ export class DeliveryComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         const selectedId = result.value;
-        console.log('ID seleccionado:', selectedId);
+        // console.log('ID seleccionado:', selectedId);
         this.pakage.updatePackageDex(packageId, selectedId).subscribe(
           (response) => {
-            console.log('Marcado como no entregado:', paquete);
-
+            // console.log('Marcado como no entregado:', paquete);
             Swal.fire('Éxito', 'Paquete marcado como no entregado.', 'success');
-            this.cargarDeliveryInfo(); // Recargar la información de entrega
+            this.cargarDeliveryInfo();
+            // Recargar la información de entrega
             this.paqueteEncontrado = null;
             // Aquí iría la lógica para actualizar el estado en el backend si aplica
           },

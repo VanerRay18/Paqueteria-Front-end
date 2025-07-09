@@ -41,7 +41,7 @@ export class PackageTrackingCarComponent implements OnInit {
     this.isLoading = true;
     this.Pk.getCatEmpl().subscribe({
       next: (response) => {
-        
+
 
         this.catEmployees = response.data;
 
@@ -53,7 +53,6 @@ export class PackageTrackingCarComponent implements OnInit {
     });
 
     this.Pk.getDeliveriesCar(page, size).subscribe((response: ApiResponse) => {
-      console.log('Datos de entregas de vehículos:', response);
       // Verifica el ID
     this.isLoading = false;
             this.total = Number(response.message);
@@ -105,7 +104,6 @@ export class PackageTrackingCarComponent implements OnInit {
 
 
   mostrarSwalFormularioPrevio(vehicle: VehicleCard): void {
-    console.log(vehicle)
     // Generar las opciones del dropdown con los empleados
     const opcionesConductor = this.catEmployees.map((emp: any) =>
       `<option value="${emp.id}">${emp.name} ${emp.first_surname} ${emp.second_surname}</option>`
@@ -155,7 +153,7 @@ export class PackageTrackingCarComponent implements OnInit {
         this.Pk.createDeliveryCar(result.value).subscribe({
           next: () => {
             this.getData(this.page,this.size);
-            this.router.navigate(['/pages/Paqueteria/Paquetes-vehiculo/' + vehicle.idCard]);
+            this.router.navigate(['/pages/Paqueteria/Paquetes-vehiculo/']);
           },
           error: () => {
             Swal.fire('Error', 'No se pudo guardar la información del vehículo.', 'error');

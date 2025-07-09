@@ -34,6 +34,7 @@ export class PackageTrackingComponent implements OnInit {
   paquetesConCosto: any[] = [];
   activeTab: string = 'normales'; // o 'costos'
   searchTerm: string = '';
+  isPrice: any;
 
 
   paquetesAgrupados: any[] = []; // Agrupados y paginados
@@ -308,9 +309,10 @@ export class PackageTrackingComponent implements OnInit {
     this.pakage.getPackageByCarga(this.incomingPackageId, page, size).subscribe(
       response => {
 
-        this.total = response.data.total
-        this.isMatch = response.data.cargamento.isMatch
-        this.cargamento = response.data.cargamento
+        this.total = response.data.total;
+        this.isMatch = response.data.cargamento.isMatch;
+        this.cargamento = response.data.cargamento;
+        this.isPrice = response.data.cargamento.isPrice;
         const todosLosPaquetes = response.data.packages;
 
         // Dividir paquetes

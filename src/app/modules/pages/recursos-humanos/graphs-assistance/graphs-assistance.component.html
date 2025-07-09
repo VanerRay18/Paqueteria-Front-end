@@ -28,7 +28,7 @@
           <button type="button" class="btn btn-sm"
             (click)="seleccionarDiaNoLaboral()">DIAS NO LABORALES</button>
         </div>
-        <div class="card-person" *ngFor="let persona of pagedData"
+        <div class="card-person" *ngFor="let persona of pagedData | filter: searchTerm"
           style="cursor: default;">
           <h3>{{ persona.name }}</h3>
 

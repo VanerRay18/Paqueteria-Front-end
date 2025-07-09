@@ -22,7 +22,7 @@
         <input id="csvFile" type="file" (change)="onFileSelected($event, 'costos')" accept=".csv" #fileInputCostos
           style="display: none" />
 
-        <button class="btn btn-archivo" (click)="fileInputCostos.click()"
+        <button class="btn btn-archivo" (click)="fileInputCostos.click()" *ngIf="isPrice === true"
           [disabled]="isMatchPrice || isPriceExel === true" [class.disabled-btn]="isMatchPrice && isPriceExel">
           🗂️ Cargar Excel de Costos
         </button>
@@ -33,7 +33,7 @@
           [class.disabled-btn]="isMatch">
           🔄 Hacer macheo
         </button>
-        <button class="btn btn-escanear" (click)="macheoPaquetesCostos()" [disabled]="isMatchPrice || total <=0"
+        <button class="btn btn-escanear" (click)="macheoPaquetesCostos()" [disabled]="isMatchPrice || total <=0" *ngIf="isPrice === true"
           [class.disabled-btn]="isMatch">
           🔄🪙 Macheo de costos
         </button>
@@ -71,7 +71,7 @@
 
     <div class="tabs">
       <button [class.active]="activeTab === 'normales'" (click)="activeTab = 'normales'">📦 Normales</button>
-      <button [class.active]="activeTab === 'costos'" (click)="activeTab = 'costos'">💰 Con costo</button>
+      <button [class.active]="activeTab === 'costos'" (click)="activeTab = 'costos'" *ngIf="isPrice === true">💰 Con costo</button>
     </div>
     <div *ngIf="activeTab === 'normales'">
       <div *ngFor="let grupo of paquetesAgrupados">
@@ -117,7 +117,7 @@
           <span>{{paquete.nameOrg}}&nbsp;&nbsp; Intentos:
             {{paquete.totalEntregas}}&nbsp; Rutas: {{paquete.totalRutas}}</span>
           <span class="center-info">{{paquete.status.name}} - {{
-            paquete.status.tiempo | date: 'dd-MM-yyyy HH:mm' }} - {{ paquete.dex || 'No tiene DEX asignado'}}</span>
+            paquete.status.tiempo | date: 'dd-MM-yyyy HH:mm' }} - {{ paquete.dex.description || 'No tiene DEX asignado'}}</span>
         </div>
       </div>
     </ng-template>

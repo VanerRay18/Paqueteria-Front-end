@@ -296,7 +296,6 @@ export class DeliveryPackagesComponent implements OnInit {
   getData(page: number, size: number): void {
     this.isLoading = true;
     this.paquetesAgrupados = [];
-    console.log(this.deliveryId)
     this.pakage.getPackageByDelivery(this.deliveryId, page, size).subscribe(
       response => {
         this.total = response.data.total
