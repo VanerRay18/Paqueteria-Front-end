@@ -35,9 +35,11 @@ export class PackageTrackingComponent implements OnInit {
   activeTab: string = 'normales'; // o 'costos'
   searchTerm: string = '';
   isPrice: any;
-
-
+  pageCost: number = 0;
+  sizeCost: number = 20;
+  totalCost = 0;
   paquetesAgrupados: any[] = []; // Agrupados y paginados
+  isLoadingCost: boolean = false;
 
   constructor(
     private pakage: PakageService,
@@ -50,13 +52,17 @@ export class PackageTrackingComponent implements OnInit {
   ngOnInit(): void {
     this.incomingPackageId = this.route.snapshot.paramMap.get('id');
     this.getData(this.page, this.size);
-    this.getPakagesByCost(this.page, this.size);
+    this.getPakagesByCost(this.pageCost, this.sizeCost);
 
   }
 
   cambiarPagina(pagina: number) {
     this.page = pagina;
     this.getData(this.page, this.size);
+  }
+  cambiarPaginaCost(pagina: number) {
+    this.pageCost = pagina;
+    this.getPakagesByCost(this.pageCost, this.sizeCost);
   }
 
   renderInput(id: string, value: string = ''): string {
@@ -307,7 +313,7 @@ export class PackageTrackingComponent implements OnInit {
   getData(page: number, size: number): void {
     this.isLoading = true;
     this.paquetesAgrupados = [];
-        this.pakage.getPackageByCarga(this.incomingPackageId, page, size, "false").subscribe(
+    this.pakage.getPackageByCarga(this.incomingPackageId, page, size, "false").subscribe(
       response => {
 
         this.total = response.data.total;
@@ -333,10 +339,13 @@ export class PackageTrackingComponent implements OnInit {
 
   }
 
-  getPakagesByCost(page: number, size: number): void{
-        this.pakage.getPackageByCarga(this.incomingPackageId, page, size, "true").subscribe(
+  getPakagesByCost(page: number, size: number): void {
+    this.isLoadingCost = true;
+    this.paquetesConCosto = [];
+    this.pakage.getPackageByCarga(this.incomingPackageId, page, size, "true").subscribe(
       response => {
-
+        this.totalCost = response.data.total;
+        this.isLoadingCost = false;
         this.paquetesConCosto = response.data.packages;
 
       },

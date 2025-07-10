@@ -4,8 +4,10 @@
   <div class="paquetes-box">
     <div class="paquetes-header">
       <div class="left">
-        <strong>Paquetes registrados&nbsp;&nbsp;&nbsp;</strong>
-        <span>&nbsp;&nbsp;&nbsp;Total: {{this.total}}</span>
+        <strong >Paquetes registrados&nbsp;&nbsp;&nbsp;</strong>
+        <span *ngIf="activeTab === 'costos'">&nbsp;&nbsp;&nbsp;Total: {{this.totalCost}}</span>
+       <span *ngIf="activeTab === 'normales'">&nbsp;&nbsp;&nbsp;Total: {{this.total}}</span>
+
       </div>
 
       <div class="botones-responsivos">
@@ -147,10 +149,16 @@
       </div>
     </ng-template>
 
-    <app-paginador-component [isLoading]="isLoading" [page]="page" [size]="size"
+    <app-paginador-component *ngIf="activeTab === 'normales'" [isLoading]="isLoading" [page]="page" [size]="size"
       [total]="total"
       (pageChange)="cambiarPagina($event)">
     </app-paginador-component>
+
+    <app-paginador-component *ngIf="activeTab === 'costos'" [isLoading]="isLoadingCost" [page]="pageCost" [size]="sizeCost"
+      [total]="totalCost"
+      (pageChange)="cambiarPaginaCost($event)">
+    </app-paginador-component>
+
 
   </div>
 </div>
