@@ -12,9 +12,10 @@
       <select class="buscador" [(ngModel)]="Typepakage"
         (ngModelChange)="selectTypepakage(Typepakage)">
         <option [ngValue]="null">Todos</option>
-        <option *ngFor="let type of typeP" [value]="type.id">{{ type.name
+        <option *ngFor="let type of typeP" [ngValue]="type.id">{{ type.name
           }}</option>
       </select>
+
       <input type="text" placeholder="Buscar..." class="buscador"
         [(ngModel)]="searchTerm" />
       <div class="acciones">

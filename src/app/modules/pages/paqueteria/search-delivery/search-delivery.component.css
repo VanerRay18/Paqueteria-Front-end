@@ -180,3 +180,19 @@ h2 {
   }
 }
 
+.color-list li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem; /* espacio entre ítems */
+}
+
+@media (max-width: 768px) {
+  .color-list {
+    flex-direction: column !important;
+  }
+  .color-item {
+    margin-right: 0 !important;
+  }
+}
+
+

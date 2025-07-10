@@ -31,12 +31,13 @@ export class DeliveryPackagesComponent implements OnInit {
   page: number = 0;
   size: number = 20;
   searchTerm: string = '';
-  Typepakage: any = null;
   typeP = [
     { id: 1, name: 'Normal' },
     { id: 2, name: 'Costo' },
   ];
   paquetesCost: any;
+  paquetesNormal: any;
+  Typepakage: number | null = null;
 
   paquetesAgrupados: any[] = []; // Agrupados y paginados
   constructor(
@@ -55,15 +56,16 @@ export class DeliveryPackagesComponent implements OnInit {
     this.getData(this.page, this.size);
   }
 
-  selectTypepakage(object: any) {
-
-    if (object.id === 1) {
-        this.getData(this.page, this.size);
-    }else{
-         this.getPakagesCost(this.page, this.size);
+  selectTypepakage(typeId: number | null) {
+    if (typeId === 2) {
+    this.isLoading = true;
+      this.getPakagesCost(this.page, this.size);
+    } else {
+      this.isLoading = true;
+      this.getPakagesNorm(this.page, this.size);
     }
-
   }
+
 
   renderInput(id: string, value: string = ''): string {
     const safeValue = value ?? ''; // evita undefined
@@ -311,7 +313,7 @@ export class DeliveryPackagesComponent implements OnInit {
   getData(page: number, size: number): void {
     this.isLoading = true;
     this.paquetesAgrupados = [];
-    this.pakage.getPackageByDelivery(this.deliveryId, page, size, 'false').subscribe(
+    this.pakage.getPackageByDelivery(this.deliveryId, page, size, '').subscribe(
       response => {
         this.total = response.data.total
         this.cargamento = response.data.cargamento
@@ -328,15 +330,29 @@ export class DeliveryPackagesComponent implements OnInit {
     );
   }
 
+  getPakagesNorm(page: number, size: number): void {
+    this.isLoading = true;
+    this.pakage.getPackageByDelivery(this.deliveryId, page, size, 'false').subscribe(
+      response => {
+        this.paquetesNormal = response.data.paquetes; // Asignar los datos recibidos a la variable paquetes
+        // console.log(response.data.packages);
+        this.agruparPorFechaDeEntrega(this.paquetesNormal);
+        this.isLoading = false;
+      },
+      error => {
+        console.error('Error al obtener los datos:', error);
+        this.isLoading = false;
+      }
+    );
+  }
+
   getPakagesCost(page: number, size: number): void {
+    this.isLoading = true;
     this.pakage.getPackageByDelivery(this.deliveryId, page, size, 'true').subscribe(
       response => {
-        this.total = response.data.total
-        this.cargamento = response.data.cargamento
-        this.cost = response.data.cost;
         this.paquetesCost = response.data.paquetes; // Asignar los datos recibidos a la variable paquetes
         // console.log(response.data.packages);
-        this.agruparPorFechaDeEntrega(this.paquetes);
+        this.agruparPorFechaDeEntrega(this.paquetesCost);
         this.isLoading = false;
       },
       error => {
