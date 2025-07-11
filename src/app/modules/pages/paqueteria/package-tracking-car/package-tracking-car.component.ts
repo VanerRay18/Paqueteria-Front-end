@@ -36,15 +36,21 @@ export class PackageTrackingCarComponent implements OnInit {
     this.page = pagina;
     this.getData(this.page, this.size);
   }
+handleImageError(event: Event) {
+  const target = event.target as HTMLImageElement;
 
+  // Evita bucle infinito si ya está puesta la imagen de fallback
+  if (target.src.includes('not_found_package.png')) return;
+
+  target.src = 'assets/not_found_package.png';
+}
   getData(page:any,size:any): void {
     this.isLoading = true;
+    this.vehicleCards = []; // Limpiar los datos previos
+    this.catEmployees = []; // Limpiar los empleados previos
     this.Pk.getCatEmpl().subscribe({
       next: (response) => {
-
-
         this.catEmployees = response.data;
-
         // console.log('Datos de todos los empleados:', response);
       },
       error: (err) => {

@@ -9,20 +9,24 @@
 
 
 
-      <div class="foto-container">
-        <div class="preview" [ngStyle]="{ 'background-image': 'url(' + fotoPreview + ')' }">
+<div class="foto-container">
+  <div class="preview">
+    <img
+      *ngIf="fotoPreview || fotoAntigua"
+      [src]="fotoPreview || fotoAntigua"
+      alt="Foto del empleado"
+      (error)="handleImageError($event)"
+    />
+  </div>
 
-          <!-- Mostrar imagen antigua si no hay nueva seleccionada -->
-          <img *ngIf="fotoAntigua && !fotoPreview" [src]="fotoAntigua" alt="Foto del empleado"
-            style="max-width: 100%; height: 100%; object-fit: contain; border-radius: 8px;" />
-        </div>
-        <label for="foto" class="foto-label">
-          <i class="fas fa-info-circle info-icon" data-tooltip="Selecione la fotografia del trabajador"></i>
-          Fotografía de la persona
-        </label>
+  <label for="foto" class="foto-label">
+    <i class="fas fa-info-circle info-icon" data-tooltip="Seleccione la fotografía del trabajador"></i>
+    Fotografía de la persona
+  </label>
 
-        <input type="file" id="foto" (change)="onFotoSelected($event)" hidden />
-      </div>
+  <input type="file" id="foto" (change)="onFotoSelected($event)" hidden />
+</div>
+
 
       <div class="group">
         <i class="fas fa-info-circle info-icon" data-tooltip="Nombre completo oficial del trabajador."></i>

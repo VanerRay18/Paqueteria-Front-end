@@ -206,6 +206,14 @@ export class NewEmployeeComponent implements OnInit {
     return `${horas}:${minutos}`;
   }
 
+handleImageError(event: Event) {
+  const target = event.target as HTMLImageElement;
+
+  // Evita bucle infinito si ya está puesta la imagen de fallback
+  if (target.src.includes('not_found_package.png')) return;
+
+  target.src = 'assets/not_found_package.png';
+}
 
   // 2️⃣ Método para cargar datos existentes y llenar los formularios
   loadEmployeeData(id: number) {

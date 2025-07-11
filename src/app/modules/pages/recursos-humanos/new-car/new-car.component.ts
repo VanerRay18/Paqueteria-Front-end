@@ -68,6 +68,15 @@ export class NewCarComponent implements OnInit {
       }
     });
   }
+handleImageError(event: Event) {
+  const target = event.target as HTMLImageElement;
+
+  // Evita bucle infinito si ya está puesta la imagen de fallback
+  if (target.src.includes('not_found_package.png')) return;
+
+  target.src = 'assets/not_found_package.png';
+}
+
 
   formatearFecha(fecha: string | Date): string {
     const d = new Date(fecha);
@@ -77,9 +86,10 @@ export class NewCarComponent implements OnInit {
     return `${year}-${month}-${day}`;
   }
 
-  get todasLasFotos(): string[] {
-    return this.fotosPreview.length > 0 ? this.fotosPreview : this.fotosAntiguas;
-  }
+get todasLasFotos(): string[] {
+  // Muestra las fotos nuevas si las hay, si no, las antiguas del backend
+  return this.fotosPreview.length > 0 ? this.fotosPreview : (this.fotosAntiguas || []);
+}
 
 
   loadEmployeeData(carId: any) {
@@ -94,8 +104,7 @@ export class NewCarComponent implements OnInit {
 
           if (!carTieneDatos) return;
           // 👉 Llenar las fotos antiguas
-        this.fotosAntiguas = response.data.images.map((img: any) => img.path);
-         
+        this.fotosAntiguas = response.data.images.map((img: any) => img.url);
 
           setTimeout(() => {
             this.fotoActual = 0;

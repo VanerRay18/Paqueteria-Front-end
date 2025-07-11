@@ -9,7 +9,12 @@
       <div class="vehicle-card m-4" *ngFor="let vehicle of vehicleCards"
         (click)="mostrarSwalVehiculo(vehicle)">
         <div class="vehicle-header">
-          <img [src]="vehicle.imagen" alt="auto" class="vehicle-img" />
+        <img 
+          [src]="vehicle.imagen?.url" 
+          alt="auto" 
+          class="vehicle-img"
+          (error)="handleImageError($event)" 
+        />
           <div class="vehicle-info">
             <strong>{{ vehicle.placa }}</strong>
             <div class="vehicle-model">{{ vehicle.modelo }}</div>
