@@ -1,3 +1,4 @@
+import { GraphsModule } from './modules/pages/graphs/graphs.module';
 import { Component, NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LayoutComponent } from './modules/layout/layout.component';
@@ -9,6 +10,7 @@ import { NewEmployeeComponent } from './modules/pages/recursos-humanos/new-emplo
 import { RecursosHumanosModule } from './modules/pages/recursos-humanos/recursos-humanos.module';
 import { PaqueteriaModule } from './modules/pages/paqueteria/paqueteria.module';
 import { DeliveryComponent } from './modules/pages/paqueteria/delivery/delivery.component';
+
 
 
 const routes: Routes = [
@@ -55,6 +57,13 @@ const routes: Routes = [
         loadChildren:() =>
           import('./modules/pages/paqueteria/paqueteria.module').then(
             (m) => m.PaqueteriaModule
+          ),
+      },
+      {
+        path:'Graficas',
+        loadChildren:() =>
+          import('./modules/pages/graphs/graphs.module').then(
+            (m) => m.GraphsModule
           ),
       }
     ],

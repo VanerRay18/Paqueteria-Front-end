@@ -4,9 +4,11 @@
   <div class="paquetes-box">
     <div class="paquetes-header">
       <div class="left">
-        <strong >Paquetes registrados&nbsp;&nbsp;&nbsp;</strong>
-        <span *ngIf="activeTab === 'costos'">&nbsp;&nbsp;&nbsp;Total: {{this.totalCost}}</span>
-       <span *ngIf="activeTab === 'normales'">&nbsp;&nbsp;&nbsp;Total: {{this.total}}</span>
+        <strong>Paquetes registrados&nbsp;&nbsp;&nbsp;</strong>
+        <span *ngIf="activeTab === 'costos'">&nbsp;&nbsp;&nbsp;Total:
+          {{this.totalCost}}</span>
+        <span *ngIf="activeTab === 'normales'">&nbsp;&nbsp;&nbsp;Total:
+          {{this.total}}</span>
 
       </div>
 
@@ -123,7 +125,13 @@
           <i class="fa-solid fa-pen-to-square"
             style="cursor:pointer; margin-left: 10px;"
             (click)="editarConsolidado(paquete)"></i>&nbsp;
+          <i class="fa-solid fa-folder-open"
+            style="cursor:pointer; margin-left: 10px;"
+            (click)="histotyPackage(paquete)"></i>&nbsp;
           <span [ngStyle]="{ color: paquete.color }">{{ paquete.guia }}</span>
+          <i class="fa-solid fa-trash-can"
+            style="cursor:pointer; margin-left: 10px;"
+            (click)="deletePackage(paquete)"></i>&nbsp;
         </div>
 
         <div *ngIf="esCosto" style="margin-top:5px; color:#16a34a;">
@@ -149,16 +157,17 @@
       </div>
     </ng-template>
 
-    <app-paginador-component *ngIf="activeTab === 'normales'" [isLoading]="isLoading" [page]="page" [size]="size"
+    <app-paginador-component *ngIf="activeTab === 'normales'"
+      [isLoading]="isLoading" [page]="page" [size]="size"
       [total]="total"
       (pageChange)="cambiarPagina($event)">
     </app-paginador-component>
 
-    <app-paginador-component *ngIf="activeTab === 'costos'" [isLoading]="isLoadingCost" [page]="pageCost" [size]="sizeCost"
+    <app-paginador-component *ngIf="activeTab === 'costos'"
+      [isLoading]="isLoadingCost" [page]="pageCost" [size]="sizeCost"
       [total]="totalCost"
       (pageChange)="cambiarPaginaCost($event)">
     </app-paginador-component>
-
 
   </div>
 </div>

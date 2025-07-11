@@ -5,7 +5,12 @@
   <div class="tarjeta-principal">
     <div class="tarjeta-vehiculo">
       <div class="vehiculo-header">
-        <img [src]="image" alt="Vehículo" class="vehiculo-img" />
+               <img
+          [src]="image"
+          alt="auto"
+          class="vehiculo-img "
+          (error)="handleImageError($event)"
+        />
         <div class="info-vehiculo">
           <h3>{{ car.marca }} {{ car.modelo }} {{ car.color }}</h3>
           <p class="placa">Placa: {{ car.placa || 'Sin placa' }}</p>

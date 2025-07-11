@@ -9,11 +9,11 @@
       <div class="vehicle-card m-4" *ngFor="let vehicle of vehicleCards"
         (click)="mostrarSwalVehiculo(vehicle)">
         <div class="vehicle-header">
-        <img 
-          [src]="vehicle.imagen?.url" 
-          alt="auto" 
+        <img
+          [src]="vehicle.imagen?.url"
+          alt="auto"
           class="vehicle-img"
-          (error)="handleImageError($event)" 
+          (error)="handleImageError($event)"
         />
           <div class="vehicle-info">
             <strong>{{ vehicle.placa }}</strong>
@@ -43,9 +43,9 @@
             </div>
           </div>
           <div class="progress-labels">
-            <div>Paquetes entregados <br /><small>{{ vehicle.entregados
+            <div>Entregados <br /><small>{{ vehicle.entregados
                 }}</small></div>
-            <div>Faltantes <br /><small>{{ vehicle.faltantes }}</small></div>
+            <div>No entregados <br /><small>{{ vehicle.faltantes }}</small></div>
           </div>
         </div>
 

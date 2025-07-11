@@ -290,6 +290,14 @@ export class PackageTrackingComponent implements OnInit {
     });
   }
 
+  histotyPackage(paquete: any): void {
+
+  }
+
+  deletePackage(paquete: any): void {
+
+  }
+
   agruparPorFechaDeEntrega(paquetes: any[]) {
     const agrupados: { [fecha: string]: any[] } = {};
 

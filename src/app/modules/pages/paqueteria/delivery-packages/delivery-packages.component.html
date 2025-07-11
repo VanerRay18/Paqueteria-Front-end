@@ -69,8 +69,13 @@
           <i class="fa-solid fa-pen-to-square"
             style="cursor:pointer; margin-left: 10px;"
             (click)="editarConsolidado(paquete)"></i>&nbsp;
-
+          <i class="fa-solid fa-folder-open"
+            style="cursor:pointer; margin-left: 10px;"
+            (click)="histotyPackage(paquete)"></i>&nbsp;
           <span [ngStyle]="{ color: paquete.color }">{{ paquete.guia }}</span>
+          <i class="fa-solid fa-trash-can"
+            style="cursor:pointer; margin-left: 10px;"
+            (click)="deletePackage(paquete)"></i>&nbsp;
         </div>
 
         <div *ngIf="paquete.isCost === true"
