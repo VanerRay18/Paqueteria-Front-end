@@ -13,7 +13,7 @@ import { DeliveryComponent } from './modules/pages/paqueteria/delivery/delivery.
 
 const routes: Routes = [
   {path:'',redirectTo:'/login',pathMatch:'full'},
-  { path: 'Test', component: DeliveryComponent},
+  { path: 'Test', component: TestComponent},
   {path: 'login',
     component: LoginComponent,
   },

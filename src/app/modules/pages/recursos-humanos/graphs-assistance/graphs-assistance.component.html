@@ -36,7 +36,7 @@
           <span class="datos">Faltas<br><strong>{{ persona.faltas
               }}</strong></span>
           <div class="barra" (click)="abrirSwalFaltas(persona)">
-            <div class="progreso" [style.width.%]="(persona.faltasBarra ) * 100"
+            <div class="progreso" [style.width.%]="(persona.faltasBarra ) "
               style="background: red; cursor: pointer;">
             </div>
           </div>
@@ -46,7 +46,7 @@
               }}</strong></span>
           <div class="barra" (click)="abrirSwalInasistencias(persona)">
             <div class="progreso"
-              [style.width.%]="(persona.asistenciaBarra) * 100"
+              [style.width.%]="(persona.asistenciaBarra) "
               style="background: green; cursor: pointer;">
             </div>
           </div>
@@ -55,7 +55,7 @@
               }}</strong></span>
           <div class="barra" (click)="abrirSwalRetardos(persona)">
             <div class="progreso"
-              [style.width.%]="(persona.retardosBarra) * 100"
+              [style.width.%]="(persona.retardosBarra) "
               style="background: rgb(255, 166, 0); cursor: pointer;">
             </div>
           </div>

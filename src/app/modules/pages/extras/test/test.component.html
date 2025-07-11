@@ -1,4 +1,4 @@
-<div>
+<!-- <div>
   <label for="csvFile">Subir archivo CSV: </label>
   <input
     id="csvFile"
@@ -6,4 +6,33 @@
     (change)="onFileSelected($event)"
     accept=".csv"
   />
-</div>
+</div> -->
+
+<h2>Gráfico de Pastel</h2>
+<app-chart
+  [chartType]="'pie'"
+  [chartLabels]="pieLabels"
+  [chartData]="pieData"
+  [title]="'Colores preferidos'">
+</app-chart>
+
+<hr>
+
+<h2>Gráfico de Barras</h2>
+<app-chart
+  [chartType]="'bar'"
+  [chartLabels]="barLabels"
+  [chartData]="barData"
+  [title]="'Ventas mensuales'">
+</app-chart>
+
+<hr>
+
+<h2>Gráfico de Línea</h2>
+<app-chart
+  [chartType]="'line'"
+  [chartLabels]="lineLabels"
+  [chartData]="lineData"
+  [title]="'Accesos por día'">
+</app-chart>
+

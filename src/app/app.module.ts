@@ -24,6 +24,7 @@ import { RHRoutingModule } from './modules/pages/recursos-humanos/rh-routing.mod
 import { PaqueteriaRoutingModule } from './modules/pages/paqueteria/paqueteria-routing.module';
 import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
 import { HomeModule } from './modules/pages/home/home.module';
+import { NgChartsModule } from 'ng2-charts';
 
 
 
@@ -51,12 +52,13 @@ import { HomeModule } from './modules/pages/home/home.module';
     RHRoutingModule,
     PaqueteriaRoutingModule,
     NgxDaterangepickerMd.forRoot(),
+    NgChartsModule
   ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
-      multi:true
+      multi: true
     }
   ],
   bootstrap: [AppComponent]

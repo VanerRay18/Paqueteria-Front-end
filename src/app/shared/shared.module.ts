@@ -9,6 +9,8 @@ import { FilterPipe } from './filter.pipe';
 import { BusquedaComponent } from './componentes/busqueda/busqueda.component';
 import { FooterComponent } from './header/footer/footer.component';
 import { PaginadorComponentComponent } from './componentes/paginador-component/paginador-component.component';
+import { ChartComponent } from './componentes/chart/chart.component';
+import { NgChartsModule } from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -18,12 +20,14 @@ import { PaginadorComponentComponent } from './componentes/paginador-component/p
     FilterPipe,
     BusquedaComponent,
     FooterComponent,
-    PaginadorComponentComponent
+    PaginadorComponentComponent,
+    ChartComponent
   ],
   imports: [
     CommonModule,
     RouterModule,
-    FormsModule  // Asegúrate de incluir FormsModule aquí
+    FormsModule,
+    NgChartsModule  // Asegúrate de incluir FormsModule aquí
   ],
   exports: [
     NavComponent,
@@ -31,7 +35,8 @@ import { PaginadorComponentComponent } from './componentes/paginador-component/p
     TablesComponent,
     PaginadorComponentComponent,
     FooterComponent,
-    FilterPipe
+    FilterPipe,
+    ChartComponent
   ]
 })
 export class SharedModule { }

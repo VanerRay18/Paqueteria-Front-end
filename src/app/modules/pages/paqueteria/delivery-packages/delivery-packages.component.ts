@@ -58,10 +58,12 @@ export class DeliveryPackagesComponent implements OnInit {
 
   selectTypepakage(typeId: number | null) {
     if (typeId === 2) {
-    this.isLoading = true;
+      this.isLoading = true;
+      this.paquetesAgrupados = [];
       this.getPakagesCost(this.page, this.size);
     } else {
       this.isLoading = true;
+      this.paquetesAgrupados = [];
       this.getPakagesNorm(this.page, this.size);
     }
   }
@@ -332,6 +334,7 @@ export class DeliveryPackagesComponent implements OnInit {
 
   getPakagesNorm(page: number, size: number): void {
     this.isLoading = true;
+    this.paquetes = [];
     this.pakage.getPackageByDelivery(this.deliveryId, page, size, 'false').subscribe(
       response => {
         this.paquetesNormal = response.data.paquetes; // Asignar los datos recibidos a la variable paquetes
@@ -348,6 +351,7 @@ export class DeliveryPackagesComponent implements OnInit {
 
   getPakagesCost(page: number, size: number): void {
     this.isLoading = true;
+    this.paquetesCost = [];
     this.pakage.getPackageByDelivery(this.deliveryId, page, size, 'true').subscribe(
       response => {
         this.paquetesCost = response.data.paquetes; // Asignar los datos recibidos a la variable paquetes

@@ -261,8 +261,8 @@ export class GraphsAssistanceComponent implements OnInit {
                   }).then(result => {
                     if (result.isConfirmed && attendanceId) {
                       this.rh.UpdateAttendance(result.value, attendanceId).subscribe(() => {
-                        Swal.fire('¡Justificado!', 'La asistencia fue actualizada.', 'success');
-
+                        Swal.fire('¡Éxito!', 'La asistencia/Falta fue actualizada.', 'success');
+                        this.getDatos();
                         const desde = (document.getElementById('desdeInput') as HTMLInputElement).value;
                         const hasta = (document.getElementById('hastaInput') as HTMLInputElement).value;
                         if (desde && hasta) cargarDatos(desde, hasta);

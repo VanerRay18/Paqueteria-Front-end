@@ -34,7 +34,11 @@ export class SearchDeliveryComponent implements OnInit {
   isLoading: boolean = true;
   page: number = 0;
   size: number = 15;
-
+  typeP = [
+    { id: 1, name: 'Normal' },
+    { id: 2, name: 'Costo' },
+  ];
+  Typepakage: number | null = null;
   packageOrg: any = null;
   packageDex: any = null; // Dex seleccionado
   packageCat: any = null; // Estado seleccionado
@@ -89,6 +93,10 @@ export class SearchDeliveryComponent implements OnInit {
   selectPackageOrg(object: any) {
     this.getData(this.page, this.size);
 
+  }
+
+  selectTypepakage(typeId: number | null) {
+    this.getData(this.page, this.size);
   }
 
   selectPackageDex(object: any) {
@@ -360,6 +368,11 @@ export class SearchDeliveryComponent implements OnInit {
     }
     if (this.packageDex != null) {
       headers = new HttpHeaders({ 'dexId': this.packageDex, 'desde': desdeFormatted, 'hasta': hastaFormatted, 'page': page, 'size': size });
+    }
+    if (this.Typepakage === 1) {
+      headers = new HttpHeaders({ 'isCost': "false", 'desde': desdeFormatted, 'hasta': hastaFormatted, 'page': page, 'size': size });
+    }else if (this.Typepakage === 2) {
+      headers = new HttpHeaders({ 'isCost': "true", 'desde': desdeFormatted, 'hasta': hastaFormatted, 'page': page, 'size': size });
     }
     this.isLoading = true;
     this.pakage.getAllPackages(headers).subscribe(

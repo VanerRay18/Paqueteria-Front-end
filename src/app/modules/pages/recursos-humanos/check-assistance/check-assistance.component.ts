@@ -16,9 +16,9 @@ export class CheckAssistanceComponent {
     private rh: RHService
   ) {
 
-   }
+  }
 
- token: string[] = ['', '', '', '', '', ''];
+  token: string[] = ['', '', '', '', '', ''];
   tokenArray = new Array(6);
 
   onInput(event: any, index: number) {
@@ -45,10 +45,13 @@ export class CheckAssistanceComponent {
         if (response.success) {
           Swal.fire({
             icon: 'success',
-            title: 'Asistencia registrada',
-            text: response.message || 'Asistencia registrada correctamente.', // muestra "Registro tardío, favor de presentar su justificante"
+            title: 'Registro exitoso',
+            text: response.message || 'Asistencia/Falta registrada correctamente.', // muestra "Registro tardío, favor de presentar su justificante"
             confirmButtonText: 'Aceptar'
           });
+          this.token.fill(''); // Limpiar el token después del envío
+          this.tokenArray.fill(''); // Limpiar el tokenArray después del envío
+          this.token = ['', '', '', '', '', '']; // Limpiar el token
         } else {
           Swal.fire({
             icon: 'error',
@@ -56,6 +59,9 @@ export class CheckAssistanceComponent {
             text: response.message || 'Algo salió mal.',
             confirmButtonText: 'Aceptar'
           });
+          this.token.fill(''); // Limpiar el token después del envío
+          this.tokenArray.fill(''); // Limpiar el tokenArray después del envío
+          this.token = ['', '', '', '', '', '']; // Limpiar el token
         }
       },
       error: (err) => {
