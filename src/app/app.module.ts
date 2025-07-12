@@ -25,7 +25,8 @@ import { PaqueteriaRoutingModule } from './modules/pages/paqueteria/paqueteria-r
 import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
 import { HomeModule } from './modules/pages/home/home.module';
 import { NgChartsModule } from 'ng2-charts';
-
+import { GraphsRoutingModule } from './modules/pages/graphs/graphs-routing.module';
+import { GraphsModule } from './modules/pages/graphs/graphs.module';
 
 
 @NgModule({
@@ -52,7 +53,9 @@ import { NgChartsModule } from 'ng2-charts';
     RHRoutingModule,
     PaqueteriaRoutingModule,
     NgxDaterangepickerMd.forRoot(),
-    NgChartsModule
+    NgChartsModule,
+    GraphsRoutingModule,
+    GraphsModule
   ],
   providers: [
     {

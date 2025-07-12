@@ -59,6 +59,15 @@ export class DeliveryComponent implements OnInit {
     this.rutaIniciada = this.deliveryInfo?.status?.id === 7;
   }
 
+  handleImageError(event: Event) {
+  const target = event.target as HTMLImageElement;
+
+  // Evita bucle infinito si ya está puesta la imagen de fallback
+  if (target.src.includes('not_found_package.png')) return;
+
+  target.src = 'assets/not_found_package.png';
+}
+
 
   getData(page: number, size: number): void {
     this.isLoading = true;

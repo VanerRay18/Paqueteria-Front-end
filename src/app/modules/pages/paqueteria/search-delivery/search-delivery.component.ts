@@ -419,53 +419,14 @@ export class SearchDeliveryComponent implements OnInit {
     });
   }
 
-  onFileSelected(event: any): void {
-    const file: File = event.target.files[0];
+  histotyPackage(paquete: any): void {
 
-    if (file) {
-      const reader: FileReader = new FileReader();
-
-      reader.onload = (e: any) => {
-        const data: Uint8Array = new Uint8Array(e.target.result);
-        const workbook: XLSX.WorkBook = XLSX.read(data, { type: 'array' });
-
-        const sheetName = workbook.SheetNames[0]; // leer solo la primera hoja
-        const worksheet = workbook.Sheets[sheetName];
-
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
-
-        console.log('JSON generado desde Excel:', jsonData);
-
-        this.enviarAlBackend(jsonData);
-      };
-
-      reader.readAsArrayBuffer(file); // ✅ lee como binario
-    }
   }
 
-  // Método para enviar los datos al backend
-  enviarAlBackend(data: any): void {
-    console.log(data) // Reemplaza con el ID real del paquete entrante
-    this.pakage.SentDataExel(data, this.deliveryId
+  deletePackage(paquete: any): void {
 
-    ).subscribe(
-      response => {
-        console.log(response.data);
-        Swal.fire({
-          title: '¡Éxito!',
-          text: 'Se cargo el consolidado correctamente.',
-          icon: 'success',
-          showConfirmButton: false,
-          timer: 1500,
-          timerProgressBar: true
-        });
-      }
-    );
-
-
-    //     console.log('Enviando datos al backend:', data);
-    //     // Aquí puedes usar un servicio HTTP para enviar los datos
   }
+
 
   mostrarSwal() {
     Swal.fire({
@@ -501,11 +462,6 @@ export class SearchDeliveryComponent implements OnInit {
         });
       }
     });
-  }
-
-
-  macheoPaquetes(): void {
-
   }
 
 

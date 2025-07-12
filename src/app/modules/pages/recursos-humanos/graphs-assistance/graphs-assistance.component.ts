@@ -24,7 +24,7 @@ export class GraphsAssistanceComponent implements OnInit {
   constructor(
     private rh: RHService
   ) {
-    (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
+    (pdfMake as any).vfs = pdfFonts.vfs;
   }
 
   ngOnInit(): void {
@@ -1002,7 +1002,7 @@ export class GraphsAssistanceComponent implements OnInit {
     }
   }
 
-  generarReportePDF(data: any[], desde: string, hasta: string, nombreEmpleado: string = 'Empleado',  tituloReporte: string) {
+  generarReportePDF(data: any[], desde: string, hasta: string, nombreEmpleado: string = 'Empleado', tituloReporte: string) {
     const fechaHoy = new Date().toLocaleDateString();
 
     const bodyTabla = [
