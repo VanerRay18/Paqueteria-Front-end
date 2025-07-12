@@ -6,15 +6,9 @@
 
   <div class="card ">
     <div class="row d-flex justify-content-center m-4">
-      <div class="vehicle-card m-4" *ngFor="let vehicle of vehicleCards"
-        (click)="mostrarSwalVehiculo(vehicle)">
+      <div class="vehicle-card m-4" *ngFor="let vehicle of vehicleCards" (click)="mostrarSwalVehiculo(vehicle)">
         <div class="vehicle-header">
-        <img 
-          [src]="vehicle.imagen?.url" 
-          alt="auto" 
-          class="vehicle-img"
-          (error)="handleImageError($event)" 
-        />
+          <img [src]="vehicle?.imagen?.url" alt="auto" class="vehicle-img" (error)="handleImageError($event)" />
           <div class="vehicle-info">
             <strong>{{ vehicle.placa }}</strong>
             <div class="vehicle-model">{{ vehicle.modelo }}</div>
@@ -23,8 +17,7 @@
             <div class="vehicle-destination"><strong>Destino:</strong> {{
               vehicle.destino }}</div>
           </div>
-          <div class="vehicle-status"
-            [ngClass]="{
+          <div class="vehicle-status" [ngClass]="{
                       'status-activo': vehicle.estado.id === 7 || vehicle.estado.id === 8 || vehicle.estado.id === 9,
                       'status-inactivo': vehicle.estado.id !== 7 && vehicle.estado.id !== 8 && vehicle.estado.id !== 9
                   }">
@@ -38,8 +31,7 @@
 
         <div class="progress-bar-container">
           <div class="progress-bar-bg">
-            <div class="progress-bar-fill"
-              [style.width.%]="vehicle.porcentaje">
+            <div class="progress-bar-fill" [style.width.%]="vehicle.porcentaje">
             </div>
           </div>
           <div class="progress-labels">
@@ -50,9 +42,9 @@
         </div>
 
       </div>
-              <app-paginador-component [isLoading]="isLoading" [message]="'No hay cargamentos registrados en este día.'"
-          [page]="page" [size]="size" [total]="total" (pageChange)="cambiarPagina($event)">
-        </app-paginador-component>
+      <app-paginador-component [isLoading]="isLoading" [message]="'No hay cargamentos registrados en este día.'"
+        [page]="page" [size]="size" [total]="total" (pageChange)="cambiarPagina($event)">
+      </app-paginador-component>
     </div>
   </div>
 </div>

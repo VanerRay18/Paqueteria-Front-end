@@ -34,7 +34,7 @@ export interface VehicleCard {
   }; // puedes ampliar
   entregados: number;
   faltantes: number;
-  imagen: any; // ruta de la imagen del vehículo
+  imagen?: any; // ruta de la imagen del vehículo
   destino: string; // destino del vehículo
   kmIniciales?: number;
   porcentaje: number; // porcentaje de entregados

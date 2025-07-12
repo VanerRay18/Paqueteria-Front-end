@@ -62,6 +62,7 @@ export class DeliveryComponent implements OnInit {
 
   getData(page: number, size: number): void {
     this.isLoading = true;
+    this.paquetes = []; // Limpiar los paquetes antes de cargar nuevos datos
     this.pakage.getPackageByDelivery(this.deliveryId, page, size, '').subscribe(
       response => {
         this.total = response.data.total
@@ -80,7 +81,14 @@ export class DeliveryComponent implements OnInit {
     this.page = pagina;
     this.getData(this.page, this.size);
   }
+handleImageError(event: Event) {
+  const target = event.target as HTMLImageElement;
 
+  // Evita bucle infinito si ya está puesta la imagen de fallback
+  if (target.src.includes('not_found_package.png')) return;
+
+  target.src = 'assets/not_found_package.png';
+}
 
 
   cargarDeliveryInfo() {
@@ -187,14 +195,14 @@ export class DeliveryComponent implements OnInit {
   }
 
   terminarRuta() {
-    const pendientes = this.paquetes.filter(p =>
-      p.status?.id !== 8 && p.status?.id !== 9
-    );
+    // const pendientes = this.paquetes.filter(p =>
+    //   p.status?.id !== 8 && p.status?.id !== 9
+    // );
 
-    if (pendientes.length > 0) {
-      Swal.fire('Ruta incompleta', 'Debes entregar o marcar todos los paquetes antes de finalizar la ruta.', 'error');
-      return;
-    }
+    // if (pendientes.length > 0) {
+    //   Swal.fire('Ruta incompleta', 'Debes entregar o marcar todos los paquetes antes de finalizar la ruta.', 'error');
+    //   return;
+    // }
 
     let catStatusId = 10;
     let packageId = this.deliveryId; // Asegúrate de que el paquete tenga un ID
@@ -204,6 +212,7 @@ export class DeliveryComponent implements OnInit {
         console.log('Marcado como no entregado:', response);
         this.cargarDeliveryInfo();
         this.ngOnInit();
+        this.getData(this.page, this.size);
         Swal.fire('Éxito', 'Ha terminado su ruta.', 'success');
         // Recargar la información de entrega
         // Aquí iría la lógica para actualizar el estado en el backend si aplica

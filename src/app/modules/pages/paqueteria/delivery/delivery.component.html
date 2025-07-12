@@ -1,11 +1,16 @@
 <div class="ruta-container">
-  <h2 class="titulo">Ruta Asignada</h2>
+  <h2 class="titulo">Mi Ruta</h2>
 
   <!-- Tarjeta de vehículo -->
   <div class="tarjeta-principal">
     <div class="tarjeta-vehiculo">
       <div class="vehiculo-header">
-        <img [src]="image" alt="Vehículo" class="vehiculo-img" />
+        <img 
+          [src]="image?.url" 
+          alt="auto" 
+          class="vehicle-img"
+          (error)="handleImageError($event)" 
+        />
         <div class="info-vehiculo">
           <h3>{{ car.marca }} {{ car.modelo }} {{ car.color }}</h3>
           <p class="placa">Placa: {{ car.placa || 'Sin placa' }}</p>

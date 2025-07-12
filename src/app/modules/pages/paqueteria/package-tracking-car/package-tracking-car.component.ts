@@ -70,14 +70,17 @@ handleImageError(event: Event) {
         const total = entregados + noEntregados;
         const porcentaje = total > 0 ? Math.round((entregados / total) * 100) : 0;
         const id = item.id; // Asegúrate de que el ID esté presente
-
+  // Validar imagen
+    const imagen = (item.imagen && typeof item.imagen === 'object' && item.imagen.url)
+      ? item.imagen
+      : null;
         return {
           placa: item.car?.placa || '',
           modelo: item.car?.modelo || '',
           conductor: conductor || 'Sin conductor',
           entregados: entregados,
           faltantes: noEntregados,
-          imagen: item.images.path, // 🔁 Cambia según imagen real
+          imagen, // 🔁 Cambia según imagen real
           destino: item.destino || 'Sin destino asignado', // 🔁 Usa tu lógica real aquí
           porcentaje: porcentaje,
           kmIniciales: 0, // Agrega si lo tienes
