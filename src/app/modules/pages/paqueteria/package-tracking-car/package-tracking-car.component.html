@@ -6,7 +6,8 @@
 
   <div class="card ">
     <div class="row d-flex justify-content-center m-4">
-      <div class="vehicle-card m-4" *ngFor="let vehicle of vehicleCards" (click)="mostrarSwalVehiculo(vehicle)">
+      <input type="text" placeholder="Buscar..." class="buscador" [(ngModel)]="searchTerm" />
+      <div class="vehicle-card m-4" *ngFor="let vehicle of vehicleCards | filter: searchTerm" (click)="mostrarSwalVehiculo(vehicle)">
         <div class="vehicle-header">
           <img [src]="vehicle?.imagen?.url" alt="auto" class="vehicle-img" (error)="handleImageError($event)" />
           <div class="vehicle-info">

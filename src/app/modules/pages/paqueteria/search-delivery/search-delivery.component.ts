@@ -4,11 +4,13 @@ import { PakageService } from 'src/app/services/pakage.service';
 import * as Papa from 'papaparse';
 import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
 import { formatDate } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import dayjs from 'dayjs';
 import { HttpHeaders } from '@angular/common/http';
 import { ApiResponse } from 'src/app/models/ApiResponse';
+import { DatePipe } from '@angular/common';
 @Component({
   selector: 'app-search-delivery',
   templateUrl: './search-delivery.component.html',
@@ -49,6 +51,7 @@ export class SearchDeliveryComponent implements OnInit {
     private pakage: PakageService,
     private fileTransferService: FileTransferService,
     private route: ActivatedRoute,
+    private datePipe: DatePipe
   ) { }
 
   ngOnInit(): void {
@@ -353,6 +356,7 @@ export class SearchDeliveryComponent implements OnInit {
   }
 
   getData(page: number, size: number): void {
+
     this.paquetesAgrupados = [];
     if (!this.rango || !this.rango.startDate || !this.rango.endDate) { return; }
 
@@ -371,7 +375,7 @@ export class SearchDeliveryComponent implements OnInit {
     }
     if (this.Typepakage === 1) {
       headers = new HttpHeaders({ 'isCost': "false", 'desde': desdeFormatted, 'hasta': hastaFormatted, 'page': page, 'size': size });
-    }else if (this.Typepakage === 2) {
+    } else if (this.Typepakage === 2) {
       headers = new HttpHeaders({ 'isCost': "true", 'desde': desdeFormatted, 'hasta': hastaFormatted, 'page': page, 'size': size });
     }
     this.isLoading = true;
@@ -420,10 +424,102 @@ export class SearchDeliveryComponent implements OnInit {
   }
 
   histotyPackage(paquete: any): void {
+    this.pakage.getHistoryByPakage(paquete.id).subscribe((resp) => {
+      if (resp.success && resp.data) {
+        const history = resp.data.sort((a: { tsCreated: number; }, b: { tsCreated: number; }) => a.tsCreated - b.tsCreated);
+        const htmlContent = history.map((entry: { tsCreated: string | number | Date; catStatus: { name: string; config: { config: { color: string; }; }; }; description: any; }) => {
+          const date = this.datePipe.transform(entry.tsCreated, 'yyyy-MM-dd HH:mm:ss');
+          const status = entry.catStatus?.name || 'Sin estatus';
+          const description = entry.description ? `<div><strong>Detalle:</strong> ${entry.description}</div>` : '';
+          const color = entry.catStatus?.config?.config?.color || '#888';
 
+          return `
+          <div style="margin-bottom: 15px;">
+            <div style="color: ${color}; font-weight: bold;">${status}</div>
+            <div style="font-size: 12px; color: #555;">${date}</div>
+            ${description}
+          </div>
+        `;
+        }).join('');
+
+        Swal.fire({
+          title: 'Historial del Paquete 📦',
+          html: htmlContent,
+          width: 600,
+          showCloseButton: true,
+          confirmButtonText: 'Cerrar',
+          scrollbarPadding: false
+        });
+      } else {
+        Swal.fire('Error', 'No se pudo obtener el historial del paquete.', 'error');
+      }
+    });
   }
 
-  deletePackage(paquete: any): void {
+  ChangeStatus(paquete: any): void {
+   const statuses = [
+    { id: 3, name: 'Vinculado con consolidado' },
+    { id: 4, name: 'En bodega' },
+    { id: 6, name: 'Cargado en unidad' },
+    { id: 7, name: 'En ruta' },
+    { id: 8, name: 'Entregado' },
+    { id: 13, name: 'No encontrado en el consolidado' },
+    { id: 14, name: 'Devuelto a la paquetería' },
+    { id: 15, name: 'Vinculado con precio' },
+  ];
+
+   const currentStatusId = paquete.status?.id;
+
+  const statusOptionsHtml = statuses.map(s =>
+    `<option value="${s.id}" ${s.id === currentStatusId ? 'selected' : ''}>${s.name}</option>`
+  ).join('');
+
+  Swal.fire({
+    title: 'Cambiar estatus del paquete',
+    html: `
+      <label for="status">Selecciona nuevo estatus:</label>
+      <select id="status" class="swal2-select">${statusOptionsHtml}</select>
+      <br><br>
+      <label for="description">Descripción (opcional):</label>
+      <textarea id="description" class="swal2-textarea" placeholder="Motivo o comentario..."></textarea>
+    `,
+    showCancelButton: true,
+    confirmButtonText: 'Actualizar',
+    cancelButtonText: 'Cancelar',
+    preConfirm: () => {
+      const selectedStatusId = (document.getElementById('status') as HTMLSelectElement).value;
+      const description = (document.getElementById('description') as HTMLTextAreaElement).value;
+      if (!selectedStatusId) {
+        Swal.showValidationMessage('Debes seleccionar un estatus');
+        return;
+      }
+      return { catStatusId: selectedStatusId, description };
+    }
+  }).then(result => {
+    if (result.isConfirmed && result.value) {
+      const { catStatusId, description } = result.value;
+
+      // Mostrar loading mientras se hace la petición
+      Swal.fire({
+        title: 'Actualizando estatus...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
+
+      this.pakage.updatePackageStatus(paquete.id, catStatusId, description).subscribe(resp => {
+        Swal.close();
+        if (resp.success) {
+          this.getData(this.page, this.size);
+          Swal.fire('¡Éxito!', 'El estatus del paquete fue actualizado.', 'success');
+        } else {
+          Swal.fire('Error', 'No se pudo actualizar el estatus del paquete.', 'error');
+        }
+      }, () => {
+        Swal.close();
+        Swal.fire('Error', 'Ocurrió un error al comunicarse con el servidor.', 'error');
+      });
+    }
+  });
 
   }
 
@@ -460,6 +556,73 @@ export class SearchDeliveryComponent implements OnInit {
             Swal.fire('Error', 'Ocurrió un problema al enviar el paquete.', 'error');
           }
         });
+      }
+    });
+  }
+
+  downloadPackagesExcel(page: number, size: number): void {
+    if (!this.rango || !this.rango.startDate || !this.rango.endDate) { return; }
+
+    const desdeFormatted = this.rango.startDate.format('YYYY-MM-DD');
+    const hastaFormatted = this.rango.endDate.format('YYYY-MM-DD');
+    const headers = new HttpHeaders({ 'desde': desdeFormatted, 'hasta': hastaFormatted, 'page': page, 'size':  this.total });
+
+    // 🌀 Mostrar swal de carga
+    Swal.fire({
+      title: 'Generando Excel...',
+      text: 'Por favor espera',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+
+    this.pakage.getAllPackages(headers).subscribe((resp) => {
+      Swal.close();
+
+      if (!resp.success || !resp.data || resp.data.length === 0) {
+        Swal.fire('Sin datos', 'No hay paquetes para exportar en ese rango de fechas.', 'warning');
+        return;
+      }
+
+      if (resp.success && resp.data) {
+        const excelData = resp.data.map((pkg: any) => {
+          const c = pkg.consolidado || {};
+          return {
+            Tracking: c.trackingNo || '',
+            Origen: c.originLocId || '',
+            Destino: c.destinationLocId || '',
+            Remitente: c.shprCoShprName || '',
+            DirRemitente: c.shprAddr || '',
+            CiudadRemitente: c.shprCity || '',
+            EstadoRemitente: c.shprState || '',
+            TelefonoRemitente: c.shprPhone || '',
+            Destinatario: c.recipName || '',
+            DirDestinatario: c.recipAddr || '',
+            CiudadDestinatario: c.recipCity || '',
+            EstadoDestinatario: c.recipState || '',
+            TelefonoDestinatario: c.recipPhone || '',
+            FechaCompromiso: c.commitDate ? `${c.commitDate[0]}-${c.commitDate[1]}-${c.commitDate[2]}` : '',
+            HoraCompromiso: c.commitTime || '',
+            Servicio: c.service || '',
+            DEX: pkg.dex || '',
+            Estado: pkg.status?.name || '',
+            Costo: pkg.costLoad || ''
+          };
+        });
+
+        const worksheet = XLSX.utils.json_to_sheet(excelData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Paquetes');
+
+        const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+        const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+        FileSaver.saveAs(blob, `paquetes_${desdeFormatted}_a_${hastaFormatted}.xlsx`);
+        Swal.fire('¡Listo!', 'El archivo se descargó correctamente.', 'success');
+      } else {
+        Swal.close();
+        console.error('Error al obtener los datos del backend');
       }
     });
   }

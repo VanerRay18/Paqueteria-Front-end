@@ -54,11 +54,11 @@ export class PakageService {
   }
 
   getPackageByCarga(incomingPackageId: any, page: any, size: any, isCost: any): Observable<ApiResponse> {
-    let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId, 'page': page, 'size': size , 'isCost': isCost});
+    let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId, 'page': page, 'size': size, 'isCost': isCost });
     return this.http.get<ApiResponse>(`${environment.baseService}${'/package/packagesByIncomingPackageId'}`, { headers });
   }
   getPackageByDelivery(deliveryId: any, page: any, size: any, isCost: any): Observable<ApiResponse> {
-    let headers = new HttpHeaders({ 'deliveryId': deliveryId, 'page': page, 'size': size, 'isCost': isCost});
+    let headers = new HttpHeaders({ 'deliveryId': deliveryId, 'page': page, 'size': size, 'isCost': isCost });
     return this.http.get<ApiResponse>(`${environment.baseService}${'/package/packagesByDeliveryId'}`, { headers });
   }
 
@@ -82,6 +82,12 @@ export class PakageService {
   getCatEmpl(): Observable<ApiResponse> {
     return this.http.get<ApiResponse>(`${environment.baseService}${'/employees/catEmployee'}`);
   }
+
+  getHistoryByPakage(packageId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'packageId': packageId });
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/packageHistory'}`, { headers });
+  }
+
 
   SentDataExel(data: any, incomingPackageId: any): Observable<ApiResponse> {//Trae la nomina actual
     let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId });
@@ -178,4 +184,20 @@ export class PakageService {
       { headers }
     );
   }
+
+  DeletePackage(packageId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'packageId': packageId });
+    return this.http.patch<ApiResponse>(`${environment.baseService}${'/package/softdelete'}`, null,
+      { headers }
+    );
+  }
+
+  DeletePackageByDelivery(packageId: any, deliveryId : any, description: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'packageId': packageId, 'deliveryId': deliveryId, 'description': description });
+    return this.http.patch<ApiResponse>(`${environment.baseService}${'/package/softdeleteDelivery'}`, null,
+      { headers }
+    );
+  }
+
+
 }

@@ -40,21 +40,6 @@ export class PakageIncomingComponent implements OnInit {
 
   ngOnInit(): void {
 
-    // this.fileTransferService.currentIdTercero$
-    //   // <- solo se ejecuta una vez
-    //   .subscribe(id => {
-    //     if (id !== null) {
-    //       // console.log('ID recibido:', id);
-    //       this.PackageOrgId = id;
-    //       // Establecer fecha actual por defecto
-    //       this.rango = {
-    //         startDate: dayjs().startOf('day'),
-    //         endDate: dayjs().endOf('day')
-    //       };
-
-    //       this.getDatos(this.page, this.size);
-    //     }
-    //   });
     this.PackageOrgId = this.route.snapshot.paramMap.get('id');
          this.rango = {
             startDate: dayjs().startOf('day'),

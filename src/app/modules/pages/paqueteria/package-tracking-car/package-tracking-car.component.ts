@@ -16,8 +16,8 @@ export class PackageTrackingCarComponent implements OnInit {
   paquetes: string[] = [];
   vehicleCards: VehicleCard[] = [];
   catEmployees: any;
-
-    page: number = 0;
+  searchTerm: string = '';
+  page: number = 0;
   size: number = 4;
   isLoading: boolean = true;
   total: number = 0;
@@ -32,19 +32,19 @@ export class PackageTrackingCarComponent implements OnInit {
     this.getData(this.page, this.size); // Cargar los datos al iniciar el componente
     // Aquí podrías cargar los datos iniciales si es necesario
   }
- cambiarPagina(pagina: number) {
+  cambiarPagina(pagina: number) {
     this.page = pagina;
     this.getData(this.page, this.size);
   }
-handleImageError(event: Event) {
-  const target = event.target as HTMLImageElement;
+  handleImageError(event: Event) {
+    const target = event.target as HTMLImageElement;
 
-  // Evita bucle infinito si ya está puesta la imagen de fallback
-  if (target.src.includes('not_found_package.png')) return;
+    // Evita bucle infinito si ya está puesta la imagen de fallback
+    if (target.src.includes('not_found_package.png')) return;
 
-  target.src = 'assets/not_found_package.png';
-}
-  getData(page:any,size:any): void {
+    target.src = 'assets/not_found_package.png';
+  }
+  getData(page: any, size: any): void {
     this.isLoading = true;
     this.vehicleCards = []; // Limpiar los datos previos
     this.catEmployees = []; // Limpiar los empleados previos
@@ -60,8 +60,8 @@ handleImageError(event: Event) {
 
     this.Pk.getDeliveriesCar(page, size).subscribe((response: ApiResponse) => {
       // Verifica el ID
-    this.isLoading = false;
-            this.total = Number(response.message);
+      this.isLoading = false;
+      this.total = Number(response.message);
       // 🔁 Mapear los datos recibidos al modelo VehicleCard
       this.vehicleCards = response.data.map((item: any) => {
         const conductor = `${item.employee?.name || ''} ${item.employee?.firstSurname || ''} ${item.employee?.secondSurname || ''}`.trim();
@@ -70,10 +70,10 @@ handleImageError(event: Event) {
         const total = entregados + noEntregados;
         const porcentaje = total > 0 ? Math.round((entregados / total) * 100) : 0;
         const id = item.id; // Asegúrate de que el ID esté presente
-  // Validar imagen
-    const imagen = (item.imagen && typeof item.imagen === 'object' && item.imagen.url)
-      ? item.imagen
-      : null;
+        // Validar imagen
+        const imagen = (item.imagen && typeof item.imagen === 'object' && item.imagen.url)
+          ? item.imagen
+          : null;
         return {
           placa: item.car?.placa || '',
           modelo: item.car?.modelo || '',
@@ -160,9 +160,10 @@ handleImageError(event: Event) {
 
         // Mandar la data al backend
         this.Pk.createDeliveryCar(result.value).subscribe({
-          next: () => {
-            this.getData(this.page,this.size);
-            this.router.navigate(['/pages/Paqueteria/Paquetes-vehiculo/']);
+          next: (response) => {
+            this.getData(this.page, this.size);
+            const id = response.data;
+            this.router.navigate(['/pages/Paqueteria/Paquetes-vehiculo/' + id]);
           },
           error: () => {
             Swal.fire('Error', 'No se pudo guardar la información del vehículo.', 'error');

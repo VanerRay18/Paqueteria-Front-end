@@ -7,6 +7,7 @@ import * as XLSX from 'xlsx';
 import { formatDate } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { OrgItem } from 'src/app/shared/interfaces/utils';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-delivery-packages',
@@ -44,6 +45,7 @@ export class DeliveryPackagesComponent implements OnInit {
     private pakage: PakageService,
     private fileTransferService: FileTransferService,
     private route: ActivatedRoute,
+     private datePipe: DatePipe
   ) { }
 
   ngOnInit(): void {
@@ -293,11 +295,60 @@ export class DeliveryPackagesComponent implements OnInit {
   }
 
   histotyPackage(paquete: any): void {
+this.pakage.getHistoryByPakage(paquete.id).subscribe((resp) => {
+      if (resp.success && resp.data) {
+        const history = resp.data.sort((a: { tsCreated: number; }, b: { tsCreated: number; }) => a.tsCreated - b.tsCreated);
+        const htmlContent = history.map((entry: { tsCreated: string | number | Date; catStatus: { name: string; config: { config: { color: string; }; }; }; description: any; }) => {
+          const date = this.datePipe.transform(entry.tsCreated, 'yyyy-MM-dd HH:mm:ss');
+          const status = entry.catStatus?.name || 'Sin estatus';
+          const description = entry.description ? `<div><strong>Detalle:</strong> ${entry.description}</div>` : '';
+          const color = entry.catStatus?.config?.config?.color || '#888';
 
+          return `
+          <div style="margin-bottom: 15px;">
+            <div style="color: ${color}; font-weight: bold;">${status}</div>
+            <div style="font-size: 12px; color: #555;">${date}</div>
+            ${description}
+          </div>
+        `;
+        }).join('');
+
+        Swal.fire({
+          title: 'Historial del Paquete 📦',
+          html: htmlContent,
+          width: 600,
+          showCloseButton: true,
+          confirmButtonText: 'Cerrar',
+          scrollbarPadding: false
+        });
+      } else {
+        Swal.fire('Error', 'No se pudo obtener el historial del paquete.', 'error');
+      }
+    });
   }
 
   deletePackage(paquete: any): void {
-
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: `¿Deseas eliminar el paquete con guía ${paquete.guia}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.pakage.DeletePackageByDelivery(paquete.id, this.deliveryId, 'Eliminación de paquete').subscribe(
+          response => {
+            Swal.fire('¡Eliminado!', `El paquete con guía ${paquete.guia} ha sido eliminado.`, 'success');
+            this.getData(this.page, this.size);
+          },
+          error => {
+            console.error('Error al eliminar el paquete:', error);
+            Swal.fire('Error', 'No se pudo eliminar el paquete.', 'error');
+          }
+        );
+      }
+    });
   }
 
   agruparPorFechaDeEntrega(paquetes: any[]) {

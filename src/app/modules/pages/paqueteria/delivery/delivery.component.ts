@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiResponse } from 'src/app/models/ApiResponse';
+import { CarsService } from 'src/app/services/cars.service';
 import { PakageService } from 'src/app/services/pakage.service';
 import { OrgItem } from 'src/app/shared/interfaces/utils';
 import Swal from 'sweetalert2';
@@ -34,7 +35,8 @@ export class DeliveryComponent implements OnInit {
   cost: any;
 
   constructor(
-    private pakage: PakageService // Replace with actual service type
+    private pakage: PakageService,
+    private cars: CarsService // Asegúrate de que PakageService tenga los métodos necesarios para manejar vehículos
   ) { }
 
   ngOnInit(): void {
@@ -59,15 +61,6 @@ export class DeliveryComponent implements OnInit {
     this.rutaIniciada = this.deliveryInfo?.status?.id === 7;
   }
 
-  handleImageError(event: Event) {
-  const target = event.target as HTMLImageElement;
-
-  // Evita bucle infinito si ya está puesta la imagen de fallback
-  if (target.src.includes('not_found_package.png')) return;
-
-  target.src = 'assets/not_found_package.png';
-}
-
 
   getData(page: number, size: number): void {
     this.isLoading = true;
@@ -90,14 +83,14 @@ export class DeliveryComponent implements OnInit {
     this.page = pagina;
     this.getData(this.page, this.size);
   }
-handleImageError(event: Event) {
-  const target = event.target as HTMLImageElement;
+  handleImageError(event: Event) {
+    const target = event.target as HTMLImageElement;
 
-  // Evita bucle infinito si ya está puesta la imagen de fallback
-  if (target.src.includes('not_found_package.png')) return;
+    // Evita bucle infinito si ya está puesta la imagen de fallback
+    if (target.src.includes('not_found_package.png')) return;
 
-  target.src = 'assets/not_found_package.png';
-}
+    target.src = 'assets/not_found_package.png';
+  }
 
 
   cargarDeliveryInfo() {
@@ -163,29 +156,57 @@ handleImageError(event: Event) {
     Swal.fire({
       title: `<strong>Datos del paquete</strong>`,
       html: `
-            <div style="display: flex; flex-direction: column; gap: 1.2rem; font-size: 14px;">
+    <div style="display: flex; flex-direction: column; gap: 1.2rem; font-size: 14px;">
 
-              <!-- Consolidado -->
-              <div style="padding: 12px; border-radius: 8px; background: #f1f5f9; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <h4 style="margin-bottom: 8px; color: #0f172a;">${guia}</h4>
-                ${d ? `
-                  <p><strong>Destino:</strong> ${d.destinationLocId} - ${d.recipCity}, ${d.recipState}</p>
-                  <p><strong>Persona que recibe:</strong> ${d.recipName}</p>
-                  <p><strong>Numero de Telefono:</strong> ${d.recipPhone}</p>
-                  <p><strong>Referencias:</strong> ${d.shprRef}</p>
-                ` : `<p>No hay información de consolidado</p>`}
-              </div>
+      <!-- Consolidado -->
+      <div style="padding: 12px; border-radius: 8px; background: #f1f5f9; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h4 style="margin-bottom: 8px; color: #0f172a;">${guia}</h4>
+        ${d ? `
+          <p><strong>Destino:</strong> ${d.destinationLocId} - ${d.recipCity}, ${d.recipState}</p>
+          <p><strong>Persona que recibe:</strong> ${d.recipName}</p>
+          <p>
+            <strong>Numero de Telefono:</strong> 
+            <span id="phone-text">${d.recipPhone}</span>
+            <button id="copy-phone" style="margin-left: 8px; cursor: pointer; border: none; background: none;" title="Copiar">
+              📋
+            </button>
+          </p>
+          <span id="alert-copy" style="color: green; font-size: 13px; display: none;">Teléfono copiado</span>
+          <p><strong>Referencias:</strong> ${d.shprRef}</p>
+        ` : `<p>No hay información de consolidado</p>`}
+      </div>
 
-            </div>
-          `,
+    </div>
+  `,
       width: 650,
       showCloseButton: true,
       confirmButtonText: 'Cerrar',
       focusConfirm: false,
       customClass: {
         popup: 'custom-swal-popup'
+      },
+      didRender: () => {
+        const copyBtn = document.getElementById('copy-phone');
+        const phoneText = document.getElementById('phone-text')?.textContent || '';
+        const alerta = document.getElementById('alert-copy');
+
+        if (copyBtn && alerta) {
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(phoneText).then(() => {
+              alerta.textContent = '✅ Teléfono copiado';
+              alerta.style.display = 'inline';
+
+              // Oculta el mensaje después de 1.5 segundos
+              setTimeout(() => {
+                alerta.style.display = 'none';
+              }, 1500);
+            });
+          });
+        }
       }
+
     });
+
   }
 
   empezarRuta() {
@@ -314,6 +335,75 @@ handleImageError(event: Event) {
       }
     });
 
+  }
+
+  swalOdometro() {
+
+    Swal.fire({
+      title: 'Agregar nuevo registro',
+      html: `
+          <input type="number" id="km" class="swal2-input" placeholder="Kilómetros">
+          <input type="number" step="0.1" id="litros" class="swal2-input" placeholder="Litros">
+          <input type="number" step="0.1" id="costo" class="swal2-input" placeholder="Costo">
+          <textarea id="comentarios" class="swal2-textarea" placeholder="Comentarios"></textarea>
+        `,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Guardar',
+      cancelButtonText: 'Cancelar',
+      preConfirm: () => {
+        const odometro = (document.getElementById('km') as HTMLInputElement).value;
+        const litros = (document.getElementById('litros') as HTMLInputElement).value;
+        const precio = (document.getElementById('costo') as HTMLInputElement).value;
+        const comentarios = (document.getElementById('comentarios') as HTMLTextAreaElement).value;
+
+        if (!odometro || !litros || !precio) {
+          Swal.showValidationMessage('Todos los campos excepto comentarios son obligatorios');
+          return false;
+        }
+        if (odometro <= this.car.km) {
+          Swal.showValidationMessage('El odómetro debe ser mayor que el kilometraje actual: ' + this.car.km);
+          return false;
+        }
+
+
+
+        return {
+          odometro: Number(odometro),
+          litros: parseFloat(litros),
+          precio: parseFloat(precio),
+          comentarios
+        };
+      }
+    }).then(result => {
+      if (result.isConfirmed && result.value) {
+        const datos = {
+          ...result.value,
+          carId: this.car.id, // Asegúrate de que this.car tenga el ID del vehículo
+        };
+
+        this.cars.createFuelLog(datos).subscribe({
+          next: () => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Datos guardados',
+              text: 'Registro agregado correctamente.',
+            }).then(() => {
+
+            });
+            this.cargarDeliveryInfo(); // Recargar tabla de vehículos
+          },
+          error: (err) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Ocurrió un error al guardar los datos.',
+            });
+            console.error(err);
+          }
+        });
+      }
+    });
   }
 
 

@@ -34,6 +34,7 @@
 
       <div class="estado-ruta">
         <span class="badge bodega">🚚 {{ status.name }}</span>
+        <i class="fa-solid fa-gas-pump"  (click)="swalOdometro()"></i>
         <button *ngIf=" status.id === 5" class="btn-comenzar" (click)="empezarRuta()">Comenzar ruta</button>
         <button *ngIf=" status.id === 7" class="btn-comenzar" (click)="terminarRuta()">Terminar ruta</button>
       </div>

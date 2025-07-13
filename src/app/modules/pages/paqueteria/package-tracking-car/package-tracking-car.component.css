@@ -25,7 +25,8 @@ h1 {
 
 .vehicle-card {
   width: 30%;
-  min-width: 250px; /* Más ancho mínimo para mejor lectura */
+  min-width: 250px;
+  /* Más ancho mínimo para mejor lectura */
   max-width: 350px;
   height: 280px;
   border: 2px solid #000;
@@ -171,6 +172,14 @@ h1 {
     width: 100%;
     height: auto;
     margin-bottom: 12px;
+  }
+
+  .buscador {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    flex: 1;
+    max-width: 250px;
   }
 
   .vehicle-info {

@@ -27,6 +27,7 @@ import { HomeModule } from './modules/pages/home/home.module';
 import { NgChartsModule } from 'ng2-charts';
 import { GraphsRoutingModule } from './modules/pages/graphs/graphs-routing.module';
 import { GraphsModule } from './modules/pages/graphs/graphs.module';
+import { DatePipe } from '@angular/common'; // 👈 Importar aquí
 
 
 @NgModule({
@@ -62,7 +63,8 @@ import { GraphsModule } from './modules/pages/graphs/graphs.module';
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
       multi: true
-    }
+    },
+    DatePipe
   ],
   bootstrap: [AppComponent]
 })

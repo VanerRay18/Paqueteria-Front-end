@@ -8,6 +8,7 @@ import { FileTransferService } from 'src/app/services/file-transfer.service';
 import { PakageService } from 'src/app/services/pakage.service';
 import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
+import { DatePipe } from '@angular/common';
 
 
 @Component({
@@ -44,7 +45,8 @@ export class PackageTrackingComponent implements OnInit {
   constructor(
     private pakage: PakageService,
     private fileTransferService: FileTransferService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private datePipe: DatePipe
 
   ) {
 
@@ -291,11 +293,60 @@ export class PackageTrackingComponent implements OnInit {
   }
 
   histotyPackage(paquete: any): void {
+this.pakage.getHistoryByPakage(paquete.id).subscribe((resp) => {
+      if (resp.success && resp.data) {
+        const history = resp.data.sort((a: { tsCreated: number; }, b: { tsCreated: number; }) => a.tsCreated - b.tsCreated);
+        const htmlContent = history.map((entry: { tsCreated: string | number | Date; catStatus: { name: string; config: { config: { color: string; }; }; }; description: any; }) => {
+          const date = this.datePipe.transform(entry.tsCreated, 'yyyy-MM-dd HH:mm:ss');
+          const status = entry.catStatus?.name || 'Sin estatus';
+          const description = entry.description ? `<div><strong>Detalle:</strong> ${entry.description}</div>` : '';
+          const color = entry.catStatus?.config?.config?.color || '#888';
 
+          return `
+          <div style="margin-bottom: 15px;">
+            <div style="color: ${color}; font-weight: bold;">${status}</div>
+            <div style="font-size: 12px; color: #555;">${date}</div>
+            ${description}
+          </div>
+        `;
+        }).join('');
+
+        Swal.fire({
+          title: 'Historial del Paquete 📦',
+          html: htmlContent,
+          width: 600,
+          showCloseButton: true,
+          confirmButtonText: 'Cerrar',
+          scrollbarPadding: false
+        });
+      } else {
+        Swal.fire('Error', 'No se pudo obtener el historial del paquete.', 'error');
+      }
+    });
   }
 
   deletePackage(paquete: any): void {
-
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: `¿Deseas eliminar el paquete con guía ${paquete.guia}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.pakage.DeletePackage(paquete.id).subscribe(
+          response => {
+            Swal.fire('¡Eliminado!', `El paquete ${paquete.guia} ha sido eliminado.`, 'success');
+            this.getData(this.page, this.size);
+          },
+          error => {
+            console.error('Error al eliminar el paquete:', error);
+            Swal.fire('Error', 'No se pudo eliminar el paquete.', 'error');
+          }
+        );
+      }
+    });
   }
 
   agruparPorFechaDeEntrega(paquetes: any[]) {
@@ -547,11 +598,25 @@ export class PackageTrackingComponent implements OnInit {
               if (!lista) return;
               lista.innerHTML = this.paquetesEsc.map((p, i) =>
                 `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding: 4px 8px; border: 1px solid #ccc; border-radius: 6px;">
-              <span>${p}</span>
-              <button style="border: none; background: transparent; font-size: 16px; cursor: pointer; color: #b91c1c;"
-                onclick="document.dispatchEvent(new CustomEvent('quitar-paquete', { detail: ${i} }))">✖</button>
-            </div>`
+        <span>${p}</span>
+        <button style="border: none; background: transparent; font-size: 16px; cursor: pointer; color: #b91c1c;"
+          onclick="document.dispatchEvent(new CustomEvent('quitar-paquete', { detail: ${i} }))">✖</button>
+      </div>`
               ).join('');
+            };
+
+            const enviarAutomatico = () => {
+              const paquetesAEnviar = [...this.paquetesEsc]; // copia antes de limpiar
+              this.pakage.paquetesEscaneados(paquetesAEnviar, this.incomingPackageId).subscribe({
+                next: () => {
+                  this.getData(this.page, this.size);
+                  this.paquetesEsc = []; // limpia paquetes ya enviados
+                  renderLista(); // actualiza la lista en el modal
+                },
+                error: () => {
+                  Swal.fire('Error', 'No se pudieron guardar automáticamente los paquetes.', 'error');
+                }
+              });
             };
 
             const agregarPaquete = (paquete: string) => {
@@ -571,8 +636,13 @@ export class PackageTrackingComponent implements OnInit {
 
               this.paquetesEsc.push(recortado);
               renderLista();
-            };
 
+              // 👉 Envío automático al llegar a 30 paquetes
+              if (this.paquetesEsc.length >= 30) {
+                Swal.showValidationMessage('ℹ️ 30 paquetes alcanzados, enviando automáticamente...');
+                enviarAutomatico();
+              }
+            };
 
             input.addEventListener('input', () => {
               if (debounceTimer) clearTimeout(debounceTimer);
