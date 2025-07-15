@@ -17,7 +17,8 @@ export class PermisosUserService {
   }
   getPermisos(): any {
     const permisosString = localStorage.getItem('permisos');
-   
+    console.log(permisosString)
+
     if (permisosString) {
         try {
             this.permisos = JSON.parse(permisosString);
@@ -41,15 +42,15 @@ export class PermisosUserService {
     const eliminarValue = localStorage.getItem('eliminar');
     return eliminarValue !== null ? eliminarValue === 'true' : true;
   }
-  
+
   add(): boolean {
     const agregarValue = localStorage.getItem('agregar');
     return agregarValue !== null ? agregarValue === 'true' : true;
   }
 
-  getPermisosSpring(permisoId: number): Observable<ApiResponse> {//Historial actual de licencias
+  getPermisosSpring(permisoId: number): Observable<ApiResponse> {
     let headers = new HttpHeaders({'permisoId': permisoId})
-    return this.http.get<ApiResponse>(`${environment.baseService}${'/user/permisosById'}`,
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/roles/permisosById'}`,
       {headers}
     );
   }

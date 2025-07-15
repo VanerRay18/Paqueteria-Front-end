@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { ApiResponse } from 'src/app/models/ApiResponse';
 import { FileTransferService } from 'src/app/services/file-transfer.service';
 import { PakageService } from 'src/app/services/pakage.service';
+import { PermisosUserService } from 'src/app/services/permisos-user.service';
 
 @Component({
   selector: 'app-inicio',
@@ -9,8 +11,10 @@ import { PakageService } from 'src/app/services/pakage.service';
   styleUrls: ['./inicio.component.css']
 })
 export class InicioComponent implements OnInit {
-empresas: any[] = [];
-isLoading: boolean= true;
+  empresas: any[] = [];
+  isLoading: boolean = true;
+  autorizar: boolean = false;
+
   alertas = [
     {
       dias: 3,
@@ -28,48 +32,53 @@ isLoading: boolean= true;
 
   constructor(private router: Router,
     private pakage: PakageService,
-    private idService: FileTransferService
+    private idService: FileTransferService,
+    private PermisosUserService: PermisosUserService,
   ) { }
 
   ngOnInit(): void {
-this.filtrarPor('dia');
+    this.filtrarPor('dia');
+    this.PermisosUserService.getPermisosSpring(this.PermisosUserService.getPermisos().ADMIN).subscribe((response: ApiResponse) => {
+      console.log(response.data)
+      this.autorizar = response.data.autorizar
+    });
   }
 
   filtrarPor(rango: 'dia' | 'semana' | 'mes') {
-  const hoy = new Date();
-  let desde = new Date(hoy);
+    const hoy = new Date();
+    let desde = new Date(hoy);
 
-  if (rango === 'semana') {
-    desde.setDate(hoy.getDate() - 7);
-  } else if (rango === 'mes') {
-    desde.setMonth(hoy.getMonth() - 1);
-  }
-
-  const desdeStr = desde.toISOString().split('T')[0]; // yyyy-mm-dd
-  const hastaStr = hoy.toISOString().split('T')[0];   // yyyy-mm-dd
-        this.isLoading = true;
-  this.pakage.getPaqueterias(desdeStr, hastaStr).subscribe({
-    next: (res) => {
-      this.empresas = res.data;
-      this.empresas.forEach((empresa: any) => {
-        this.isLoading = false;
-        empresa.nombre = empresa.name;
-        empresa.faltantes = empresa.noEntregados;
-        const total = empresa.entregados + empresa.faltantes;
-        empresa.porcentaje = total ? (empresa.entregados / total) * 100 : 0;
-      });
-    },
-    error: (err) => {
-      console.error('Error al filtrar empresas:', err);
+    if (rango === 'semana') {
+      desde.setDate(hoy.getDate() - 7);
+    } else if (rango === 'mes') {
+      desde.setMonth(hoy.getMonth() - 1);
     }
-  });
-}
+
+    const desdeStr = desde.toISOString().split('T')[0]; // yyyy-mm-dd
+    const hastaStr = hoy.toISOString().split('T')[0];   // yyyy-mm-dd
+    this.isLoading = true;
+    this.pakage.getPaqueterias(desdeStr, hastaStr).subscribe({
+      next: (res) => {
+        this.empresas = res.data;
+        this.empresas.forEach((empresa: any) => {
+          this.isLoading = false;
+          empresa.nombre = empresa.name;
+          empresa.faltantes = empresa.noEntregados;
+          const total = empresa.entregados + empresa.faltantes;
+          empresa.porcentaje = total ? (empresa.entregados / total) * 100 : 0;
+        });
+      },
+      error: (err) => {
+        console.error('Error al filtrar empresas:', err);
+      }
+    });
+  }
 
 
 
   irAEmpresa(id: any) {
     // console.log('ID de la empresa:', id); // Obtiene el ID del empleado
-  //this.idService.setIdTercero(id);
+    //this.idService.setIdTercero(id);
     this.router.navigate(['/pages/Paqueteria/Carga-paquetes/' + id]);
   }
 

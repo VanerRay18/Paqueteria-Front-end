@@ -35,7 +35,7 @@
     <!-- ASISTENCIAS Y ALERTAS -->
     <div class="card-group">
       <!-- ASISTENCIAS -->
-      <div class="card">
+      <div class="card" *ngIf="autorizar">
         <h4 class="card-title">🕒 Asistencias del personal</h4>
         <p>Consulta las asistencias y faltas del personal registrado.</p>
         <button class="btn" (click)="irAsistencias()">IR</button>

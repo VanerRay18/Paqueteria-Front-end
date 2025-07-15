@@ -59,6 +59,7 @@ export class LoginComponent implements OnInit {
             const path = response.body.data.config.principal;
             const extras = response.body.data.config.extras
             this.PermisosUserService.save(response.body.data.permisos);
+            console.log(response.body.data.permisos)
             // Guardar el token y otros datos en localStorage
             if (token) {
                 localStorage.setItem('userId', userId);
