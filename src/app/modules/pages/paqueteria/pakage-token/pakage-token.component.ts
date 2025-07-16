@@ -38,6 +38,13 @@ export class PakageTokenComponent {
       },
       error: (err) => {
         console.error('Error al generar token', err);
+              Swal.fire({
+        icon: 'error',
+        title: '¡Error!',
+        text: err.error.message,
+        confirmButtonText: 'Aceptar'
+      });
+
         this.buttonDisabled = false;
       }
     });
