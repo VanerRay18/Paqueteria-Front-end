@@ -37,10 +37,9 @@ export class InicioComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.filtrarPor('dia');
-    this.PermisosUserService.getPermisosSpring(this.PermisosUserService.getPermisos().ADMIN).subscribe((response: ApiResponse) => {
-      console.log(response.data)
-      this.autorizar = response.data.autorizar
+     this.filtrarPor('dia');  
+    this.PermisosUserService.getPermisosSpring(this.PermisosUserService.getPermisos().ADMIN_PAQUETERIA).subscribe((response: ApiResponse) => {
+      this.autorizar = response.data.auto
     });
   }
 
@@ -60,6 +59,7 @@ export class InicioComponent implements OnInit {
     this.pakage.getPaqueterias(desdeStr, hastaStr).subscribe({
       next: (res) => {
         this.empresas = res.data;
+        console.log('Empresas filtradas:', this.empresas);
         this.empresas.forEach((empresa: any) => {
           this.isLoading = false;
           empresa.nombre = empresa.name;
