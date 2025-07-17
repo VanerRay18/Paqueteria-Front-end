@@ -449,52 +449,72 @@ export class PackageTrackingComponent implements OnInit {
     if (file) {
       const reader: FileReader = new FileReader();
       reader.onload = (e: any) => {
-        const data: Uint8Array = new Uint8Array(e.target.result);
-        const workbook: XLSX.WorkBook = XLSX.read(data, { type: 'array' });
+        const arrayBuffer = e.target.result;
+        const uint8Array = new Uint8Array(arrayBuffer);
 
-        const sheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[sheetName];
+        // Verificamos si el archivo contiene números en formato científico
+        const textReader = new FileReader();
+        textReader.onload = (event: any) => {
+          const textContent = event.target.result as string;
 
-        const jsonDataOriginal = XLSX.utils.sheet_to_json(worksheet, {
-          defval: '',
-          raw: false,
-          dateNF: 'mm/dd/yyyy' // Formato de fecha
-        });
+          if (/[\d.]+e[+-]?\d+/i.test(textContent)) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Formato inválido detectado',
+              text: 'El archivo contiene números en formato científico como "3.9068E+11", lo cual no es permitido.',
+            });
+            return;
+          }
 
-        const toCamelCase = (str: string) => {
-          return str
-            .toLowerCase()
-            .replace(/[^a-zA-Z0-9 ]/g, '')              // quita caracteres especiales
-            .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) =>
-              index === 0 ? word.toLowerCase() : word.toUpperCase()
-            )
-            .replace(/\s+/g, '');
-        };
+          const workbook: XLSX.WorkBook = XLSX.read(uint8Array, { type: 'array' });
 
-        const jsonData = jsonDataOriginal.map((row: any) => {
-          const newRow: any = {};
+          const sheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[sheetName];
 
-          Object.keys(row).forEach(key => {
-            const newKey = toCamelCase(key);
-            const value = row[key];
-
-            // Detectar si es una fecha
-            if (value instanceof Date || (!isNaN(Date.parse(value)) && typeof value === 'string')) {
-              const date = dayjs(value);
-              newRow[newKey] = date.isValid() ? date.format('MM/DD/YYYY') : value;
-            } else {
-              newRow[newKey] = value;
-            }
+          const jsonDataOriginal = XLSX.utils.sheet_to_json(worksheet, {
+            defval: '',
+            raw: false,
+            dateNF: 'mm/dd/yyyy' // Formato de fecha
           });
 
-          return newRow;
-        });
+          const toCamelCase = (str: string) => {
+            return str
+              .toLowerCase()
+              .replace(/[^a-zA-Z0-9 ]/g, '')              // quita caracteres especiales
+              .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) =>
+                index === 0 ? word.toLowerCase() : word.toUpperCase()
+              )
+              .replace(/\s+/g, '');
+          };
 
-        if (tipo === 'normal') {
-          this.enviarAlBackend(jsonData);
-        } else if (tipo === 'costos') {
-          this.enviarAlBackendCostos(jsonData);
-        }
+          const jsonData = jsonDataOriginal.map((row: any) => {
+            const newRow: any = {};
+
+            Object.keys(row).forEach(key => {
+              const newKey = toCamelCase(key);
+              const value = row[key];
+
+              // Detectar si es una fecha
+              if (value instanceof Date || (!isNaN(Date.parse(value)) && typeof value === 'string')) {
+                const date = dayjs(value);
+                newRow[newKey] = date.isValid() ? date.format('MM/DD/YYYY') : value;
+              } else {
+                newRow[newKey] = value;
+              }
+            });
+
+            return newRow;
+          });
+
+          if (tipo === 'normal') {
+            this.enviarAlBackend(jsonData);
+          } else if (tipo === 'costos') {
+            this.enviarAlBackendCostos(jsonData);
+          }
+        };
+
+        // Ahora leemos como texto para validación previa
+        textReader.readAsText(file);
       };
 
 
@@ -514,7 +534,7 @@ export class PackageTrackingComponent implements OnInit {
       }
     });
     this.pakage.SentDataExel(data, this.incomingPackageId).subscribe(
-      response => {
+      (response) => {
         // console.log(response.data);
         this.getData(this.page, this.size); // Actualiza la lista después de enviar los datos
         Swal.fire({
@@ -525,6 +545,13 @@ export class PackageTrackingComponent implements OnInit {
           timer: 1500,
           timerProgressBar: true
         });
+      },
+      (err) => {
+        Swal.fire(
+          'Error',
+          ` ${err.error?.message || 'Error desconocido'}`,
+          'error'
+        );
       }
     );
 
@@ -540,7 +567,7 @@ export class PackageTrackingComponent implements OnInit {
       }
     });
     this.pakage.SentDataExelCost(data, this.incomingPackageId).subscribe(
-      response => {
+      (response) => {
         // console.log(response.data);
         this.getData(this.page, this.size); // Actualiza la lista después de enviar los datos
         Swal.fire({
@@ -551,6 +578,13 @@ export class PackageTrackingComponent implements OnInit {
           timer: 1500,
           timerProgressBar: true
         });
+      },
+      (err) => {
+        Swal.fire(
+          'Error',
+          ` ${err.error?.message || 'Formato inválido del archivo'}`,
+          'error'
+        );
       }
     );
 
