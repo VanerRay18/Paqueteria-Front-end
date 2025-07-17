@@ -125,7 +125,7 @@ export class PackageTrackingCarComponent implements OnInit {
         <option value="">Selecciona un conductor</option>
         ${opcionesConductor}
       </select>
-      <input id="input-destino" class="swal2-input" placeholder="Destino" value=" ">
+      <input id="input-destino" class="swal2-input" placeholder="Destino" >
       <input id="input-description" class="swal2-input" placeholder="Descripción">
     `,
       confirmButtonText: 'Guardar y continuar',

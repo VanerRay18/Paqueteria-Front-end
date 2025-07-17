@@ -41,17 +41,17 @@ export class PakageIncomingComponent implements OnInit {
   ngOnInit(): void {
 
     this.PackageOrgId = this.route.snapshot.paramMap.get('id');
-         this.rango = {
-            startDate: dayjs().startOf('day'),
-            endDate: dayjs().endOf('day')
-          };
+    this.rango = {
+      startDate: dayjs().startOf('day'),
+      endDate: dayjs().endOf('day')
+    };
 
-          this.getDatos(this.page, this.size);
+    this.getDatos(this.page, this.size);
 
   }
 
   getDatos(page: number, size: number) {
-    console.log('Obteniendo datos para la página:', page, 'con tamaño:', size);
+
     if (!this.rango || !this.rango.startDate || !this.rango.endDate) return;
 
     const desdeFormatted = this.rango.startDate.format('YYYY-MM-DD');
@@ -63,7 +63,6 @@ export class PakageIncomingComponent implements OnInit {
     this.pakage.getCargaById(this.PackageOrgId, desdeFormatted, hastaFormatted, page, size).subscribe(
       (response: ApiResponse) => {
         this.total = Number(response.message) || 0;
-        console.log("este es el total", this.total);
         this.data = response.data;
         this.isLoading = false;
       },
@@ -82,7 +81,7 @@ export class PakageIncomingComponent implements OnInit {
   infocard(id: number) {
     // this.fileTransferService.clearIdTercero();
     // this.fileTransferService.setIdTercero(id);
-    this.router.navigate(['/pages/Paqueteria/Registro-seguimiento/'+ id]);
+    this.router.navigate(['/pages/Paqueteria/Registro-seguimiento/' + id]);
   }
 
   crearCargamento() {
@@ -97,14 +96,22 @@ export class PakageIncomingComponent implements OnInit {
       if (result.isConfirmed) {
 
         const description = 'Cargamento generado '; // o algo dinámico
-
+        Swal.fire({
+          title: 'Creando cargamento...',
+          text: 'Por favor, espere.',
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
         this.pakage.createIncoming(this.PackageOrgId, description).subscribe({
           next: (res) => {
             Swal.fire('¡Cargamento creado!', '', 'success').then(() => {
               // this.fileTransferService.clearIdTercero();
               // this.fileTransferService.setIdTercero(res.data);
               // console.log('Cargamento creado con ID:', res.data);
-              this.router.navigate(['/pages/Paqueteria/Registro-seguimiento/'+ res.data]);
+              this.router.navigate(['/pages/Paqueteria/Registro-seguimiento/' + res.data]);
             });
             // this.fileTransferService.clearIdTercero();
             this.getDatos(this.page, this.size); // Actualizar la lista de cargamentos

@@ -96,9 +96,9 @@ export class PakageService {
   }
 
 
-  paquetesEscaneados(data: any, incomingPackageId: any): Observable<ApiResponse> {//Trae la nomina actual
-    let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId });
-    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/createPackage'}`, data,
+  paquetesEscaneados(guia: any, incomingPackageId: any): Observable<ApiResponse> {//Trae la nomina actual
+    let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId, 'guia': guia,});
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/createPackage'}`, null,
       { headers });
   }
 
