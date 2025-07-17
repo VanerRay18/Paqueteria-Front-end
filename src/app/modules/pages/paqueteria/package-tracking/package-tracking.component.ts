@@ -293,7 +293,7 @@ export class PackageTrackingComponent implements OnInit {
   }
 
   histotyPackage(paquete: any): void {
-this.pakage.getHistoryByPakage(paquete.id).subscribe((resp) => {
+    this.pakage.getHistoryByPakage(paquete.id).subscribe((resp) => {
       if (resp.success && resp.data) {
         const history = resp.data.sort((a: { tsCreated: number; }, b: { tsCreated: number; }) => a.tsCreated - b.tsCreated);
         const htmlContent = history.map((entry: { tsCreated: string | number | Date; catStatus: { name: string; config: { config: { color: string; }; }; }; description: any; }) => {
@@ -556,102 +556,106 @@ this.pakage.getHistoryByPakage(paquete.id).subscribe((resp) => {
 
   }
 
-mostrarSwal(): void {
-  this.paquetesEsc = [];
+  mostrarSwal(): void {
+    this.paquetesEsc = [];
 
-  const headers = new HttpHeaders({ 'incomingPackageId': this.incomingPackageId });
+    const headers = new HttpHeaders({ 'incomingPackageId': this.incomingPackageId });
 
-  this.pakage.getConfigPackageOrg(headers).subscribe({
-    next: (response) => {
-      const { minvalue, maxvalue } = response.data.config;
+    this.pakage.getConfigPackageOrg(headers).subscribe({
+      next: (response) => {
+        const { minvalue, maxvalue } = response.data.config;
 
-      Swal.fire({
-        title: 'Comience a escanear los paquetes',
-        html: `
+        Swal.fire({
+          title: 'Comience a escanear los paquetes',
+          html: `
           <input id="input-paquete" class="swal2-input" placeholder="Escanea o escribe el paquete" autofocus>
           <div id="lista-paquetes" style="max-height: 250px; overflow-y: auto; text-align: left; font-weight: 500; font-family: sans-serif; margin-top: 1rem;"></div>
         `,
-        showCancelButton: true,
-        confirmButtonText: 'Cerrar',
-        cancelButtonText: 'Cancelar',
-        allowOutsideClick: false,
-        preConfirm: () => {
-          if (this.paquetesEsc.length === 0) {
-            Swal.showValidationMessage('Debes escanear al menos un paquete.');
-            return false;
-          }
-          return true;
-        },
-        didOpen: () => {
-          const input = document.getElementById('input-paquete') as HTMLInputElement;
-          const lista = document.getElementById('lista-paquetes');
-          let debounceTimer: any;
+          showCancelButton: true,
+          confirmButtonText: 'Cerrar',
+          cancelButtonText: 'Cancelar',
+          allowOutsideClick: false,
+          preConfirm: () => {
+            if (this.paquetesEsc.length === 0) {
+              Swal.showValidationMessage('Debes escanear al menos un paquete.');
+              return false;
+            }
+            return true;
+          },
+          didOpen: () => {
+            const input = document.getElementById('input-paquete') as HTMLInputElement;
+            const lista = document.getElementById('lista-paquetes');
+            let debounceTimer: any;
 
-          const renderLista = () => {
-            if (!lista) return;
-            lista.innerHTML = this.paquetesEsc.map((p, i) =>
-              `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding: 4px 8px; border: 1px solid #ccc; border-radius: 6px;">
+            const renderLista = () => {
+              if (!lista) return;
+              lista.innerHTML = this.paquetesEsc.map((p, i) =>
+                `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding: 4px 8px; border: 1px solid #ccc; border-radius: 6px;">
                 <span>${p}</span>
                 <button style="border: none; background: transparent; font-size: 16px; cursor: pointer; color: #b91c1c;"
                   onclick="document.dispatchEvent(new CustomEvent('quitar-paquete', { detail: ${i} }))">✖</button>
               </div>`
-            ).join('');
-          };
+              ).join('');
+            };
 
-          const agregarPaquete = (paquete: string) => {
-            if (paquete.length < minvalue) {
-              Swal.showValidationMessage(`❌ El paquete debe tener al menos ${minvalue} caracteres.`);
-              return;
-            }
-
-            const recortado = paquete.length > maxvalue
-              ? paquete.substring(paquete.length - maxvalue)
-              : paquete;
-
-            if (this.paquetesEsc.includes(recortado)) {
-              Swal.showValidationMessage(`⚠️ El paquete "${recortado}" ya fue escaneado.`);
-              return;
-            }
-
-            // ✅ Enviar al backend uno por uno
-            this.pakage.paquetesEscaneados(recortado, this.incomingPackageId).subscribe({
-              next: () => {
-                this.paquetesEsc.push(recortado);
-                renderLista();
-              },
-              error: () => {
-                Swal.fire('Error', `No se pudo guardar el paquete "${recortado}".`, 'error');
+            const agregarPaquete = (paquete: string) => {
+              if (paquete.length < minvalue) {
+                Swal.showValidationMessage(`❌ El paquete debe tener al menos ${minvalue} caracteres.`);
+                return;
               }
+
+              const recortado = paquete.length > maxvalue
+                ? paquete.substring(paquete.length - maxvalue)
+                : paquete;
+
+              if (this.paquetesEsc.includes(recortado)) {
+                Swal.showValidationMessage(`⚠️ El paquete "${recortado}" ya fue escaneado.`);
+                return;
+              }
+
+              // ✅ Enviar al backend uno por uno
+              this.pakage.paquetesEscaneados(recortado, this.incomingPackageId).subscribe({
+                next: (response) => {
+                  this.paquetesEsc.push(recortado);
+                  renderLista();
+                },
+                error: (err) => {
+                  Swal.fire(
+                    'Error',
+                    `No se pudo guardar el paquete "${recortado}".\n\nDetalle: ${err.error?.message || 'Error desconocido'}`,
+                    'error'
+                  );
+                }
+              });
+            };
+
+            input.addEventListener('input', () => {
+              if (debounceTimer) clearTimeout(debounceTimer);
+              debounceTimer = setTimeout(() => {
+                const valor = input.value.trim();
+                if (valor) {
+                  agregarPaquete(valor);
+                  input.value = '';
+                }
+              }, 600);
             });
-          };
 
-          input.addEventListener('input', () => {
-            if (debounceTimer) clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => {
-              const valor = input.value.trim();
-              if (valor) {
-                agregarPaquete(valor);
-                input.value = '';
-              }
-            }, 600);
-          });
+            document.addEventListener('quitar-paquete', (e: any) => {
+              const index = e.detail;
+              this.paquetesEsc.splice(index, 1);
+              renderLista();
+            });
 
-          document.addEventListener('quitar-paquete', (e: any) => {
-            const index = e.detail;
-            this.paquetesEsc.splice(index, 1);
-            renderLista();
-          });
-
-          input.focus();
-        }
-      });
-    },
-    error: (err) => {
-      console.error('Error al obtener configuración de longitud:', err);
-      Swal.fire('Error', 'No se pudo cargar la configuración de escaneo.', 'error');
-    }
-  });
-}
+            input.focus();
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error al obtener configuración de longitud:', err);
+        Swal.fire('Error', 'No se pudo cargar la configuración de escaneo.', 'error');
+      }
+    });
+  }
 
 
 
