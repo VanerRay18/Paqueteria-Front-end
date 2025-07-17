@@ -6,10 +6,17 @@
 
   <div class="card ">
     <div class="row d-flex justify-content-center m-4">
-      <input type="text" placeholder="Buscar..." class="buscador" [(ngModel)]="searchTerm" />
-      <div class="vehicle-card m-4" *ngFor="let vehicle of vehicleCards | filter: searchTerm" (click)="mostrarSwalVehiculo(vehicle)">
+      <input
+        type="text"
+        placeholder="🔍 Buscar..."
+        class="buscador"
+        [(ngModel)]="searchTerm" />
+      <div class="vehicle-card m-4"
+        *ngFor="let vehicle of vehicleCards | filter: searchTerm"
+        (click)="mostrarSwalVehiculo(vehicle)">
         <div class="vehicle-header">
-          <img [src]="vehicle?.imagen?.url" alt="auto" class="vehicle-img" (error)="handleImageError($event)" />
+          <img [src]="vehicle?.imagen?.url" alt="auto" class="vehicle-img"
+            (error)="handleImageError($event)" />
           <div class="vehicle-info">
             <strong>{{ vehicle.placa }}</strong>
             <div class="vehicle-model">{{ vehicle.modelo }}</div>
@@ -38,13 +45,16 @@
           <div class="progress-labels">
             <div>Entregados <br /><small>{{ vehicle.entregados
                 }}</small></div>
-            <div>No entregados <br /><small>{{ vehicle.faltantes }}</small></div>
+            <div>No entregados <br /><small>{{ vehicle.faltantes
+                }}</small></div>
           </div>
         </div>
 
       </div>
-      <app-paginador-component [isLoading]="isLoading" [message]="'No hay cargamentos registrados en este día.'"
-        [page]="page" [size]="size" [total]="total" (pageChange)="cambiarPagina($event)">
+      <app-paginador-component [isLoading]="isLoading"
+        [message]="'No hay cargamentos registrados en este día.'"
+        [page]="page" [size]="size" [total]="total"
+        (pageChange)="cambiarPagina($event)">
       </app-paginador-component>
     </div>
   </div>

@@ -556,144 +556,103 @@ this.pakage.getHistoryByPakage(paquete.id).subscribe((resp) => {
 
   }
 
-  mostrarSwal(): void {
-    this.paquetesEsc = [];
+mostrarSwal(): void {
+  this.paquetesEsc = [];
 
-    const headers = new HttpHeaders({ 'incomingPackageId': this.incomingPackageId });
+  const headers = new HttpHeaders({ 'incomingPackageId': this.incomingPackageId });
 
-    this.pakage.getConfigPackageOrg(headers).subscribe({
-      next: (response) => {
-        const { minvalue, maxvalue } = response.data.config;
+  this.pakage.getConfigPackageOrg(headers).subscribe({
+    next: (response) => {
+      const { minvalue, maxvalue } = response.data.config;
 
-        Swal.fire({
-          title: 'Comience a escanear los paquetes',
-          html: `
-        <input id="input-paquete" class="swal2-input" placeholder="Escanea o escribe el paquete" autofocus>
-        <div id="lista-paquetes" style="
-          max-height: 250px;
-          overflow-y: auto;
-          text-align: left;
-          font-weight: 500;
-          font-family: sans-serif;
-          margin-top: 1rem;"></div>
-      `,
-          showCancelButton: true,
-          confirmButtonText: 'Guardar',
-          cancelButtonText: 'Cancelar',
-          allowOutsideClick: false,
-          preConfirm: () => {
-            // Validación final antes de enviar
-            if (this.paquetesEsc.length === 0) {
-              Swal.showValidationMessage('Debes escanear al menos un paquete.');
-              return false;
-            }
-            return this.paquetesEsc;
-          },
-          didOpen: () => {
-            const input = document.getElementById('input-paquete') as HTMLInputElement;
-            const lista = document.getElementById('lista-paquetes');
-            let debounceTimer: any;
-
-            const renderLista = () => {
-              if (!lista) return;
-              lista.innerHTML = this.paquetesEsc.map((p, i) =>
-                `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding: 4px 8px; border: 1px solid #ccc; border-radius: 6px;">
-        <span>${p}</span>
-        <button style="border: none; background: transparent; font-size: 16px; cursor: pointer; color: #b91c1c;"
-          onclick="document.dispatchEvent(new CustomEvent('quitar-paquete', { detail: ${i} }))">✖</button>
-      </div>`
-              ).join('');
-            };
-
-            const enviarAutomatico = () => {
-              const paquetesAEnviar = [...this.paquetesEsc]; // copia antes de limpiar
-              this.pakage.paquetesEscaneados(paquetesAEnviar, this.incomingPackageId).subscribe({
-                next: () => {
-                  this.getData(this.page, this.size);
-                  this.paquetesEsc = []; // limpia paquetes ya enviados
-                  renderLista(); // actualiza la lista en el modal
-                },
-                error: () => {
-                  Swal.fire('Error', 'No se pudieron guardar automáticamente los paquetes.', 'error');
-                }
-              });
-            };
-
-            const agregarPaquete = (paquete: string) => {
-              if (paquete.length < minvalue) {
-                Swal.showValidationMessage(`❌ El paquete debe tener al menos ${minvalue} caracteres.`);
-                return;
-              }
-
-              const recortado = paquete.length > maxvalue
-                ? paquete.substring(paquete.length - maxvalue)
-                : paquete;
-
-              if (this.paquetesEsc.includes(recortado)) {
-                Swal.showValidationMessage(`⚠️ El paquete "${recortado}" ya fue escaneado.`);
-                return;
-              }
-
-              this.paquetesEsc.push(recortado);
-              renderLista();
-
-              // 👉 Envío automático al llegar a 30 paquetes
-              if (this.paquetesEsc.length >= 30) {
-                Swal.showValidationMessage('ℹ️ 30 paquetes alcanzados, enviando automáticamente...');
-                enviarAutomatico();
-              }
-            };
-
-            input.addEventListener('input', () => {
-              if (debounceTimer) clearTimeout(debounceTimer);
-              debounceTimer = setTimeout(() => {
-                const valor = input.value.trim();
-                if (valor) {
-                  agregarPaquete(valor);
-                  input.value = '';
-                }
-              }, 600);
-            });
-
-            document.addEventListener('quitar-paquete', (e: any) => {
-              const index = e.detail;
-              this.paquetesEsc.splice(index, 1);
-              renderLista();
-            });
-
-            input.focus();
+      Swal.fire({
+        title: 'Comience a escanear los paquetes',
+        html: `
+          <input id="input-paquete" class="swal2-input" placeholder="Escanea o escribe el paquete" autofocus>
+          <div id="lista-paquetes" style="max-height: 250px; overflow-y: auto; text-align: left; font-weight: 500; font-family: sans-serif; margin-top: 1rem;"></div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Cerrar',
+        cancelButtonText: 'Cancelar',
+        allowOutsideClick: false,
+        preConfirm: () => {
+          if (this.paquetesEsc.length === 0) {
+            Swal.showValidationMessage('Debes escanear al menos un paquete.');
+            return false;
           }
-        }).then((result) => {
-          if (result.isConfirmed && result.value?.length > 0) {
-            // ✅ Enviar al backend todos los paquetes escaneados
+          return true;
+        },
+        didOpen: () => {
+          const input = document.getElementById('input-paquete') as HTMLInputElement;
+          const lista = document.getElementById('lista-paquetes');
+          let debounceTimer: any;
 
-            Swal.fire({
-              title: 'Enviando paquetes...',
-              html: 'Por favor espera mientras se procesan los datos.',
-              allowOutsideClick: false,
-              didOpen: () => {
-                Swal.showLoading();
-              }
-            });
+          const renderLista = () => {
+            if (!lista) return;
+            lista.innerHTML = this.paquetesEsc.map((p, i) =>
+              `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding: 4px 8px; border: 1px solid #ccc; border-radius: 6px;">
+                <span>${p}</span>
+                <button style="border: none; background: transparent; font-size: 16px; cursor: pointer; color: #b91c1c;"
+                  onclick="document.dispatchEvent(new CustomEvent('quitar-paquete', { detail: ${i} }))">✖</button>
+              </div>`
+            ).join('');
+          };
 
-            this.pakage.paquetesEscaneados(this.paquetesEsc, this.incomingPackageId).subscribe({
+          const agregarPaquete = (paquete: string) => {
+            if (paquete.length < minvalue) {
+              Swal.showValidationMessage(`❌ El paquete debe tener al menos ${minvalue} caracteres.`);
+              return;
+            }
+
+            const recortado = paquete.length > maxvalue
+              ? paquete.substring(paquete.length - maxvalue)
+              : paquete;
+
+            if (this.paquetesEsc.includes(recortado)) {
+              Swal.showValidationMessage(`⚠️ El paquete "${recortado}" ya fue escaneado.`);
+              return;
+            }
+
+            // ✅ Enviar al backend uno por uno
+            this.pakage.paquetesEscaneados(recortado, this.incomingPackageId).subscribe({
               next: () => {
-                Swal.fire('¡Éxito!', 'Los paquetes fueron enviados correctamente.', 'success');
-                this.getData(this.page, this.size);
+                this.paquetesEsc.push(recortado);
+                renderLista();
               },
               error: () => {
-                Swal.fire('Error', 'No se pudieron guardar los paquetes.', 'error');
+                Swal.fire('Error', `No se pudo guardar el paquete "${recortado}".`, 'error');
               }
             });
-          }
-        });
-      },
-      error: (err) => {
-        console.error('Error al obtener configuración de longitud:', err);
-        Swal.fire('Error', 'No se pudo cargar la configuración de escaneo.', 'error');
-      }
-    });
-  }
+          };
+
+          input.addEventListener('input', () => {
+            if (debounceTimer) clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+              const valor = input.value.trim();
+              if (valor) {
+                agregarPaquete(valor);
+                input.value = '';
+              }
+            }, 600);
+          });
+
+          document.addEventListener('quitar-paquete', (e: any) => {
+            const index = e.detail;
+            this.paquetesEsc.splice(index, 1);
+            renderLista();
+          });
+
+          input.focus();
+        }
+      });
+    },
+    error: (err) => {
+      console.error('Error al obtener configuración de longitud:', err);
+      Swal.fire('Error', 'No se pudo cargar la configuración de escaneo.', 'error');
+    }
+  });
+}
+
 
 
 
