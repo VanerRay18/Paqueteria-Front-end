@@ -83,6 +83,11 @@
               style="width: 14px; height: 14px; background-color: rgb(204, 1, 1);"></span>
             <small><strong>Rojo:</strong> Entrega atrasada</small>
           </li>
+          <li class="color-item d-flex align-items-center mb-2 me-3">
+            <span class="me-2 rounded-circle"
+              style="width: 14px; height: 14px; background-color: rgb(231, 96, 198);"></span>
+            <small><strong>Rosa:</strong> Paquete con mas de 3 dias</small>
+          </li>
         </ul>
       </div>
 
@@ -128,10 +133,15 @@
           <i class="fa-solid fa-folder-open"
             style="cursor:pointer; margin-left: 10px;"
             (click)="histotyPackage(paquete)"></i>&nbsp;
-          <span [ngStyle]="{ color: paquete.color }">{{ paquete.guia }}</span>
+          <span [ngStyle]="{ color: paquete.color }">{{ paquete.guia
+            }}</span>
           <i class="fa-solid fa-trash-can"
             style="cursor:pointer; margin-left: 10px;"
             (click)="deletePackage(paquete)"></i>&nbsp;
+          <span *ngIf="paquete.passIncoming >= 3"
+            class="me-2"
+            style="display: inline-block; width: 14px; height: 14px; background-color: rgb(231, 96, 198); border-radius: 50%;">
+          </span>&nbsp;
         </div>
 
         <div *ngIf="esCosto" style="margin-top:5px; color:#16a34a;">

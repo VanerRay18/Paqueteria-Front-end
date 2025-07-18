@@ -457,115 +457,79 @@ export class SearchDeliveryComponent implements OnInit {
   }
 
   ChangeStatus(paquete: any): void {
-   const statuses = [
-    { id: 3, name: 'Vinculado con consolidado' },
-    { id: 4, name: 'En bodega' },
-    { id: 6, name: 'Cargado en unidad' },
-    { id: 7, name: 'En ruta' },
-    { id: 8, name: 'Entregado' },
-    { id: 13, name: 'No encontrado en el consolidado' },
-    { id: 14, name: 'Devuelto a la paquetería' },
-    { id: 15, name: 'Vinculado con precio' },
-  ];
+    const statuses = [
+      { id: 3, name: 'Vinculado con consolidado' },
+      { id: 4, name: 'En bodega' },
+      { id: 6, name: 'Cargado en unidad' },
+      { id: 7, name: 'En ruta' },
+      { id: 8, name: 'Entregado' },
+      { id: 13, name: 'No encontrado en el consolidado' },
+      { id: 14, name: 'Devuelto a la paquetería' },
+      { id: 15, name: 'Vinculado con precio' },
+    ];
 
-   const currentStatusId = paquete.status?.id;
+    const currentStatusId = paquete.status?.id;
 
-  const statusOptionsHtml = statuses.map(s =>
-    `<option value="${s.id}" ${s.id === currentStatusId ? 'selected' : ''}>${s.name}</option>`
-  ).join('');
+    const statusOptionsHtml = statuses.map(s =>
+      `<option value="${s.id}" ${s.id === currentStatusId ? 'selected' : ''}>${s.name}</option>`
+    ).join('');
 
-  Swal.fire({
-    title: 'Cambiar estatus del paquete',
-    html: `
+    Swal.fire({
+      title: 'Cambiar estatus del paquete',
+      html: `
       <label for="status">Selecciona nuevo estatus:</label>
       <select id="status" class="swal2-select">${statusOptionsHtml}</select>
       <br><br>
       <label for="description">Descripción (opcional):</label>
       <textarea id="description" class="swal2-textarea" placeholder="Motivo o comentario..."></textarea>
     `,
-    showCancelButton: true,
-    confirmButtonText: 'Actualizar',
-    cancelButtonText: 'Cancelar',
-    preConfirm: () => {
-      const selectedStatusId = (document.getElementById('status') as HTMLSelectElement).value;
-      const description = (document.getElementById('description') as HTMLTextAreaElement).value;
-      if (!selectedStatusId) {
-        Swal.showValidationMessage('Debes seleccionar un estatus');
-        return;
-      }
-      return { catStatusId: selectedStatusId, description };
-    }
-  }).then(result => {
-    if (result.isConfirmed && result.value) {
-      const { catStatusId, description } = result.value;
-
-      // Mostrar loading mientras se hace la petición
-      Swal.fire({
-        title: 'Actualizando estatus...',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading()
-      });
-
-      this.pakage.updatePackageStatus(paquete.id, catStatusId, description).subscribe(resp => {
-        Swal.close();
-        if (resp.success) {
-          this.getData(this.page, this.size);
-          Swal.fire('¡Éxito!', 'El estatus del paquete fue actualizado.', 'success');
-        } else {
-          Swal.fire('Error', 'No se pudo actualizar el estatus del paquete.', 'error');
-        }
-      }, () => {
-        Swal.close();
-        Swal.fire('Error', 'Ocurrió un error al comunicarse con el servidor.', 'error');
-      });
-    }
-  });
-
-  }
-
-
-  mostrarSwal() {
-    Swal.fire({
-      title: 'Escanea o escribe el paquete',
-      html: `<input id="input-paquete" class="swal2-input" placeholder="Número de guía" autofocus>`,
       showCancelButton: true,
-      confirmButtonText: 'Guardar',
+      confirmButtonText: 'Actualizar',
       cancelButtonText: 'Cancelar',
-      allowOutsideClick: false,
       preConfirm: () => {
-        const input = document.getElementById('input-paquete') as HTMLInputElement;
-        const value = input?.value.trim();
-        if (!value) {
-          Swal.showValidationMessage('Debes ingresar un paquete');
+        const selectedStatusId = (document.getElementById('status') as HTMLSelectElement).value;
+        const description = (document.getElementById('description') as HTMLTextAreaElement).value;
+        if (!selectedStatusId) {
+          Swal.showValidationMessage('Debes seleccionar un estatus');
           return;
         }
-        return value;
+        return { catStatusId: selectedStatusId, description };
       }
-    }).then((result) => {
+    }).then(result => {
       if (result.isConfirmed && result.value) {
-        const paquete = result.value;
+        const { catStatusId, description } = result.value;
 
-        // 👇 Llamada al servicio con un solo paquete
-        this.pakage.addPackagesInDelivery(paquete, this.deliveryId).subscribe({
-          next: () => {
-            Swal.fire('¡Guardado!', `Paquete ${paquete} enviado correctamente.`, 'success');
+        // Mostrar loading mientras se hace la petición
+        Swal.fire({
+          title: 'Actualizando estatus...',
+          allowOutsideClick: false,
+          didOpen: () => Swal.showLoading()
+        });
+
+        this.pakage.updatePackageStatus(paquete.id, catStatusId, description).subscribe(resp => {
+          Swal.close();
+          if (resp.success) {
             this.getData(this.page, this.size);
-          },
-          error: (error) => {
-            console.error('Error al enviar el paquete:', error);
-            Swal.fire('Error', 'Ocurrió un problema al enviar el paquete.', 'error');
+            Swal.fire('¡Éxito!', 'El estatus del paquete fue actualizado.', 'success');
+          } else {
+            Swal.fire('Error', 'No se pudo actualizar el estatus del paquete.', 'error');
           }
+        }, () => {
+          Swal.close();
+          Swal.fire('Error', 'Ocurrió un error al comunicarse con el servidor.', 'error');
         });
       }
     });
+
   }
+
 
   downloadPackagesExcel(page: number, size: number): void {
     if (!this.rango || !this.rango.startDate || !this.rango.endDate) { return; }
 
     const desdeFormatted = this.rango.startDate.format('YYYY-MM-DD');
     const hastaFormatted = this.rango.endDate.format('YYYY-MM-DD');
-    const headers = new HttpHeaders({ 'desde': desdeFormatted, 'hasta': hastaFormatted, 'page': page, 'size':  this.total });
+    const headers = new HttpHeaders({ 'desde': desdeFormatted, 'hasta': hastaFormatted, 'page': page, 'size': this.total });
 
     // 🌀 Mostrar swal de carga
     Swal.fire({
@@ -578,15 +542,17 @@ export class SearchDeliveryComponent implements OnInit {
     });
 
 
-    this.pakage.getAllPackages(headers).subscribe((resp) => {
-      Swal.close();
+    this.pakage.getAllPackages(headers).subscribe({
+      next: (resp) => {
+        Swal.close(); // Cerramos cualquier Swal de carga
 
-      if (!resp.success || !resp.data || resp.data.length === 0) {
-        Swal.fire('Sin datos', 'No hay paquetes para exportar en ese rango de fechas.', 'warning');
-        return;
-      }
+        // Validamos si no hay datos
+        if (!resp.success || !resp.data || resp.data.length === 0) {
+          Swal.fire('Sin datos', 'No hay paquetes para exportar en ese rango de fechas.', 'warning');
+          return;
+        }
 
-      if (resp.success && resp.data) {
+        // Procesamos los datos y exportamos a Excel
         const excelData = resp.data.map((pkg: any) => {
           const c = pkg.consolidado || {};
           return {
@@ -619,12 +585,21 @@ export class SearchDeliveryComponent implements OnInit {
         const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
         const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
         FileSaver.saveAs(blob, `paquetes_${desdeFormatted}_a_${hastaFormatted}.xlsx`);
+
         Swal.fire('¡Listo!', 'El archivo se descargó correctamente.', 'success');
-      } else {
+      },
+
+      error: (err) => {
         Swal.close();
-        console.error('Error al obtener los datos del backend');
+        console.error('Error al obtener los datos del backend', err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text:  ` ${err.error?.message || 'No hay paquetes para generar el excel'}` ,
+        });
       }
     });
+
   }
 
 

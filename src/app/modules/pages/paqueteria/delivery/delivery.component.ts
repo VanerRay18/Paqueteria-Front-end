@@ -113,6 +113,11 @@ export class DeliveryComponent implements OnInit {
       },
       (error) => {
         console.error('Error al obtener delivery info:', error);
+              Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: ` ${error.error?.message || 'Aun no tiene una ruta asiganada.'}`
+      });
       }
     );
 
@@ -165,7 +170,7 @@ export class DeliveryComponent implements OnInit {
           <p><strong>Destino:</strong> ${d.destinationLocId} - ${d.recipCity}, ${d.recipState}</p>
           <p><strong>Persona que recibe:</strong> ${d.recipName}</p>
           <p>
-            <strong>Numero de Telefono:</strong> 
+            <strong>Numero de Telefono:</strong>
             <span id="phone-text">${d.recipPhone}</span>
             <button id="copy-phone" style="margin-left: 8px; cursor: pointer; border: none; background: none;" title="Copiar">
               📋
@@ -239,11 +244,11 @@ export class DeliveryComponent implements OnInit {
     let description = 'ruta terminada'; // Descripción de la acción
     this.pakage.updateDeliveryStatus(packageId, catStatusId, description).subscribe(
       (response) => {
-        console.log('Marcado como no entregado:', response);
         this.cargarDeliveryInfo();
         this.ngOnInit();
         this.getData(this.page, this.size);
         Swal.fire('Éxito', 'Ha terminado su ruta.', 'success');
+        this.cargarDeliveryInfo();
         // Recargar la información de entrega
         // Aquí iría la lógica para actualizar el estado en el backend si aplica
       },

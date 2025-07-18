@@ -41,7 +41,7 @@ export class PakageTokenComponent {
               Swal.fire({
         icon: 'error',
         title: '¡Error!',
-        text: err.error.message,
+        text: ` ${err.error?.message || 'Ocurrio un erro al generar el token'}`,
         confirmButtonText: 'Aceptar'
       });
 

@@ -10,12 +10,7 @@ h5{
   margin: 0;
 }
 
-.card{
-  background-color: #ffffff;
-  border-radius: 10px;
-  width: 98%;
 
-}
 
 .progress {
   display: flex;
@@ -55,11 +50,25 @@ h5{
   margin: 5px 0;
 }
 
-.boton-container {
-  display: flex; /* Activa flexbox */
-  justify-content: center; /* Centra el contenido horizontalmente */
-  align-items: center; /* Centra el contenido verticalmente */
+.botones-responsivos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
 
+/* Cuando el ancho sea menor a 600px (pantallas pequeñas), los botones se apilan */
+@media (max-width: 600px) {
+  .botones-responsivos {
+    text-align: center;
+    justify-items: center;
+    flex-direction: column;
+    align-items: stretch; /* opcional: hace que los botones ocupen todo el ancho */
+  }
+
+  .botones-responsivos button {
+    width: 100%; /* para que se vean iguales */
+   margin: 0 0 12px 0 !important;/* quitar márgenes laterales como ms-2 */
+  }
 }
 
 button {
@@ -190,6 +199,12 @@ button:active {
 
 /* Estilos responsivos para pantallas pequeñas */
 @media (max-width: 768px) {
+  .card2 {
+    width: 300px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
   .card-person {
     width: 100% !important;
     box-sizing: border-box;
@@ -237,12 +252,7 @@ button:active {
     text-align: center;
   }
 
-  .card2 {
-     width: 100% !important;
-    flex-direction: column;
-    padding: 0.5rem;
-    align-items: stretch;
-  }
+
 
   button {
     width: 100%;
