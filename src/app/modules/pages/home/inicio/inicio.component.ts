@@ -59,7 +59,7 @@ export class InicioComponent implements OnInit {
     this.pakage.getPaqueterias(desdeStr, hastaStr).subscribe({
       next: (res) => {
         this.empresas = res.data;
-        console.log('Empresas filtradas:', this.empresas);
+        // console.log('Empresas filtradas:', this.empresas);
         this.empresas.forEach((empresa: any) => {
           this.isLoading = false;
           empresa.nombre = empresa.name;

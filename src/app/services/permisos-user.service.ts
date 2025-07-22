@@ -17,7 +17,7 @@ export class PermisosUserService {
   }
   getPermisos(): any {
     const permisosString = localStorage.getItem('permisos');
-    console.log(permisosString)
+    // console.log(permisosString)
 
     if (permisosString) {
         try {

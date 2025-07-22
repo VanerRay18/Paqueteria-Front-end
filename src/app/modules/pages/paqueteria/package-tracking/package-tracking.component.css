@@ -227,3 +227,19 @@ h2 {
     margin-right: 0 !important;
   }
 }
+
+@media (max-width: 576px) {
+  .color-list {
+    flex-direction: column !important;
+    align-items: flex-start;
+  }
+
+  .color-item {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .card{
+    width: 100% !important  ;
+  }
+}

@@ -12,31 +12,31 @@
           (error)="handleImageError($event)" 
         />
         <div class="info-vehiculo">
-          <h3>{{ car.marca }} {{ car.modelo }} {{ car.color }}</h3>
-          <p class="placa">Placa: {{ car.placa || 'Sin placa' }}</p>
-          <p>Destino: <strong>{{ deliveryInfo.destino || 'Sin destino asignado' }}</strong></p>
-          <p>Conductor: <strong>{{ conductor.name }} {{ conductor.firstSurname }} {{ conductor.secondSurname }}</strong>
+          <h3>{{ car?.marca }} {{ car?.modelo }} {{ car?.color }}</h3>
+          <p class="placa">Placa: {{ car?.placa || 'Sin placa' }}</p>
+          <p>Destino: <strong>{{ deliveryInfo?.destino || 'Sin destino asignado' }}</strong></p>
+          <p>Conductor: <strong>{{ conductor?.name }} {{ conductor?.firstSurname }} {{ conductor?.secondSurname }}</strong>
           </p>
-          <p>Total de paquetes: <strong>{{ packageInformation.paquetesTotal || 0 }}</strong></p>
+          <p>Total de paquetes: <strong>{{ packageInformation?.paquetesTotal || 0 }}</strong></p>
           <p>Dinero total de paquetes: <strong>{{this.cost | currency:'USD':'symbol':'1.2-2'}}</strong></p>
         </div>
       </div>
 
       <div class="progress-container">
         <div class="progress-bar-bg">
-          <div class="progress-bar-fill" [style.width.%]="packageInformation.barra"></div>
+          <div class="progress-bar-fill" [style.width.%]="packageInformation?.barra"></div>
         </div>
         <div class="progress-labels">
-          <div>📦 Entregados: <small>{{ packageInformation.entregados }}</small></div>
-          <div>📦 No entregados: <small>{{ packageInformation.noEntregados }}</small></div>
+          <div>📦 Entregados: <small>{{ packageInformation?.entregados }}</small></div>
+          <div>📦 No entregados: <small>{{ packageInformation?.noEntregados }}</small></div>
         </div>
       </div>
 
       <div class="estado-ruta">
-        <span class="badge bodega">🚚 {{ status.name }}</span>
+        <span class="badge bodega">🚚 {{ status?.name }}</span>
         <i class="fa-solid fa-gas-pump"  (click)="swalOdometro()"></i>
-        <button *ngIf=" status.id === 5" class="btn-comenzar" (click)="empezarRuta()">Comenzar ruta</button>
-        <button *ngIf=" status.id === 7" class="btn-comenzar" (click)="terminarRuta()">Terminar ruta</button>
+        <button *ngIf=" status?.id === 5" class="btn-comenzar" (click)="empezarRuta()">Comenzar ruta</button>
+        <button *ngIf=" status?.id === 7" class="btn-comenzar" (click)="terminarRuta()">Terminar ruta</button>
       </div>
     </div>
   </div>

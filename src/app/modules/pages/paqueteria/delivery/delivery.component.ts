@@ -347,11 +347,37 @@ export class DeliveryComponent implements OnInit {
     Swal.fire({
       title: 'Agregar nuevo registro',
       html: `
-          <input type="number" id="km" class="swal2-input" placeholder="Kilómetros">
-          <input type="number" step="0.1" id="litros" class="swal2-input" placeholder="Litros">
-          <input type="number" step="0.1" id="costo" class="swal2-input" placeholder="Costo">
-          <textarea id="comentarios" class="swal2-textarea" placeholder="Comentarios"></textarea>
-        `,
+      <style>
+        html, body, .swal2-container, .swal2-popup {
+          overflow-x: hidden !important;
+          max-width: 100vw !important;
+        }
+
+        .swal2-popup {
+          width: 95vw !important;
+          box-sizing: border-box !important;
+          padding: 1rem !important;
+        }
+
+        .swal2-input, .swal2-textarea {
+          width: 100% !important;
+          max-width: 100% !important;
+          box-sizing: border-box !important;
+          margin: 0 auto 0.5rem auto;
+        }
+
+        @media (max-width: 400px) {
+          .swal2-input, .swal2-textarea {
+            font-size: 14px !important;
+          }
+        }
+      </style>
+
+      <input type="number" id="km" class="swal2-input" placeholder="Kilómetros">
+      <input type="number" step="0.1" id="litros" class="swal2-input" placeholder="Litros">
+      <input type="number" step="0.1" id="costo" class="swal2-input" placeholder="Costo">
+      <textarea id="comentarios" class="swal2-textarea" placeholder="Comentarios"></textarea>
+    `,
       focusConfirm: false,
       showCancelButton: true,
       confirmButtonText: 'Guardar',
