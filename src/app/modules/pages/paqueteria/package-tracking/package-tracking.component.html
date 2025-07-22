@@ -41,13 +41,13 @@
           📦 Comenzar a escanear
         </button>
         <button class="btn btn-escanear" (click)="macheoPaquetes()"
-          [disabled]="isMatch || total <=0"
-          [class.disabled-btn]="isMatch">
+          [disabled]="(isMatch === false && isCreateExel === true) || total <=0"
+          [class.disabled-btn]="(isMatch === false && isCreateExel === true)">
           🔄 Hacer macheo
         </button>
         <button class="btn btn-escanear" (click)="macheoPaquetesCostos()"
           [disabled]="isMatchPrice || total <=0" *ngIf="isPrice === true"
-          [class.disabled-btn]="isMatch">
+          [class.disabled-btn]="isMatch === false && isCreateExel === true">
           🔄🪙 Macheo de costos
         </button>
         <button class="btn btn-escanear" (click)="machoteExelPaquetes()">
