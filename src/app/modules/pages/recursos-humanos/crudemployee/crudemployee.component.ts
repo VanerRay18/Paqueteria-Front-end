@@ -14,14 +14,16 @@ import { RHService } from 'src/app/services/rh.service';
 })
 export class CRUDEmployeeComponent {
   searchTerm: string = '';
-  headersB = ['Nombre','Primer Apellido','Segundo Apellido','RFC','CURP', 'Tipo de contratacion', 'Puesto', 'Telefono', 'Status','Acciones'];
-  displayedColumnsB = ['name','first_surname','second_surname','rfc','curp', 'cat_job_id', 'cat_employment_id', 'phone', 'active'];
-  dataB:any[] = [];
-  headersC = ['Nombre','Primer Apellido','Segundo Apellido','RFC','CURP', 'Tipo de contratacion', 'Puesto', 'Telefono', 'Status','Acciones'];
-  displayedColumnsC = ['name','first_surname','second_surname','rfc','curp', 'cat_job_id', 'cat_employment_id', 'phone', 'active'];
-  dataC:any[] = [];
+  headersB = ['Nombre', 'Primer Apellido', 'Segundo Apellido', 'RFC', 'CURP', 'Tipo de contratacion', 'Puesto', 'Telefono', 'Status', 'Acciones'];
+  displayedColumnsB = ['name', 'first_surname', 'second_surname', 'rfc', 'curp', 'cat_job_id', 'cat_employment_id', 'phone', 'active'];
+  dataB: any[] = [];
+  headersC = ['Nombre', 'Primer Apellido', 'Segundo Apellido', 'RFC', 'CURP', 'Tipo de contratacion', 'Puesto', 'Telefono', 'Status', 'Acciones'];
+  displayedColumnsC = ['name', 'first_surname', 'second_surname', 'rfc', 'curp', 'cat_job_id', 'cat_employment_id', 'phone', 'active'];
+  dataC: any[] = [];
   isLoading = false;
   info: any;
+  totalIndividual: any;
+  totalHonorarios: any;
   arrayUserRecibido: any;
   activeTab: string = 'base';
   tabs = [
@@ -42,7 +44,7 @@ export class CRUDEmployeeComponent {
     this.getData();
   }
 
-  onDelete(employeeId : any) {
+  onDelete(employeeId: any) {
     Swal.fire({
       title: '¿Estás seguro?',
       text: "¡No podrás deshacer esta acción!",
@@ -82,35 +84,38 @@ export class CRUDEmployeeComponent {
 
   }
 
-getData() {
-  this.rh.getEmployees().subscribe((response: ApiResponse) => {
-// console.log('Datos obtenidos:', response.data);
-   this.dataB = response.data.individual.map((item: any) => ({
-           ...item,
-           active: item.active ? 'Activo' : 'Inactivo',
-         }));
-   this.dataC = response.data.honorarios.map((item: any) => ({
-           ...item,
-           active: item.active ? 'Activo' : 'Inactivo',
-         }));
-    // console.log('Datos obtenidos:', this.data);
-  },
-    (error) => {
-      // console.error('Error al obtener los datos:', error);
-      console.error('Ocurrio un error', error);
-    });
+  getData() {
+    this.rh.getEmployees().subscribe((response: ApiResponse) => {
+      // console.log('Datos obtenidos:', response.data);
+      this.totalIndividual = response.data.totales.individual;
+      this.totalHonorarios = response.data.totales.honorarios;
+      this.dataB = response.data.individual.map((item: any) => ({
+        ...item,
 
-}
+        active: item.active ? 'Activo' : 'Inactivo',
+      }));
+      this.dataC = response.data.honorarios.map((item: any) => ({
+        ...item,
+        active: item.active ? 'Activo' : 'Inactivo',
+      }));
+      // console.log('Datos obtenidos:', this.data);
+    },
+      (error) => {
+        // console.error('Error al obtener los datos:', error);
+        console.error('Ocurrio un error', error);
+      });
 
-
-onEdit(employeeId: any) {
-  // console.log('ID del empleado a editar:', employeeId.id);
-  // const id = employeeId.id; // Obtiene el ID del empleado
-  // this.fileTransferService.setIdTercero(id); // Establece el ID del
-  this.router.navigate(['/pages/RH/Registrar-Trabajador/'+employeeId]); // Navega a la página de edición del empleado
+  }
 
 
-}
+  onEdit(employeeId: any) {
+    // console.log('ID del empleado a editar:', employeeId.id);
+    // const id = employeeId.id; // Obtiene el ID del empleado
+    // this.fileTransferService.setIdTercero(id); // Establece el ID del
+    this.router.navigate(['/pages/RH/Registrar-Trabajador/' + employeeId]); // Navega a la página de edición del empleado
+
+
+  }
 
   setActiveTab(tabId: string) {
     this.activeTab = tabId; // Cambia la pestaña activa

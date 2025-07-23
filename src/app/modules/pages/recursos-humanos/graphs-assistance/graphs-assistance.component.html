@@ -74,29 +74,20 @@
           </div>
 
         </div>
+<!-- Paginador dentro de la tarjeta al fondo -->
+<div class="col-12 d-flex justify-content-center mt-4 mb-2">
+  <app-paginador-component
+    [isLoading]="isLoading"
+    [page]="currentPage"
+    [size]="itemsPerPage"
+    [total]="data.length"
+    (pageChange)="cambiarPagina($event)">
+  </app-paginador-component>
+</div>
 
       </div>
-      <!-- Paginador -->
-      <div class="pagination d-flex justify-content-center mt-4 w-100">
-        <button class="btn btn-outline-primary btn-sm mx-1"
-          [disabled]="currentPage === 1"
-          (click)="cambiarPagina(currentPage - 1)">
-          &laquo;
-        </button>
 
-        <button class="btn btn-outline-primary btn-sm mx-1"
-          *ngFor="let page of totalPages"
-          [class.active]="page === currentPage"
-          (click)="cambiarPagina(page)">
-          {{ page }}
-        </button>
 
-        <button class="btn btn-outline-primary btn-sm mx-1"
-          [disabled]="currentPage === totalPages.length"
-          (click)="cambiarPagina(currentPage + 1)">
-          &raquo;
-        </button>
-      </div>
     </div>
 
   </div>

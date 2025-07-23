@@ -34,7 +34,7 @@
           class="form-control" placeholder="Seleccionar fechas"
           (ngModelChange)="getData(this.page, this.size)" />
       </div>
-      <i class="fa-solid fa-file-excel"
+      <i *ngIf="total>0" class="fa-solid fa-file-excel"
         (click)="downloadPackagesExcel(this.page, this.size)"
         style="color: #16a34a;"></i>
       <input type="text" placeholder="Buscar..." class="buscador"

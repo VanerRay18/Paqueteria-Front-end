@@ -57,6 +57,14 @@ export class PakageService {
     let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId, 'page': page, 'size': size, 'isCost': isCost });
     return this.http.get<ApiResponse>(`${environment.baseService}${'/package/packagesByIncomingPackageId'}`, { headers });
   }
+
+    getGuiasByIncomingPackage(incomingPackageId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId });
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/getGuiasByIncomingPackage'}`, { headers });
+  }
+
+
+
   getPackageByDelivery(deliveryId: any, page: any, size: any, isCost: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'deliveryId': deliveryId, 'page': page, 'size': size, 'isCost': isCost });
     return this.http.get<ApiResponse>(`${environment.baseService}${'/package/packagesByDeliveryId'}`, { headers });

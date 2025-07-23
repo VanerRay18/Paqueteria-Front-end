@@ -24,7 +24,8 @@ export class PackageTrackingComponent implements OnInit {
   isMatch: boolean = false;  // Variable para controlar el disabled
   cargamento: any = null;
   total: number = 0;
-  isCreateExel: boolean = false;
+  isExel: boolean = false;
+  isCharge: boolean = false; // Para controlar el estado del botón de macheo de costos
   isLoading: boolean = false;
   page: number = 0;
   size: number = 20;
@@ -374,6 +375,7 @@ export class PackageTrackingComponent implements OnInit {
     this.paquetesAgrupados = [];
     this.pakage.getPackageByCarga(this.incomingPackageId, page, size, "false").subscribe(
       response => {
+        this.isCharge = true;
         // console.log(response.data)
         this.total = response.data.total;
         this.isMatch = response.data.cargamento.isMatch;
@@ -384,7 +386,7 @@ export class PackageTrackingComponent implements OnInit {
         this.agruparPorFechaDeEntrega(this.paquetesNormales);
 
         this.isLoading = false;
-        this.isCreateExel = response.data.cargamento.isExel;
+        this.isExel = response.data.cargamento.isExel;
         this.isCost = response.data.cargamento.isCost;
         this.isMatchPrice = response.data.cargamento.isMatchPrice;
         this.isPriceExel = response.data.cargamento.isPriceExel;
@@ -607,10 +609,12 @@ export class PackageTrackingComponent implements OnInit {
       }
 
       .swal2-popup {
-        width: 95vw !important;
-        box-sizing: border-box !important;
-        padding: 1rem !important;
-      }
+  width: 95vw !important;
+  max-width: 600px !important; /* ✅ nuevo */
+  box-sizing: border-box !important;
+  padding: 1rem !important;
+}
+
 
       #input-paquete.swal2-input {
         width: 100% !important;
@@ -652,13 +656,13 @@ export class PackageTrackingComponent implements OnInit {
 
             const renderLista = () => {
               if (!lista) return;
-              lista.innerHTML = historial.slice(-10).reverse().map((p, i) =>
+              lista.innerHTML = historial.slice(-10).reverse().map((p) =>
                 `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding: 4px 8px; border: 1px solid #ccc; border-radius: 6px;">
-                <span>${p}</span>
-                <button style="border: none; background: transparent; font-size: 16px; cursor: pointer; color: #b91c1c;"
-                  onclick="document.dispatchEvent(new CustomEvent('quitar-paquete', { detail: ${i} }))">✖</button>
-              </div>`
+    <span>${p}</span>
+    <span style="color: #22c55e; font-size: 18px;">✅</span>
+  </div>`
               ).join('');
+
             };
 
             const enviarPaquete = (paquete: string) => {
@@ -684,6 +688,7 @@ export class PackageTrackingComponent implements OnInit {
             const procesarInput = (valor: string) => {
               if (valor.length < minvalue) {
                 Swal.showValidationMessage(`❌ El paquete debe tener al menos ${minvalue} caracteres.`);
+                setTimeout(() => Swal.resetValidationMessage(), 4000);
                 return;
               }
 
@@ -795,87 +800,92 @@ export class PackageTrackingComponent implements OnInit {
   }
 
   descargarTxtDeGuiasPorBloques(): void {
-    const guias: string[] = this.paquetes
-      .map(p => p.consolidado?.trackingNo || p.guia || '')
-      .filter(Boolean);
+    this.pakage.getGuiasByIncomingPackage(this.incomingPackageId).subscribe({
+      next: (response) => {
+        const guias: string[] = response.data || [];
 
-    const bloques: string[] = [];
-    for (let i = 0; i < guias.length; i += 30) {
-      bloques.push(guias.slice(i, i + 30).join(', '));
-    }
-
-    let paginaActual = 0;
-
-    const mostrarPagina = (index: number) => {
-      const contenido = bloques[index] || '';
-
-      Swal.fire({
-        title: `Guías (bloque ${index + 1} de ${bloques.length})`,
-        html: `
-        <div style="max-height: 250px; overflow-y: auto; background: #f9fafb; padding: 12px; font-family: monospace; border-radius: 6px; border: 1px solid #ddd;">
-          <span id="bloqueTexto">${contenido}</span>
-        </div>
-        <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
-          <button id="anteriorBtn" class="swal2-styled swal2-default btn-navegacion" ${index === 0 ? 'disabled' : ''}>◀ Anterior</button>
-          <button id="copiarBtn" class="swal2-styled swal2-confirm btn-copiar">📋 Copiar</button>
-          <button id="siguienteBtn" class="swal2-styled swal2-default btn-navegacion" ${index === bloques.length - 1 ? 'disabled' : ''}>Siguiente ▶</button>
-        </div>
-      `,
-        showConfirmButton: false,
-        showCancelButton: true,
-        cancelButtonText: 'Cerrar',
-        customClass: {
-          popup: 'swal2-popup-wide'
-        },
-        didRender: () => {
-          const anteriorBtn = document.getElementById('anteriorBtn') as HTMLButtonElement;
-          const siguienteBtn = document.getElementById('siguienteBtn') as HTMLButtonElement;
-          const copiarBtn = document.getElementById('copiarBtn') as HTMLButtonElement;
-
-          if (anteriorBtn) {
-            anteriorBtn.onclick = () => mostrarPagina(index - 1);
-          }
-
-          if (siguienteBtn) {
-            siguienteBtn.onclick = () => mostrarPagina(index + 1);
-          }
-
-          if (copiarBtn) {
-            copiarBtn.onclick = () => {
-              const text = document.getElementById('bloqueTexto')?.textContent || '';
-              navigator.clipboard.writeText(text).then(() => {
-                // ✅ Crear toast manual sin cerrar SweetAlert
-                const toast = document.createElement('div');
-                toast.textContent = '✔ Copiado al portapapeles';
-                toast.style.position = 'fixed';
-                toast.style.top = '20px';
-                toast.style.right = '20px';
-                toast.style.background = '#38b000';
-                toast.style.color = '#fff';
-                toast.style.padding = '10px 16px';
-                toast.style.borderRadius = '8px';
-                toast.style.boxShadow = '0 2px 6px rgba(0,0,0,0.2)';
-                toast.style.fontSize = '14px';
-                toast.style.zIndex = '9999';
-                document.body.appendChild(toast);
-
-                setTimeout(() => {
-                  toast.remove();
-                }, 2000);
-              });
-            };
-          }
-
+        const bloques: string[] = [];
+        for (let i = 0; i < guias.length; i += 50) {
+          bloques.push(guias.slice(i, i + 50).join(', '));
         }
-      });
-    };
 
-    if (bloques.length === 0) {
-      Swal.fire('Sin guías', 'No se encontraron guías para mostrar.', 'info');
-    } else {
-      mostrarPagina(0);
-    }
+        let paginaActual = 0;
+
+        const mostrarPagina = (index: number) => {
+          const contenido = bloques[index] || '';
+
+          Swal.fire({
+            title: `Guías (bloque ${index + 1} de ${bloques.length})`,
+            html: `
+            <div style="max-height: 250px; overflow-y: auto; background: #f9fafb; padding: 12px; font-family: monospace; border-radius: 6px; border: 1px solid #ddd;">
+              <span id="bloqueTexto">${contenido}</span>
+            </div>
+            <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+              <button id="anteriorBtn" class="swal2-styled swal2-default btn-navegacion" ${index === 0 ? 'disabled' : ''}>◀ Anterior</button>
+              <button id="copiarBtn" class="swal2-styled swal2-confirm btn-copiar">📋 Copiar</button>
+              <button id="siguienteBtn" class="swal2-styled swal2-default btn-navegacion" ${index === bloques.length - 1 ? 'disabled' : ''}>Siguiente ▶</button>
+            </div>
+          `,
+            showConfirmButton: false,
+            showCancelButton: true,
+            cancelButtonText: 'Cerrar',
+            customClass: {
+              popup: 'swal2-popup-wide'
+            },
+            didRender: () => {
+              const anteriorBtn = document.getElementById('anteriorBtn') as HTMLButtonElement;
+              const siguienteBtn = document.getElementById('siguienteBtn') as HTMLButtonElement;
+              const copiarBtn = document.getElementById('copiarBtn') as HTMLButtonElement;
+
+              if (anteriorBtn) {
+                anteriorBtn.onclick = () => mostrarPagina(index - 1);
+              }
+
+              if (siguienteBtn) {
+                siguienteBtn.onclick = () => mostrarPagina(index + 1);
+              }
+
+              if (copiarBtn) {
+                copiarBtn.onclick = () => {
+                  const text = document.getElementById('bloqueTexto')?.textContent || '';
+                  navigator.clipboard.writeText(text).then(() => {
+                    const toast = document.createElement('div');
+                    toast.textContent = '✔ Copiado al portapapeles';
+                    toast.style.position = 'fixed';
+                    toast.style.top = '20px';
+                    toast.style.right = '20px';
+                    toast.style.background = '#38b000';
+                    toast.style.color = '#fff';
+                    toast.style.padding = '10px 16px';
+                    toast.style.borderRadius = '8px';
+                    toast.style.boxShadow = '0 2px 6px rgba(0,0,0,0.2)';
+                    toast.style.fontSize = '14px';
+                    toast.style.zIndex = '9999';
+                    document.body.appendChild(toast);
+
+                    setTimeout(() => {
+                      toast.remove();
+                    }, 2000);
+                  });
+                };
+              }
+            }
+          });
+        };
+
+        if (bloques.length === 0) {
+          Swal.fire('Sin guías', 'No se encontraron guías para mostrar.', 'info');
+        } else {
+          mostrarPagina(0);
+        }
+      },
+      error: (error) => {
+        console.error('Error al obtener guías:', error);
+        Swal.fire('Error', 'No se pudieron obtener las guías.', 'error');
+      }
+    });
   }
+
 
 
   macheoPaquetes(): void {

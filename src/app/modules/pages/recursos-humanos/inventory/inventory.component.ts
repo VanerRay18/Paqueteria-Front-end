@@ -24,6 +24,7 @@ export class InventoryComponent {
   displayedColumnsC = ['name', 'description', 'quantity', 'is_assignable', "ts_created"];
   dataC: any[] = [];
   isLoading = false;
+  totalRecords: any ;
   info: any;
   arrayUserRecibido: any;
   activeTab: string = 'base';
@@ -135,7 +136,7 @@ export class InventoryComponent {
       });
 
     this.cars.getAllCars().subscribe((response: ApiResponse) => {
-     
+     this.totalRecords = response.message;
       this.dataB = response.data.map((item: any) => ({
         ...item,
         vigencia : formatDate(new Date(item.vigencia), 'yyyy-MM-dd', 'en-US'),

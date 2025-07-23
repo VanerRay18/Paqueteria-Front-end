@@ -10,6 +10,25 @@
   margin-bottom: 1.5rem;
   text-align: center;
 }
+.img-no-ruta {
+  max-width: 100%;
+  width: 320px;
+  height: auto;
+  border: 1px solid #273D52;        /* Borde negro */
+  border-radius: 16px;           /* Esquinas redondeadas */
+  margin: 0 auto;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .img-no-ruta {
+    width: 200px;
+  }
+}
+.pointer{
+   cursor: pointer;
+}
+
 .vehicle-img {
   width: 200px;
   height: 200px;

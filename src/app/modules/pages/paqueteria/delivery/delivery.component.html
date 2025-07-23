@@ -1,21 +1,21 @@
 <div class="ruta-container">
   <h2 class="titulo">Mi Ruta</h2>
 
+
+  <div class="" *ngIf="!isRute">
+    <img src="\assets\NO_RUTA.png"  class="img-no-ruta" alt="">
+  </div>
   <!-- Tarjeta de vehículo -->
-  <div class="tarjeta-principal">
+  <div class="tarjeta-principal"*ngIf="isRute">
     <div class="tarjeta-vehiculo">
       <div class="vehiculo-header">
-        <img 
-          [src]="image?.url" 
-          alt="auto" 
-          class="vehicle-img"
-          (error)="handleImageError($event)" 
-        />
+        <img [src]="image?.url" alt="auto" class="vehicle-img" (error)="handleImageError($event)" />
         <div class="info-vehiculo">
           <h3>{{ car?.marca }} {{ car?.modelo }} {{ car?.color }}</h3>
           <p class="placa">Placa: {{ car?.placa || 'Sin placa' }}</p>
           <p>Destino: <strong>{{ deliveryInfo?.destino || 'Sin destino asignado' }}</strong></p>
-          <p>Conductor: <strong>{{ conductor?.name }} {{ conductor?.firstSurname }} {{ conductor?.secondSurname }}</strong>
+          <p>Conductor: <strong>{{ conductor?.name }} {{ conductor?.firstSurname }} {{ conductor?.secondSurname
+              }}</strong>
           </p>
           <p>Total de paquetes: <strong>{{ packageInformation?.paquetesTotal || 0 }}</strong></p>
           <p>Dinero total de paquetes: <strong>{{this.cost | currency:'USD':'symbol':'1.2-2'}}</strong></p>
@@ -34,7 +34,7 @@
 
       <div class="estado-ruta">
         <span class="badge bodega">🚚 {{ status?.name }}</span>
-        <i class="fa-solid fa-gas-pump"  (click)="swalOdometro()"></i>
+        <i class="fa-solid fa-gas-pump pointer" (click)="swalOdometro()"></i>
         <button *ngIf=" status?.id === 5" class="btn-comenzar" (click)="empezarRuta()">Comenzar ruta</button>
         <button *ngIf=" status?.id === 7" class="btn-comenzar" (click)="terminarRuta()">Terminar ruta</button>
       </div>
@@ -43,7 +43,7 @@
 
 
   <!-- Paquetes -->
-  <div class="paquetes-card">
+  <div class="paquetes-card"*ngIf="isRute">
     <h4>Paquetes en mi ruta</h4>
 
     <div class="buscador">
@@ -51,12 +51,13 @@
     </div>
 
     <div class="paquete-item" *ngFor="let paquete of paquetes | filter: searchTerm">
-      <span class="guia"> <i class="fa fa-eye" style="cursor:pointer; margin-left: 10px;" (click)="verdetallesPaquete(paquete)"></i> {{ paquete.guia }}</span>
-       <div *ngIf="paquete.isCost === true" style="margin-top:5px; color:#16a34a;">
-          <strong>Costo:</strong> {{ paquete.costLoad.price ? '$' +
-          paquete.costLoad.price :
-          'N/A' }}
-        </div>
+      <span class="guia"> <i class="fa fa-eye" style="cursor:pointer; margin-left: 10px;"
+          (click)="verdetallesPaquete(paquete)"></i> {{ paquete.guia }}</span>
+      <div *ngIf="paquete.isCost === true" style="margin-top:5px; color:#16a34a;">
+        <strong>Costo:</strong> {{ paquete.costLoad.price ? '$' +
+        paquete.costLoad.price :
+        'N/A' }}
+      </div>
       <div class="estado">
         <span class="entregado" [ngClass]="{'disabled': paquete.status?.id === 8 || paquete.dex}"
           (click)="marcarEntregado(paquete)">✔️ Entregado</span>
@@ -71,9 +72,4 @@
 
   </div>
 
-
-
-
-
-  <!-- Agrega más paquetes si lo necesitas -->
 </div>

@@ -14,10 +14,10 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 })
 export class GraphsAssistanceComponent implements OnInit {
   searchTerm: string = '';
-  itemsPerPage: number = 10;
+  itemsPerPage: number = 6;
   currentPage: number = 1;
   pagedData: any[] = [];
-
+  isLoading: boolean = true;
   data: Persona[] = [];
 
 
@@ -28,40 +28,44 @@ export class GraphsAssistanceComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getDatos();
-
-    this.detectScreenSize();
-    // Llenar pagedData al inicio
-    window.addEventListener('resize', this.detectScreenSize.bind(this));
-    // Aquí podrías cargar los datos de las personas desde un servicio si fuera necesario
+  this.getDatos();
+  // this.detectScreenSize();
+  // window.addEventListener('resize', this.detectScreenSize.bind(this));
   }
 
-  getDatos() {
-    this.rh.getAttencendance().subscribe((response: ApiResponse) => {
-      this.data = response.data;
-      this.currentPage = 1;
-      this.paginar();
-
-    },
-      (error) => {
-        // console.error('Error al obtener los datos:', error);
-        console.error('Ocurrio un error', error);
-      });
-
-  }
-
-  detectScreenSize() {
-    const isMobile = window.innerWidth <= 768;
-    this.itemsPerPage = isMobile ? 3 : 10;
+getDatos() {
+  this.rh.getAttencendance().subscribe((response: ApiResponse) => {
+    this.data = response.data;
+    this.currentPage = 0;
+    this.isLoading = false;
     this.paginar();
-  }
+  }, error => {
+    console.error('Ocurrió un error:', error);
+  });
+}
 
-  // Actualiza los elementos visibles
-  paginar() {
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    const endIndex = startIndex + this.itemsPerPage;
-    this.pagedData = this.data.slice(startIndex, endIndex);
-  }
+// detectScreenSize() {
+//   const isMobile = window.innerWidth <= 768;
+//   this.itemsPerPage = isMobile ? 3 : 10;
+//   this.paginar();
+// }
+
+paginar() {
+  const startIndex = this.currentPage * this.itemsPerPage;
+  const endIndex = startIndex + this.itemsPerPage;
+  this.pagedData = this.data.slice(startIndex, endIndex);
+}
+
+
+cambiarPagina(pagina: number) {
+this.currentPage = pagina ;
+this.isLoading = true;
+this.pagedData = [];
+  setTimeout(() => {
+    this.paginar();
+    this.isLoading = false;
+  }, 500);
+}
 
   // Si se actualiza la data (ej: después de un filtro o fetch)
   actualizarPaginado() {
@@ -69,11 +73,7 @@ export class GraphsAssistanceComponent implements OnInit {
     this.paginar();
   }
 
-  // Navegación de páginas
-  cambiarPagina(pagina: number) {
-    this.currentPage = pagina;
-    this.paginar();
-  }
+
 
   // Total de páginas
   get totalPages(): number[] {

@@ -33,7 +33,7 @@ export class DeliveryComponent implements OnInit {
   searchTerm: string = '';
   image: any;
   cost: any;
-
+  isRute: Boolean = false;
   constructor(
     private pakage: PakageService,
     private cars: CarsService // Asegúrate de que PakageService tenga los métodos necesarios para manejar vehículos
@@ -41,10 +41,6 @@ export class DeliveryComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargarDeliveryInfo();
-
-    // Verificar el estado de la ruta al iniciar
-    // Cargar los paquetes al iniciar el componente
-    // Cargar organizaciones al iniciar el componente
   }
 
   get paquetesFiltrados() {
@@ -97,6 +93,7 @@ export class DeliveryComponent implements OnInit {
     this.pakage.getDeliveryByEmployeeId().subscribe(
       (response: ApiResponse) => {
         if (response && response.data) {
+          this.isRute = true;
           this.deliveryInfo = response.data;
           this.deliveryId = this.deliveryInfo.id; // Assuming the delivery ID is in the response
           this.car = this.deliveryInfo.car;
@@ -112,12 +109,12 @@ export class DeliveryComponent implements OnInit {
         }
       },
       (error) => {
-        console.error('Error al obtener delivery info:', error);
-              Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: ` ${error.error?.message || 'Aun no tiene una ruta asiganada.'}`
-      });
+      //   console.error('Error al obtener delivery info:', error);
+      //         Swal.fire({
+      //   icon: 'error',
+      //   title: 'Error',
+      //   text: ` ${error.error?.message || 'Aun no tiene una ruta asiganada.'}`
+      // });
       }
     );
 
@@ -355,6 +352,7 @@ export class DeliveryComponent implements OnInit {
 
         .swal2-popup {
           width: 95vw !important;
+            max-width: 600px !important; /* ✅ nuevo */
           box-sizing: border-box !important;
           padding: 1rem !important;
         }
