@@ -44,6 +44,17 @@ export class SearchDeliveryComponent implements OnInit {
   packageOrg: any = null;
   packageDex: any = null; // Dex seleccionado
   packageCat: any = null; // Estado seleccionado
+  statuses = [
+      { id: 3, name: 'Vinculado con consolidado' },
+      { id: 4, name: 'En bodega' },
+      { id: 6, name: 'Cargado en unidad' },
+      { id: 7, name: 'En ruta' },
+      { id: 8, name: 'Entregado' },
+      { id: 13, name: 'No encontrado en el consolidado' },
+      { id: 14, name: 'Devuelto a la paquetería' },
+      { id: 15, name: 'Vinculado con precio' },
+      { id: 2, name: 'Paquete registrado' }
+    ];
 
 
   paquetesAgrupados: any[] = []; // Agrupados y paginados
@@ -104,7 +115,10 @@ export class SearchDeliveryComponent implements OnInit {
 
   selectPackageDex(object: any) {
     this.getData(this.page, this.size);
+  }
 
+  selectStatus(statusId: number | null) {
+    this.getData(this.page, this.size);
   }
 
   cambiarPagina(pagina: number) {
@@ -378,6 +392,10 @@ export class SearchDeliveryComponent implements OnInit {
     } else if (this.Typepakage === 2) {
       headers = new HttpHeaders({ 'isCost': "true", 'desde': desdeFormatted, 'hasta': hastaFormatted, 'page': page, 'size': size });
     }
+    if (this.packageCat != null) {
+      headers = new HttpHeaders({ 'packCatStatusId': this.packageCat, 'desde': desdeFormatted, 'hasta': hastaFormatted, 'page': page, 'size': size });
+    }
+
     this.isLoading = true;
     this.pakage.getAllPackages(headers).subscribe(
       response => {
@@ -457,20 +475,10 @@ export class SearchDeliveryComponent implements OnInit {
   }
 
   ChangeStatus(paquete: any): void {
-    const statuses = [
-      { id: 3, name: 'Vinculado con consolidado' },
-      { id: 4, name: 'En bodega' },
-      { id: 6, name: 'Cargado en unidad' },
-      { id: 7, name: 'En ruta' },
-      { id: 8, name: 'Entregado' },
-      { id: 13, name: 'No encontrado en el consolidado' },
-      { id: 14, name: 'Devuelto a la paquetería' },
-      { id: 15, name: 'Vinculado con precio' },
-    ];
 
     const currentStatusId = paquete.status?.id;
 
-    const statusOptionsHtml = statuses.map(s =>
+    const statusOptionsHtml = this.statuses.map(s =>
       `<option value="${s.id}" ${s.id === currentStatusId ? 'selected' : ''}>${s.name}</option>`
     ).join('');
 

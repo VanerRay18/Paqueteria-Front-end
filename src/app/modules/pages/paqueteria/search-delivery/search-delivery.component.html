@@ -28,6 +28,13 @@
           dex.description }}</option>
       </select>
 
+      <select class="buscador" [(ngModel)]="packageCat"
+        (ngModelChange)="selectStatus(packageCat)">
+        <option [ngValue]="null">Todos los status</option>
+        <option *ngFor="let cat of statuses" [ngValue]="cat.id">{{ cat.name
+          }}</option>
+      </select>
+
       <div class="col-auto col-lg-2 ">
         <input type="text" ngxDaterangepickerMd [(ngModel)]="rango"
           [showDropdowns]="true" [autoApply]="true"

@@ -51,7 +51,7 @@ export class NewEmployeeComponent implements OnInit {
   selectedFotoFile: File | null = null;
   fotoAntiguaId: number | null = null;   // El id de la foto actual (si la hay)
   fotoAntigua: any;
-  bandera: boolean = false;  
+  bandera: boolean = false;
 
 
   diasSemana = [
@@ -136,13 +136,13 @@ export class NewEmployeeComponent implements OnInit {
     this.datosPersonalesForm = this.fb.group({
       foto: [null],
       nombreCompleto: ['', [Validators.required, this.nombreCompletoValidator]],
-      rfc: ['', [Validators.required, Validators.pattern(/^([A-ZÑ&]{3,4})\d{6}[A-Z0-9]{3}$/i)]],
-      curp: ['', [Validators.required, Validators.pattern(/^([A-Z]{4})(\d{6})([HM]{1})([A-Z]{5})([A-Z\d]{2})$/i)]],
+      rfc: [''],
+      curp: [''],
       fechaNacimiento: ['', Validators.required],
       tipoSeguro: ['', Validators.required],
       telefono: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
-      horarioEnt: ['', Validators.required],
-      horarioSal: ['', Validators.required],
+      horarioEnt: ['', [Validators.required, Validators.pattern(/^([01]\d|2[0-3]):([0-5]\d)$/)]],
+      horarioSal: ['', [Validators.required, Validators.pattern(/^([01]\d|2[0-3]):([0-5]\d)$/)]],
       fechaInicio: ['', Validators.required],
       puestoLaboral: ['', Validators.required],
       tipoContratacion: ['', Validators.required],
@@ -206,14 +206,14 @@ export class NewEmployeeComponent implements OnInit {
     return `${horas}:${minutos}`;
   }
 
-handleImageError(event: Event) {
-  const target = event.target as HTMLImageElement;
+  handleImageError(event: Event) {
+    const target = event.target as HTMLImageElement;
 
-  // Evita bucle infinito si ya está puesta la imagen de fallback
-  if (target.src.includes('not_found_package.png')) return;
+    // Evita bucle infinito si ya está puesta la imagen de fallback
+    if (target.src.includes('not_found_package.png')) return;
 
-  target.src = 'assets/not_found_package.png';
-}
+    target.src = 'assets/not_found_package.png';
+  }
 
   // 2️⃣ Método para cargar datos existentes y llenar los formularios
   loadEmployeeData(id: number) {
@@ -225,12 +225,12 @@ handleImageError(event: Event) {
       const diasNoSeleccionados: number[] = e?.config?.attendanceExeption ?? [];
       this.fotoAntiguaId = resp.data.images.id;
       // Obtener URL pública de la imagen si existe
-      const paths = resp?.data?.images?.path;
+      const paths = resp?.data?.images?.url;
       const imgData = paths;
       this.fotoAntigua = imgData;
 
 
-    
+
       this.diasSemana = this.diasSemana.map(dia => ({
         ...dia,
         checked: !diasNoSeleccionados.includes(dia.valor)
@@ -255,7 +255,7 @@ handleImageError(event: Event) {
         horarioSal: this.formatHoraArray(e?.salida),
         activo: e?.active ?? true,
         usaChecador: e?.isAttendance ?? true,
-        fechaInicio: e?.dateStart ? new Date(e.dateStart).toISOString().slice(0, 10) : '',
+        fechaInicio: e?.date_start ? new Date(e.date_start).toISOString().slice(0, 10) : '',
         puestoLaboral: e?.catEmploymentId,
         tipoContratacion: e?.catJobId
       });
@@ -397,7 +397,7 @@ handleImageError(event: Event) {
 
   // Métodos para enviar cada formulario
   guardarDatosPersonales() {
-   
+
     const formValue = this.datosPersonalesForm.value;
 
     const { name, firstSurname, secondSurname } = this.separarNombreCompleto(formValue.nombreCompleto);
@@ -443,7 +443,7 @@ handleImageError(event: Event) {
               this.rh.SaveFoto(formData, '', this.employeeIdPatch, 'employee').subscribe({
                 next: () => {
                   Swal.fire('Actualizado', 'Empleado y foto actualizados correctamente.', 'success');
-                   this.datosPersonalesForm.disable();
+                  this.datosPersonalesForm.disable();
 
                 },
                 error: () => {
@@ -453,7 +453,7 @@ handleImageError(event: Event) {
               });
             } else {
               Swal.fire('Actualizado', 'Empleado actualizado correctamente.', 'success');
-               this.datosPersonalesForm.disable();
+              this.datosPersonalesForm.disable();
             }
           };
 
@@ -485,7 +485,7 @@ handleImageError(event: Event) {
           if (this.selectedFotoFile) {
             const formData = new FormData();
             formData.append('file', this.selectedFotoFile);
-            
+
             this.rh.SaveFoto(formData, '', this.employeeId, 'employee').subscribe({
               next: () => {
                 Swal.fire('Guardado', 'Empleado y foto registrados correctamente.', 'success');
@@ -594,7 +594,7 @@ handleImageError(event: Event) {
       return;
     }
 
-   this.rh.SaveUniforms(uniforms, idEmpleado).subscribe({
+    this.rh.SaveUniforms(uniforms, idEmpleado).subscribe({
       next: () => {
         Swal.fire('Uniformes guardados', 'Se guardaron correctamente.', 'success');
         this.isEditUniformes = false;
