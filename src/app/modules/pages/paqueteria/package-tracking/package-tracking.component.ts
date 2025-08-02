@@ -721,6 +721,71 @@ export class PackageTrackingComponent implements OnInit {
     });
   }
 
+  enviarListadoDePaquetes(): void {
+    Swal.fire({
+      title: 'Pegar listado de paquetes',
+      html: `
+    <div style="width: 100%;">
+      <textarea id="inputPaquetes"
+        placeholder="Pega los números de guía aquí. Uno por línea o separados por espacio"
+        rows="10"
+        style="
+          resize: vertical;
+          width: 100%;
+          min-height: 200px;
+          padding: 10px;
+          font-family: monospace;
+          font-size: 14px;
+          box-sizing: border-box;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          overflow-x: hidden;
+        ">
+      </textarea>
+    </div>
+  `,
+      showCancelButton: true,
+      confirmButtonText: '📤 Enviar',
+      cancelButtonText: 'Cancelar',
+      customClass: {
+        popup: 'swal2-responsive-popup'
+      },
+      preConfirm: () => {
+        const input = (document.getElementById('inputPaquetes') as HTMLTextAreaElement).value;
+        if (!input.trim()) {
+          Swal.showValidationMessage('Debes ingresar al menos un número de paquete');
+          return;
+        }
+        return input;
+      }
+    }).then(result => {
+      if (result.isConfirmed && result.value) {
+        const texto = result.value.trim();
+        const listado = texto.split(/\s+/); // Divide por espacio, salto de línea, tab, etc.
+
+        // Mostrar loading mientras se hace la llamada
+        Swal.fire({
+          title: 'Enviando paquetes...',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
+        this.pakage.SentListPackage(listado, this.incomingPackageId).subscribe({
+          next: (res) => {
+            this.getData(this.page, this.size); // Actualiza la lista de paquetes
+            this.getPakagesByCost(this.pageCost, this.sizeCost); // Actualiza la lista de paquetes con costo
+            Swal.fire('✅ Éxito', 'Los paquetes fueron enviados correctamente.', 'success');
+          },
+          error: (error) => {
+            const msg = error?.error?.message || 'Ocurrió un error al enviar los paquetes.';
+            Swal.fire('❌ Error', msg, 'error');
+          }
+        });
+      }
+    });
+  }
 
 
 
@@ -811,6 +876,14 @@ export class PackageTrackingComponent implements OnInit {
 
         let paginaActual = 0;
 
+        const descargarExcel = () => {
+          const data = guias.map(guia => ({ Guia: guia }));
+          const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+          const workbook: XLSX.WorkBook = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(workbook, worksheet, 'Guias');
+          XLSX.writeFile(workbook, `Guias_Paquete_${this.incomingPackageId}.xlsx`);
+        };
+
         const mostrarPagina = (index: number) => {
           const contenido = bloques[index] || '';
 
@@ -820,10 +893,13 @@ export class PackageTrackingComponent implements OnInit {
             <div style="max-height: 250px; overflow-y: auto; background: #f9fafb; padding: 12px; font-family: monospace; border-radius: 6px; border: 1px solid #ddd;">
               <span id="bloqueTexto">${contenido}</span>
             </div>
-            <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
-              <button id="anteriorBtn" class="swal2-styled swal2-default btn-navegacion" ${index === 0 ? 'disabled' : ''}>◀ Anterior</button>
+            <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; align-items: center;">
+
               <button id="copiarBtn" class="swal2-styled swal2-confirm btn-copiar">📋 Copiar</button>
+              <button id="descargarBtn" class="swal2-styled swal2-confirm btn-descargar">📥 Descargar Excel</button>
+              <button id="anteriorBtn" class="swal2-styled swal2-default btn-navegacion" ${index === 0 ? 'disabled' : ''}>◀ Anterior</button>
               <button id="siguienteBtn" class="swal2-styled swal2-default btn-navegacion" ${index === bloques.length - 1 ? 'disabled' : ''}>Siguiente ▶</button>
+             
             </div>
           `,
             showConfirmButton: false,
@@ -836,15 +912,10 @@ export class PackageTrackingComponent implements OnInit {
               const anteriorBtn = document.getElementById('anteriorBtn') as HTMLButtonElement;
               const siguienteBtn = document.getElementById('siguienteBtn') as HTMLButtonElement;
               const copiarBtn = document.getElementById('copiarBtn') as HTMLButtonElement;
+              const descargarBtn = document.getElementById('descargarBtn') as HTMLButtonElement;
 
-              if (anteriorBtn) {
-                anteriorBtn.onclick = () => mostrarPagina(index - 1);
-              }
-
-              if (siguienteBtn) {
-                siguienteBtn.onclick = () => mostrarPagina(index + 1);
-              }
-
+              if (anteriorBtn) anteriorBtn.onclick = () => mostrarPagina(index - 1);
+              if (siguienteBtn) siguienteBtn.onclick = () => mostrarPagina(index + 1);
               if (copiarBtn) {
                 copiarBtn.onclick = () => {
                   const text = document.getElementById('bloqueTexto')?.textContent || '';
@@ -862,13 +933,11 @@ export class PackageTrackingComponent implements OnInit {
                     toast.style.fontSize = '14px';
                     toast.style.zIndex = '9999';
                     document.body.appendChild(toast);
-
-                    setTimeout(() => {
-                      toast.remove();
-                    }, 2000);
+                    setTimeout(() => toast.remove(), 2000);
                   });
                 };
               }
+              if (descargarBtn) descargarBtn.onclick = descargarExcel;
             }
           });
         };
@@ -885,7 +954,6 @@ export class PackageTrackingComponent implements OnInit {
       }
     });
   }
-
 
 
   macheoPaquetes(): void {
