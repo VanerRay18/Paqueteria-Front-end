@@ -9,22 +9,22 @@
         <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;El operador debe regresar:
           {{this.cost | currency:'USD':'symbol':'1.2-2'}}</span>
       </div>
-      <select class="buscador" [(ngModel)]="Typepakage"
-        (ngModelChange)="selectTypepakage(Typepakage)">
+      <select class="buscador" [(ngModel)]="Typepakage" (ngModelChange)="selectTypepakage(Typepakage)">
         <option [ngValue]="null">Todos los paquetes</option>
         <option *ngFor="let type of typeP" [ngValue]="type.id">{{ type.name
           }}</option>
       </select>
 
-      <input type="text" placeholder="Buscar..." class="buscador"
-        [(ngModel)]="searchTerm" />
+      <input type="text" placeholder="Buscar..." class="buscador" [(ngModel)]="searchTerm" />
       <div class="acciones">
-        <input id="csvFile" type="file" (change)="onFileSelected($event)"
-          accept=".csv" #fileInput
+        <input id="csvFile" type="file" (change)="onFileSelected($event)" accept=".csv" #fileInput
           style="display: none" />
 
         <button class="btn btn-escanear" (click)="mostrarSwal()">
           Comenzar a escanear
+        </button>
+        <button class="btn btn-escanear" (click)="enviarListadoDePaquetes()">
+          📤 Subir listado de paquetes
         </button>
 
       </div>
@@ -45,13 +45,11 @@
             reconocida</small>
         </li>
         <li class="color-item d-flex align-items-center mb-2 me-3">
-          <span class="me-2 rounded-circle"
-            style="width: 14px; height: 14px; background-color: orange;"></span>
+          <span class="me-2 rounded-circle" style="width: 14px; height: 14px; background-color: orange;"></span>
           <small><strong>Naranja:</strong> Se entregan hoy</small>
         </li>
         <li class="color-item d-flex align-items-center mb-2 me-3">
-          <span class="me-2 rounded-circle"
-            style="width: 14px; height: 14px; background-color: rgb(204, 1, 1);"></span>
+          <span class="me-2 rounded-circle" style="width: 14px; height: 14px; background-color: rgb(204, 1, 1);"></span>
           <small><strong>Rojo:</strong> Entrega atrasada</small>
         </li>
         <li class="color-item d-flex align-items-center mb-2 me-3">
@@ -66,29 +64,22 @@
       <div class="fecha-entrega-linea">
         <span>{{ grupo.fecha }}</span>
       </div>
-      <div class="paquete"
-        *ngFor="let paquete of grupo.paquetes  | filter: searchTerm">
+      <div class="paquete" *ngFor="let paquete of grupo.paquetes  | filter: searchTerm">
         <div class="codigo">
-          <i class="fa fa-eye" style="cursor:pointer; margin-left: 10px;"
-            (click)="verdetallesPaquete(paquete)"></i>
-          <i class="fa-solid fa-pen-to-square"
-            style="cursor:pointer; margin-left: 10px;"
+          <i class="fa fa-eye" style="cursor:pointer; margin-left: 10px;" (click)="verdetallesPaquete(paquete)"></i>
+          <i class="fa-solid fa-pen-to-square" style="cursor:pointer; margin-left: 10px;"
             (click)="editarConsolidado(paquete)"></i>&nbsp;
-          <i class="fa-solid fa-folder-open"
-            style="cursor:pointer; margin-left: 10px;"
+          <i class="fa-solid fa-folder-open" style="cursor:pointer; margin-left: 10px;"
             (click)="histotyPackage(paquete)"></i>&nbsp;
           <span [ngStyle]="{ color: paquete.color }">{{ paquete.guia }}</span>
-          <i class="fa-solid fa-trash-can"
-            style="cursor:pointer; margin-left: 10px;"
+          <i class="fa-solid fa-trash-can" style="cursor:pointer; margin-left: 10px;"
             (click)="deletePackage(paquete)"></i>&nbsp;
-          <span *ngIf="paquete.passIncoming >= 3"
-            class="me-2"
+          <span *ngIf="paquete.passIncoming >= 3" class="me-2"
             style="display: inline-block; width: 14px; height: 14px; background-color: rgb(231, 96, 198); border-radius: 50%;">
           </span>&nbsp;
         </div>
 
-        <div *ngIf="paquete.isCost === true"
-          style="margin-top:5px; color:#16a34a;">
+        <div *ngIf="paquete.isCost === true" style="margin-top:5px; color:#16a34a;">
           <strong>Costo:</strong> {{ paquete.costLoad.price ? '$' +
           paquete.costLoad.price :
           'N/A' }}
@@ -115,8 +106,7 @@
       </div>
     </div>
 
-    <app-paginador-component [isLoading]="isLoading" [page]="page" [size]="size"
-      [total]="total"
+    <app-paginador-component [isLoading]="isLoading" [page]="page" [size]="size" [total]="total"
       (pageChange)="cambiarPagina($event)">
     </app-paginador-component>
 
