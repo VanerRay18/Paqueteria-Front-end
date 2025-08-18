@@ -102,6 +102,12 @@ export class PakageService {
       { headers });
   }
 
+    SentListPackageDelivery(data: any, deliveryId: any): Observable<ApiResponse> {//envio de lista de paquetes
+    let headers = new HttpHeaders({ 'deliveryId': deliveryId });
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/addPackagesInDeliveryList'}`, data,
+      { headers });
+  }
+
   SentDataExel(data: any, incomingPackageId: any): Observable<ApiResponse> {//Trae la nomina actual
     let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId });
     return this.http.post<ApiResponse>(`${environment.baseService}${'/package/createDeliveryLoad'}`, data,
@@ -121,6 +127,7 @@ export class PakageService {
     return this.http.post<ApiResponse>(`${environment.baseService}${'/package/addPackagesInDelivery'}`, null,
       { headers });
   }
+
 
   createIncoming(pakageOrgId: any, description: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'description': description, 'pakageOrgId': pakageOrgId });

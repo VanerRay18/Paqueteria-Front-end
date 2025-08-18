@@ -630,7 +630,70 @@ this.pakage.getHistoryByPakage(paquete.id).subscribe((resp) => {
   }
 
 
+  enviarListadoDePaquetes(): void {
+    Swal.fire({
+      title: 'Pegar listado de paquetes',
+      html: `
+    <div style="width: 100%;">
+      <textarea id="inputPaquetes"
+        placeholder="Pega los números de guía aquí. Uno por línea o separados por espacio"
+        rows="10"
+        style="
+          resize: vertical;
+          width: 100%;
+          min-height: 200px;
+          padding: 10px;
+          font-family: monospace;
+          font-size: 14px;
+          box-sizing: border-box;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          overflow-x: hidden;
+        ">
+      </textarea>
+    </div>
+  `,
+      showCancelButton: true,
+      confirmButtonText: '📤 Enviar',
+      cancelButtonText: 'Cancelar',
+      customClass: {
+        popup: 'swal2-responsive-popup'
+      },
+      preConfirm: () => {
+        const input = (document.getElementById('inputPaquetes') as HTMLTextAreaElement).value;
+        if (!input.trim()) {
+          Swal.showValidationMessage('Debes ingresar al menos un número de paquete');
+          return;
+        }
+        return input;
+      }
+    }).then(result => {
+      if (result.isConfirmed && result.value) {
+        const texto = result.value.trim();
+        const listado = texto.split(/\s+/); // Divide por espacio, salto de línea, tab, etc.
 
+        // Mostrar loading mientras se hace la llamada
+        Swal.fire({
+          title: 'Enviando paquetes...',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
+        this.pakage.SentListPackageDelivery(listado, this.deliveryId).subscribe({
+          next: (res) => {
+            this.getData(this.page, this.size); // Actualiza la lista de paquetes
+            Swal.fire('✅ Éxito', 'Los paquetes fueron enviados correctamente.', 'success');
+          },
+          error: (error) => {
+            const msg = error?.error?.message || 'Ocurrió un error al enviar los paquetes.';
+            Swal.fire('❌ Error', msg, 'error');
+          }
+        });
+      }
+    });
+  }
 
 
   macheoPaquetes(): void {
