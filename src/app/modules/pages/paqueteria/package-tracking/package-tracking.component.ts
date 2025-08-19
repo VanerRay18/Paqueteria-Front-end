@@ -481,12 +481,16 @@ export class PackageTrackingComponent implements OnInit {
 
           const toCamelCase = (str: string) => {
             return str
+            .trim()
               .toLowerCase()
-              .replace(/[^a-zA-Z0-9 ]/g, '')              // quita caracteres especiales
+              .replace(/[^a-zA-Z0-9 ]/g, '') 
+              .replace(/^(\w)/, (_, c) => c.toLowerCase())             // quita caracteres especiales
               .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) =>
                 index === 0 ? word.toLowerCase() : word.toUpperCase()
+              
               )
               .replace(/\s+/g, '');
+              
           };
 
           const jsonData = jsonDataOriginal.map((row: any) => {
@@ -526,7 +530,7 @@ export class PackageTrackingComponent implements OnInit {
 
   // Método para enviar los datos al backend
   enviarAlBackend(data: any): void {
-    // console.log(data) // Reemplaza con el ID real del paquete entrante
+// Reemplaza con el ID real del paquete entrante
     Swal.fire({
       title: 'Cargando consolidado...',
       html: '<b>Por favor espera</b>',
@@ -551,7 +555,7 @@ export class PackageTrackingComponent implements OnInit {
       (err) => {
         Swal.fire(
           'Error',
-          ` ${err.error?.message || 'Error desconocido'}`,
+          ` ${err.error?.message}`,
           'error'
         );
       }
@@ -560,6 +564,7 @@ export class PackageTrackingComponent implements OnInit {
   }
 
   enviarAlBackendCostos(data: any): void { // Reemplaza con el ID real del paquete entrante
+        console.log(data) 
     Swal.fire({
       title: 'Cargando consolidado...',
       html: '<b>Por favor espera</b>',
@@ -584,7 +589,7 @@ export class PackageTrackingComponent implements OnInit {
       (err) => {
         Swal.fire(
           'Error',
-          ` ${err.error?.message || 'Formato inválido del archivo'}`,
+          ` ${err.error?.message }`,
           'error'
         );
       }
