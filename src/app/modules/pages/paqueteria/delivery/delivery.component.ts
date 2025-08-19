@@ -215,9 +215,17 @@ export class DeliveryComponent implements OnInit {
     let catStatusId = 7; // Asumiendo que 1 es el ID para "Entregado"
     let packageId = this.deliveryId; // Asegúrate de que el paquete tenga un ID
     let description = 'Paquetes en ruta'; // Descripción de la acción
-     Swal.showLoading();
+  Swal.fire({
+    title: 'Actualizando estado...',
+    text: 'Por favor espera mientras se procesa la información.',
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+    }
+  });
     this.pakage.updateDeliveryStatus(packageId, catStatusId, description).subscribe(
       (response) => {
+        Swal.close();
         this.cargarDeliveryInfo();
         // Aquí iría la lógica para actualizar el estado en el backend si aplica
       },
@@ -240,12 +248,20 @@ export class DeliveryComponent implements OnInit {
     let catStatusId = 10;
     let packageId = this.deliveryId; // Asegúrate de que el paquete tenga un ID
     let description = 'ruta terminada'; // Descripción de la acción
-    Swal.showLoading();
+      Swal.fire({
+    title: 'Actualizando estado...',
+    text: 'Por favor espera mientras se procesa la información.',
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+    }
+  });
     this.pakage.updateDeliveryStatus(packageId, catStatusId, description).subscribe(
       (response) => {
         this.cargarDeliveryInfo();
         this.ngOnInit();
         this.getData(this.page, this.size);
+        Swal.close();
         Swal.fire('Éxito', 'Ha terminado su ruta.', 'success');
         this.cargarDeliveryInfo();
         // Recargar la información de entrega
