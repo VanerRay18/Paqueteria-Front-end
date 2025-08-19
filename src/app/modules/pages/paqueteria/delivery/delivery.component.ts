@@ -109,12 +109,12 @@ export class DeliveryComponent implements OnInit {
         }
       },
       (error) => {
-      //   console.error('Error al obtener delivery info:', error);
-      //         Swal.fire({
-      //   icon: 'error',
-      //   title: 'Error',
-      //   text: ` ${error.error?.message || 'Aun no tiene una ruta asiganada.'}`
-      // });
+        //   console.error('Error al obtener delivery info:', error);
+        //         Swal.fire({
+        //   icon: 'error',
+        //   title: 'Error',
+        //   text: ` ${error.error?.message || 'Aun no tiene una ruta asiganada.'}`
+        // });
       }
     );
 
@@ -215,6 +215,7 @@ export class DeliveryComponent implements OnInit {
     let catStatusId = 7; // Asumiendo que 1 es el ID para "Entregado"
     let packageId = this.deliveryId; // Asegúrate de que el paquete tenga un ID
     let description = 'Paquetes en ruta'; // Descripción de la acción
+     Swal.showLoading();
     this.pakage.updateDeliveryStatus(packageId, catStatusId, description).subscribe(
       (response) => {
         this.cargarDeliveryInfo();
@@ -239,6 +240,7 @@ export class DeliveryComponent implements OnInit {
     let catStatusId = 10;
     let packageId = this.deliveryId; // Asegúrate de que el paquete tenga un ID
     let description = 'ruta terminada'; // Descripción de la acción
+    Swal.showLoading();
     this.pakage.updateDeliveryStatus(packageId, catStatusId, description).subscribe(
       (response) => {
         this.cargarDeliveryInfo();
