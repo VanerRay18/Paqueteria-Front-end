@@ -30,7 +30,7 @@
 
       <select class="buscador" [(ngModel)]="packageCat"
         (ngModelChange)="selectStatus(packageCat)">
-        <option [ngValue]="null">Todos los status</option>
+        <option [ngValue]="null">Todos los estatus</option>
         <option *ngFor="let cat of statuses" [ngValue]="cat.id">{{ cat.name
           }}</option>
       </select>
