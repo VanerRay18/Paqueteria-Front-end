@@ -26,24 +26,22 @@
         <input id="csvFile" type="file" (change)="onFileSelected($event, 'normal')" accept=".csv" #fileInputNomal
           style="display: none" />
 
-        <button class="btn  btn-escanear" (click)="fileInputNomal.click()" [disabled]="isMatch || isExel"
-          [class.disabled-btn]="isMatch && isExel">
+        <button class="btn  btn-escanear" (click)="fileInputNomal.click()" >
           📁 Cargar Excel
         </button>
         <input id="csvFile" type="file" (change)="onFileSelected($event, 'costos')" accept=".csv" #fileInputCostos
           style="display: none" />
 
-        <button class="btn  btn-escanear" (click)="fileInputCostos.click()" *ngIf="isPrice"
-          [disabled]="isMatchPrice || isPriceExel " [class.disabled-btn]="isMatchPrice && isPriceExel">
+        <button class="btn  btn-escanear" (click)="fileInputCostos.click()" *ngIf="isPrice">
           🗂️ Cargar Excel de Costos
         </button>
-        <button class="btn btn-escanear" (click)="macheoPaquetes()" [disabled]="(isMatch || !isExel) || total <=0"
-          [class.disabled-btn]="(isMatch || !isExel) || total <=0">
+        <button class="btn btn-escanear" (click)="macheoPaquetes()" [disabled]=" total <=0"
+          [class.disabled-btn]=" total <=0">
           🔄 Hacer macheo
         </button>
         <button class="btn btn-escanear" (click)="macheoPaquetesCostos()"
-          [disabled]="(isMatchPrice || !isPriceExel) || total <=0" *ngIf="isPrice"
-          [class.disabled-btn]="(isMatchPrice || !isPriceExel) || total <=0">
+          [disabled]="total <=0" *ngIf="isPrice"
+          [class.disabled-btn]="total <=0">
           🔄🪙 Macheo de costos
         </button>
         <button class="btn btn-escanear" (click)="descargarTxtDeGuiasPorBloques()">

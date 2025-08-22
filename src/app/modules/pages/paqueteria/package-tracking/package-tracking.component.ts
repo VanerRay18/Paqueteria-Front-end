@@ -784,7 +784,7 @@ export class PackageTrackingComponent implements OnInit {
             Swal.fire('✅ Éxito', 'Los paquetes fueron enviados correctamente.', 'success');
           },
           error: (error) => {
-            const msg = error?.error?.message || 'Ocurrió un error al enviar los paquetes.';
+            const msg = error?.error?.message;
             Swal.fire('❌ Error', msg, 'error');
           }
         });

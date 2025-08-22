@@ -34,6 +34,7 @@ export class CheckAssistanceComponent {
     const tokenCompleto = this.token.join('');
     if (tokenCompleto.length === 6 && !this.token.includes('')) {
       this.enviarToken(); // Enviar automáticamente
+      value.length === 1   
     }
   }
 
