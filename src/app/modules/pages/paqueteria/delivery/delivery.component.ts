@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { interval } from 'rxjs';
 import { ApiResponse } from 'src/app/models/ApiResponse';
 import { CarsService } from 'src/app/services/cars.service';
 import { PakageService } from 'src/app/services/pakage.service';
@@ -65,7 +66,6 @@ export class DeliveryComponent implements OnInit {
       response => {
         this.total = response.data.total
         this.paquetes = response.data.paquetes;
-        // console.log('Paquetes:', this.paquetes);
         this.isLoading = false;
       },
       error => {
@@ -93,6 +93,7 @@ export class DeliveryComponent implements OnInit {
     this.pakage.getDeliveryByEmployeeId().subscribe(
       (response: ApiResponse) => {
         if (response && response.data) {
+          console.log(response.data);
           this.isRute = true;
           this.deliveryInfo = response.data;
           this.deliveryId = this.deliveryInfo.id; // Assuming the delivery ID is in the response
@@ -258,12 +259,12 @@ export class DeliveryComponent implements OnInit {
   });
     this.pakage.updateDeliveryStatus(packageId, catStatusId, description).subscribe(
       (response) => {
-        this.cargarDeliveryInfo();
-        this.ngOnInit();
-        this.getData(this.page, this.size);
+
         Swal.close();
         Swal.fire('Éxito', 'Ha terminado su ruta.', 'success');
-        this.cargarDeliveryInfo();
+        this.isRute = false;
+        this.paquetes =[];
+        this.deliveryInfo = [];
         // Recargar la información de entrega
         // Aquí iría la lógica para actualizar el estado en el backend si aplica
       },
