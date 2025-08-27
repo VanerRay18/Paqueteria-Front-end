@@ -630,70 +630,90 @@ this.pakage.getHistoryByPakage(paquete.id).subscribe((resp) => {
   }
 
 
-  enviarListadoDePaquetes(): void {
-    Swal.fire({
-      title: 'Pegar listado de paquetes',
-      html: `
-    <div style="width: 100%;">
-      <textarea id="inputPaquetes"
-        placeholder="Pega los números de guía aquí. Uno por línea o separados por espacio"
-        rows="10"
-        style="
-          resize: vertical;
-          width: 100%;
-          min-height: 200px;
-          padding: 10px;
-          font-family: monospace;
-          font-size: 14px;
-          box-sizing: border-box;
-          border: 1px solid #ccc;
-          border-radius: 5px;
-          overflow-x: hidden;
-        ">
-      </textarea>
-    </div>
-  `,
-      showCancelButton: true,
-      confirmButtonText: '📤 Enviar',
-      cancelButtonText: 'Cancelar',
-      customClass: {
-        popup: 'swal2-responsive-popup'
-      },
-      preConfirm: () => {
-        const input = (document.getElementById('inputPaquetes') as HTMLTextAreaElement).value;
-        if (!input.trim()) {
-          Swal.showValidationMessage('Debes ingresar al menos un número de paquete');
-          return;
+enviarListadoDePaquetes(): void {
+  this.pakage.getCatPakageOrg().subscribe({
+    next: (response) => {
+      const organizaciones: OrgItem[] = response.data || [];
+
+      Swal.fire({
+        title: 'Pegar listado de paquetes',
+        html: `
+          <div style="width: 100%; margin-bottom:10px;">
+            <select id="select-org" class="swal2-input" style="margin-bottom: 10px;">
+              <option value="">-- Selecciona organización --</option>
+              ${organizaciones.map((org: OrgItem) =>
+                `<option value="${org.id}">${org.name}</option>`
+              ).join('')}
+            </select>
+          </div>
+          <div style="width: 100%;">
+            <textarea id="inputPaquetes"
+              placeholder="Pega los números de guía aquí. Uno por línea o separados por espacio"
+              rows="10"
+              style="
+                resize: vertical;
+                width: 100%;
+                min-height: 200px;
+                padding: 10px;
+                font-family: monospace;
+                font-size: 14px;
+                box-sizing: border-box;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                overflow-x: hidden;
+              ">
+            </textarea>
+          </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: '📤 Enviar',
+        cancelButtonText: 'Cancelar',
+        preConfirm: () => {
+          const select = document.getElementById('select-org') as HTMLSelectElement;
+          const input = (document.getElementById('inputPaquetes') as HTMLTextAreaElement).value;
+
+          if (!select.value) {
+            Swal.showValidationMessage('⚠️ Debes seleccionar una organización');
+            return;
+          }
+          if (!input.trim()) {
+            Swal.showValidationMessage('⚠️ Debes ingresar al menos un número de paquete');
+            return;
+          }
+
+          return { orgId: select.value, listado: input };
         }
-        return input;
-      }
-    }).then(result => {
-      if (result.isConfirmed && result.value) {
-        const texto = result.value.trim();
-        const listado = texto.split(/\s+/); // Divide por espacio, salto de línea, tab, etc.
+      }).then(result => {
+        if (result.isConfirmed && result.value) {
+          const { orgId, listado } = result.value;
+          const listadoArr = listado.trim().split(/\s+/); // dividir por espacios, saltos de línea, etc.
 
-        // Mostrar loading mientras se hace la llamada
-        Swal.fire({
-          title: 'Enviando paquetes...',
-          allowOutsideClick: false,
-          didOpen: () => {
-            Swal.showLoading();
-          }
-        });
+          // Loading mientras se envía
+          Swal.fire({
+            title: 'Enviando paquetes...',
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+          });
 
-        this.pakage.SentListPackageDelivery(listado, this.deliveryId).subscribe({
-          next: (res) => {
-            this.getData(this.page, this.size); // Actualiza la lista de paquetes
-            Swal.fire('✅ Éxito', 'Los paquetes fueron enviados correctamente.', 'success');
-          },
-          error: (error) => {
-            const msg = error?.error?.message || 'Ocurrió un error al enviar los paquetes.';
-            Swal.fire('❌ Error', msg, 'error');
-          }
-        });
-      }
-    });
-  }
+          this.pakage.SentListPackageDelivery(listadoArr, this.deliveryId, orgId).subscribe({
+            next: (res) => {
+              this.getData(this.page, this.size);
+              Swal.fire('✅ Éxito', 'Los paquetes fueron enviados correctamente.', 'success');
+            },
+            error: (error) => {
+              const msg = error?.error?.message || 'Ocurrió un error al enviar los paquetes.';
+              Swal.fire('❌ Error', msg, 'error');
+            }
+          });
+        }
+      });
+    },
+    error: (err) => {
+      console.error('Error al obtener organizaciones:', err);
+      Swal.fire('Error', 'No se pudieron cargar las organizaciones.', 'error');
+    }
+  });
+}
 
 
   macheoPaquetes(): void {

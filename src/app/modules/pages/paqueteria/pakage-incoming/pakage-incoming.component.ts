@@ -84,47 +84,59 @@ export class PakageIncomingComponent implements OnInit {
     this.router.navigate(['/pages/Paqueteria/Registro-seguimiento/' + id]);
   }
 
-  crearCargamento() {
-    Swal.fire({
-      title: '¿Está seguro?',
-      text: 'Se creará un nuevo cargamento.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Sí, crear',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-
-        const description = 'Cargamento generado '; // o algo dinámico
-        Swal.fire({
-          title: 'Creando cargamento...',
-          text: 'Por favor, espere.',
-          allowOutsideClick: false,
-          allowEscapeKey: false,
-          didOpen: () => {
-            Swal.showLoading();
-          }
-        });
-        this.pakage.createIncoming(this.PackageOrgId, description).subscribe({
-          next: (res) => {
-            Swal.fire('¡Cargamento creado!', '', 'success').then(() => {
-              // this.fileTransferService.clearIdTercero();
-              // this.fileTransferService.setIdTercero(res.data);
-              // console.log('Cargamento creado con ID:', res.data);
-              this.router.navigate(['/pages/Paqueteria/Registro-seguimiento/' + res.data]);
-            });
-            // this.fileTransferService.clearIdTercero();
-            this.getDatos(this.page, this.size); // Actualizar la lista de cargamentos
-          },
-
-          error: (err) => {
-            console.error('Error al crear cargamento:', err);
-            Swal.fire('Error al crear cargamento', err.error?.message || '', 'error');
-          }
-        });
+crearCargamento() {
+  Swal.fire({
+    title: '¿Desea crear el cargamento con o sin paquetes?',
+    input: 'radio',
+    inputOptions: {
+      true: 'Con paquetes',
+      false: 'Sin paquetes'
+    },
+    inputValue: 'true', // Por defecto "con paquetes"
+    showCancelButton: true,
+    confirmButtonText: 'Crear',
+    cancelButtonText: 'Cancelar',
+    inputValidator: (value) => {
+      if (!value) {
+        return 'Debe elegir una opción';
       }
-    });
-  }
+      return null;
+    }
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const conPaquetes = result.value === 'true'; // <- aquí tienes tu true/false
+      const description = conPaquetes
+        ? 'Cargamento generado con paquetes'
+        : 'Cargamento generado sin paquetes';
+
+      Swal.fire({
+        title: 'Creando cargamento...',
+        text: 'Por favor, espere.',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
+      // Aquí mandas el valor según lo requerido
+      this.pakage.createIncoming(this.PackageOrgId, description, conPaquetes).subscribe({
+        next: (res) => {
+          Swal.fire('¡Cargamento creado!', '', 'success').then(() => {
+            this.router.navigate([
+              '/pages/Paqueteria/Registro-seguimiento/' + res.data
+            ]);
+          });
+          this.getDatos(this.page, this.size); // Actualizar lista
+        },
+        error: (err) => {
+          console.error('Error al crear cargamento:', err);
+          Swal.fire('Error al crear cargamento', err.error?.message || '', 'error');
+        }
+      });
+    }
+  });
+}
 
   cambiarPagina(pagina: number) {
     this.page = pagina;

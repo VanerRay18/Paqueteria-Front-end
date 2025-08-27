@@ -11,7 +11,7 @@
             name="busqueda">
           <label for="User">&nbsp;&nbsp;<i class="fa-solid fa-magnifying-glass"></i> Buscar</label>
         </div>
-        <div class="col-12 col-md-6 col-lg-3 mb-3">
+        <div class="col-12 col-md-6 col-lg-2 mb-3">
           <input type="text" ngxDaterangepickerMd [(ngModel)]="rango" [showDropdowns]="true" [autoApply]="true"
             class="form-control" placeholder="Seleccionar fechas" (ngModelChange)="getDatos(this.page, this.size)" />
         </div>
@@ -19,7 +19,8 @@
         <div class="col-auto col-lg-3 d-flex justify-content-end mt-auto">
           <button type="button" class="btn btn-sm" (click)="crearCargamento()">CREAR CARGAMENTO</button>
         </div>
-        <div class="col-auto col-lg-2 d-flex justify-content-end mt-auto">
+
+        <div class="col-auto col-lg-3 d-flex justify-content-end mt-auto">
           <a [routerLink]="['/pages/RH/Registrar-Trabajador']">
             <button type="button" class="btn btn-sm">DESCARGAR REPORTES</button>
           </a>

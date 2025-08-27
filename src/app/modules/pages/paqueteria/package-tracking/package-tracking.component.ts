@@ -78,6 +78,58 @@ export class PackageTrackingComponent implements OnInit {
   `;
   }
 
+  getData(page: number, size: number): void {
+    this.isLoading = true;
+    this.paquetesAgrupados = [];
+    this.pakage.getPackageByCarga(this.incomingPackageId, page, size, "false").subscribe(
+      response => {
+        this.isCharge = true;
+        // console.log(response.data)
+        this.total = response.data.total;
+        this.isMatch = response.data.cargamento.isMatch;
+        this.cargamento = response.data.cargamento;
+        this.isPrice = response.data.cargamento.isPrice;
+
+        this.paquetesNormales = response.data.packages;
+        this.agruparPorFechaDeEntrega(this.paquetesNormales);
+
+        this.isLoading = false;
+        this.isExel = response.data.cargamento.isExel;
+        this.isCost = response.data.cargamento.isCost;
+        this.isMatchPrice = response.data.cargamento.isMatchPrice;
+        this.isPriceExel = response.data.cargamento.isPriceExel;
+        // console.log('isCreateExel:', this.isCreateExel);
+      },
+      error => {
+        console.error('Error al obtener los datos:', error);
+        this.isLoading = false;
+      }
+    );
+
+  }
+
+  getPakagesByCost(page: number, size: number): void {
+    this.isLoadingCost = true;
+    this.paquetesConCosto = [];
+    this.pakage.getPackageByCarga(this.incomingPackageId, page, size, "true").subscribe(
+      response => {
+        this.totalCost = response.data.total;
+        this.isLoadingCost = false;
+        this.paquetesConCosto = response.data.packages;
+
+      },
+      error => {
+        console.error('Error al obtener los datos:', error);
+        this.isLoading = false;
+      }
+    );
+  }
+
+  getBarraEstado(paquete: any): string {
+    const value = paquete.status.config?.value || 0;
+    return value + '%';
+  }
+
   editarConsolidado(paquete: any): void {
     const esNuevo = !paquete.consolidado;
     const consolidado = paquete.consolidado || {};
@@ -370,57 +422,7 @@ export class PackageTrackingComponent implements OnInit {
     }));
   }
 
-  getData(page: number, size: number): void {
-    this.isLoading = true;
-    this.paquetesAgrupados = [];
-    this.pakage.getPackageByCarga(this.incomingPackageId, page, size, "false").subscribe(
-      response => {
-        this.isCharge = true;
-        // console.log(response.data)
-        this.total = response.data.total;
-        this.isMatch = response.data.cargamento.isMatch;
-        this.cargamento = response.data.cargamento;
-        this.isPrice = response.data.cargamento.isPrice;
 
-        this.paquetesNormales = response.data.packages;
-        this.agruparPorFechaDeEntrega(this.paquetesNormales);
-
-        this.isLoading = false;
-        this.isExel = response.data.cargamento.isExel;
-        this.isCost = response.data.cargamento.isCost;
-        this.isMatchPrice = response.data.cargamento.isMatchPrice;
-        this.isPriceExel = response.data.cargamento.isPriceExel;
-        // console.log('isCreateExel:', this.isCreateExel);
-      },
-      error => {
-        console.error('Error al obtener los datos:', error);
-        this.isLoading = false;
-      }
-    );
-
-  }
-
-  getPakagesByCost(page: number, size: number): void {
-    this.isLoadingCost = true;
-    this.paquetesConCosto = [];
-    this.pakage.getPackageByCarga(this.incomingPackageId, page, size, "true").subscribe(
-      response => {
-        this.totalCost = response.data.total;
-        this.isLoadingCost = false;
-        this.paquetesConCosto = response.data.packages;
-
-      },
-      error => {
-        console.error('Error al obtener los datos:', error);
-        this.isLoading = false;
-      }
-    );
-  }
-
-  getBarraEstado(paquete: any): string {
-    const value = paquete.status.config?.value || 0;
-    return value + '%';
-  }
 
   // Ojo para ver detalles
   verDetalles(paquete: any): void {
@@ -481,16 +483,16 @@ export class PackageTrackingComponent implements OnInit {
 
           const toCamelCase = (str: string) => {
             return str
-            .trim()
+              .trim()
               .toLowerCase()
-              .replace(/[^a-zA-Z0-9 ]/g, '') 
+              .replace(/[^a-zA-Z0-9 ]/g, '')
               .replace(/^(\w)/, (_, c) => c.toLowerCase())             // quita caracteres especiales
               .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) =>
                 index === 0 ? word.toLowerCase() : word.toUpperCase()
-              
+
               )
               .replace(/\s+/g, '');
-              
+
           };
 
           const jsonData = jsonDataOriginal.map((row: any) => {
@@ -529,42 +531,55 @@ export class PackageTrackingComponent implements OnInit {
   }
 
   // Método para enviar los datos al backend
-  enviarAlBackend(data: any): void {
-// Reemplaza con el ID real del paquete entrante
-    Swal.fire({
-      title: 'Cargando consolidado...',
-      html: '<b>Por favor espera</b>',
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading(); // icono de carga
-      }
-    });
-    this.pakage.SentDataExel(data, this.incomingPackageId).subscribe(
-      (response) => {
-        // console.log(response.data);
-        this.getData(this.page, this.size); // Actualiza la lista después de enviar los datos
-        Swal.fire({
-          title: '¡Éxito!',
-          text: 'Se cargo el consolidado correctamente.',
-          icon: 'success',
-          showConfirmButton: false,
-          timer: 1500,
-          timerProgressBar: true
-        });
-      },
-      (err) => {
-        Swal.fire(
-          'Error',
-          ` ${err.error?.message}`,
-          'error'
-        );
-      }
-    );
+enviarAlBackend(data: any): void {
+  Swal.fire({
+    title: 'Cargando consolidado...',
+    html: '<b>Por favor espera</b>',
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+    }
+  });
 
-  }
+  this.pakage.SentDataExel(data, this.incomingPackageId).subscribe(
+    (response) => {
+      this.getData(this.page, this.size);
+
+      // 📌 Extraer guías duplicadas del response
+      const duplicadas: string[] = response.data?.guiasDuplicadas || [];
+
+      let duplicadasHtml = '';
+      if (duplicadas.length > 0) {
+        duplicadasHtml = `
+          <div style="margin-top:10px; text-align:left;">
+            <p><b>📦 Guías duplicadas encontradas:</b></p>
+            <ul style="max-height:180px; overflow-y:auto; padding-left:18px; font-family:monospace; color:#b91c1c;">
+              ${duplicadas.map(g => `<li>${g}</li>`).join('')}
+            </ul>
+          </div>
+        `;
+      } else {
+        duplicadasHtml = `<p style="color:green;"><b>No se encontraron guías duplicadas 🎉</b></p>`;
+      }
+
+      Swal.fire({
+        icon: 'success',
+        title: '¡Éxito!',
+        html: `
+          <p>✅ Se cargó el consolidado correctamente.</p>
+          ${duplicadasHtml}
+        `,
+        confirmButtonText: 'Aceptar',
+        width: 500
+      });
+    },
+    (err) => {
+      Swal.fire('Error', ` ${err.error?.message}`, 'error');
+    }
+  );
+}
 
   enviarAlBackendCostos(data: any): void { // Reemplaza con el ID real del paquete entrante
-        console.log(data) 
     Swal.fire({
       title: 'Cargando consolidado...',
       html: '<b>Por favor espera</b>',
@@ -589,7 +604,7 @@ export class PackageTrackingComponent implements OnInit {
       (err) => {
         Swal.fire(
           'Error',
-          ` ${err.error?.message }`,
+          ` ${err.error?.message}`,
           'error'
         );
       }
@@ -784,7 +799,7 @@ export class PackageTrackingComponent implements OnInit {
             Swal.fire('✅ Éxito', 'Los paquetes fueron enviados correctamente.', 'success');
           },
           error: (error) => {
-            const msg = error?.error?.message;
+            const msg = error?.error?.message || 'Ocurrió un error al enviar los paquetes.';
             Swal.fire('❌ Error', msg, 'error');
           }
         });
@@ -904,7 +919,7 @@ export class PackageTrackingComponent implements OnInit {
               <button id="descargarBtn" class="swal2-styled swal2-confirm btn-descargar">📥 Descargar Excel</button>
               <button id="anteriorBtn" class="swal2-styled swal2-default btn-navegacion" ${index === 0 ? 'disabled' : ''}>◀ Anterior</button>
               <button id="siguienteBtn" class="swal2-styled swal2-default btn-navegacion" ${index === bloques.length - 1 ? 'disabled' : ''}>Siguiente ▶</button>
-             
+
             </div>
           `,
             showConfirmButton: false,
@@ -974,7 +989,8 @@ export class PackageTrackingComponent implements OnInit {
 
     this.pakage.MatchingPackage(this.incomingPackageId).subscribe({
       next: (response) => {
-        this.getData(this.page, this.size); // Actualiza la lista después del macheo
+        this.getData(this.page, this.size);
+        this.getPakagesByCost(this.pageCost, this.sizeCost); // Actualiza la lista después del macheo
         Swal.fire({
           icon: 'success',
           title: '¡Macheo completo!',
@@ -1009,7 +1025,8 @@ export class PackageTrackingComponent implements OnInit {
 
     this.pakage.MatchingPackageCost(this.incomingPackageId).subscribe({
       next: (response) => {
-        this.getData(this.page, this.size); // Actualiza la lista después del macheo
+        this.getData(this.page, this.size);
+        this.getPakagesByCost(this.pageCost, this.sizeCost); // Actualiza la lista después del macheo
         Swal.fire({
           icon: 'success',
           title: '¡Macheo completo!',

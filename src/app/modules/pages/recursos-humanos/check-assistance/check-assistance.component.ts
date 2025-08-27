@@ -1,5 +1,5 @@
 import { RHService } from 'src/app/services/rh.service';
-import { Component } from '@angular/core';
+import { Component, ElementRef, QueryList, ViewChildren } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 
@@ -10,16 +10,28 @@ import Swal from 'sweetalert2';
   styleUrls: ['./check-assistance.component.css']
 })
 export class CheckAssistanceComponent {
+token: string[] = ['', '', '', '', '', ''];
+  tokenArray = new Array(6);
+
+  // 🔑 Aquí referenciamos TODOS los inputs con ViewChildren
+  @ViewChildren('tokenInput') inputs!: QueryList<ElementRef>;
 
   constructor(
     private fb: FormBuilder,
     private rh: RHService
-  ) {
+  ) {}
 
+  // 🔑 Cuando se monta el componente → foco en el primer input
+  ngAfterViewInit(): void {
+    this.setFocusFirst();
   }
 
-  token: string[] = ['', '', '', '', '', ''];
-  tokenArray = new Array(6);
+  setFocusFirst() {
+    const firstInput = this.inputs.first;
+    if (firstInput) {
+      firstInput.nativeElement.focus();
+    }
+  }
 
   onInput(event: any, index: number) {
     const input = event.target;
@@ -34,12 +46,11 @@ export class CheckAssistanceComponent {
     const tokenCompleto = this.token.join('');
     if (tokenCompleto.length === 6 && !this.token.includes('')) {
       this.enviarToken(); // Enviar automáticamente
-      value.length === 1   
     }
   }
 
   enviarToken() {
-    const tokenCompleto = this.token.join('').toUpperCase(); // opcional: toUpperCase()
+    const tokenCompleto = this.token.join('').toUpperCase();
 
     this.rh.validateToken(tokenCompleto).subscribe({
       next: (response) => {
@@ -47,12 +58,9 @@ export class CheckAssistanceComponent {
           Swal.fire({
             icon: 'success',
             title: 'Registro exitoso',
-            text: response.message || 'Asistencia/Falta registrada correctamente.', // muestra "Registro tardío, favor de presentar su justificante"
+            text: response.message || 'Asistencia/Retardo registrada correctamente.',
             confirmButtonText: 'Aceptar'
           });
-          this.token.fill(''); // Limpiar el token después del envío
-          this.tokenArray.fill(''); // Limpiar el tokenArray después del envío
-          this.token = ['', '', '', '', '', '']; // Limpiar el token
         } else {
           Swal.fire({
             icon: 'error',
@@ -60,10 +68,11 @@ export class CheckAssistanceComponent {
             text: response.message || 'Algo salió mal.',
             confirmButtonText: 'Aceptar'
           });
-          this.token.fill(''); // Limpiar el token después del envío
-          this.tokenArray.fill(''); // Limpiar el tokenArray después del envío
-          this.token = ['', '', '', '', '', '']; // Limpiar el token
         }
+
+        // 🚀 Limpiar e inmediatamente regresar foco al primer input
+        this.resetToken();
+        this.setFocusFirst();
       },
       error: (err) => {
         Swal.fire({
@@ -72,10 +81,17 @@ export class CheckAssistanceComponent {
           text: err.error?.message || 'No se pudo registrar la asistencia',
           confirmButtonText: 'Aceptar'
         });
+
+        this.resetToken();
+        this.setFocusFirst();
       }
     });
   }
 
+  resetToken() {
+    this.token = ['', '', '', '', '', ''];
+    this.tokenArray = new Array(6);
+  }
 
   onBackspace(event: any, index: number) {
     const input = event.target;

@@ -26,7 +26,7 @@ export class PakageService {
 
   getCargaById(PackageOrgId: any, desde: any, hasta: any, page: any, size: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'PackageOrgId': PackageOrgId, 'desde': desde, 'hasta': hasta, 'page': page, 'size': size });
-    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/incomingPackagesByPackageOrgId'}`, { headers });
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/incoming/byPackageOrgId'}`, { headers });
   }
 
   getAllPackages(headers: HttpHeaders): Observable<ApiResponse> {
@@ -36,12 +36,12 @@ export class PakageService {
 
   getDeliveriesCar(page: any, size: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'page': page, 'size': size });
-    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/deliveries'}`, { headers });
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/delivery/informationCars'}`, { headers });
   }
 
   getPackagesDeliveryById(deliveryId: any, page: any, size: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'deliveryId': deliveryId, 'page': page, 'size': size });
-    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/packagesByDeliveryId'}`, { headers });
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/delivery'}`, { headers });
   }
 
   searchPackage(guia: any): Observable<ApiResponse> {
@@ -50,24 +50,23 @@ export class PakageService {
   }
 
   getDeliveryByEmployeeId(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/deliveryByEmployeeId'}`);
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/delivery/informationByEmployeeId'}`);
   }
 
   getPackageByCarga(incomingPackageId: any, page: any, size: any, isCost: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId, 'page': page, 'size': size, 'isCost': isCost });
-    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/packagesByIncomingPackageId'}`, { headers });
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/incoming'}`, { headers });
   }
 
   getGuiasByIncomingPackage(incomingPackageId: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId });
-    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/getGuiasByIncomingPackage'}`, { headers });
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/incoming/guiasList'}`, { headers });
   }
-
 
 
   getPackageByDelivery(deliveryId: any, page: any, size: any, isCost: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'deliveryId': deliveryId, 'page': page, 'size': size, 'isCost': isCost });
-    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/packagesByDeliveryId'}`, { headers });
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/delivery'}`, { headers });
   }
 
   getPDex(): Observable<ApiResponse> {
@@ -76,7 +75,7 @@ export class PakageService {
 
   searchPackageDelivery(guia: any, deliveryId: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'guia': guia, 'deliveryId': deliveryId });
-    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/searchPackageByDeliveryId'}`, { headers });
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/package/delivery/byPackage'}`, { headers });
   }
 
   getConfigPackageOrg(headers: HttpHeaders): Observable<ApiResponse> {
@@ -98,40 +97,40 @@ export class PakageService {
 
   SentListPackage(data: any, incomingPackageId: any): Observable<ApiResponse> {//envio de lista de paquetes
     let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId });
-    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/createPackageList'}`, data,
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/incoming/packagesList'}`, data,
       { headers });
   }
 
-    SentListPackageDelivery(data: any, deliveryId: any): Observable<ApiResponse> {//envio de lista de paquetes
-    let headers = new HttpHeaders({ 'deliveryId': deliveryId });
-    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/addPackagesInDeliveryList'}`, data,
+    SentListPackageDelivery(data: any, deliveryId: any, packageOrgId: any): Observable<ApiResponse> {//envio de lista de paquetes
+    let headers = new HttpHeaders({ 'deliveryId': deliveryId, 'packageOrgId': packageOrgId });
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/delivery/packagesList'}`, data,
       { headers });
   }
 
   SentDataExel(data: any, incomingPackageId: any): Observable<ApiResponse> {//Trae la nomina actual
     let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId });
-    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/createDeliveryLoad'}`, data,
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/incoming/load/delivery'}`, data,
       { headers });
   }
 
 
   paquetesEscaneados(guia: any, incomingPackageId: any): Observable<ApiResponse> {//Trae la nomina actual
     let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId, 'guia': guia, });
-    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/createPackage'}`, null,
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/incoming/package'}`, null,
       { headers });
   }
 
   addPackagesInDelivery(guia: any, deliveryId: any): Observable<ApiResponse> {//Trae la nomina actual
     let headers = new HttpHeaders({ 'deliveryId': deliveryId, 'guia': guia });
     console.log(headers)
-    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/addPackagesInDelivery'}`, null,
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/delivery/package'}`, null,
       { headers });
   }
 
 
-  createIncoming(pakageOrgId: any, description: any): Observable<ApiResponse> {
-    let headers = new HttpHeaders({ 'description': description, 'pakageOrgId': pakageOrgId });
-    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/createIncomingPackage'}`, null,
+  createIncoming(pakageOrgId: any, description: any, isWithPackages: boolean): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'description': description, 'pakageOrgId': pakageOrgId, 'isWithPackages': isWithPackages.toString() });
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/incoming'}`, null,
       { headers }
     );
   }
@@ -139,13 +138,13 @@ export class PakageService {
 
   MatchingPackage(incomingPackageId: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId });
-    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/createMatchPackage'}`, null,
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/incoming/match/delivery'}`, null,
       { headers }
     );
   }
 
   createDeliveryCar(data: any): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/createDelivery'}`, data,
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/delivery'}`, data,
     );
   }
 
@@ -166,7 +165,7 @@ export class PakageService {
 
   updateDeliveryStatus(deliveryId: any, catStatusId: any, description: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'deliveryId': deliveryId, 'catStatusId': catStatusId, 'description': description });
-    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/changeStatusDelivery'}`, null,
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/delivery/changeStatus'}`, null,
       { headers }
     );
   }
@@ -187,13 +186,13 @@ export class PakageService {
 
   SentDataExelCost(data: any, incomingPackageId: any): Observable<ApiResponse> {//Trae la nomina actual
     let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId });
-    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/createCostLoad'}`, data,
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/incoming/load/cost'}`, data,
       { headers });
   }
 
   MatchingPackageCost(incomingPackageId: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId });
-    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/matchCost'}`, null,
+    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/incoming/match/cost'}`, null,
       { headers }
     );
   }
@@ -214,7 +213,7 @@ export class PakageService {
 
   DeletePackageByDelivery(packageId: any, deliveryId: any, description: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'packageId': packageId, 'deliveryId': deliveryId, 'description': description });
-    return this.http.patch<ApiResponse>(`${environment.baseService}${'/package/softdeleteDelivery'}`, null,
+    return this.http.patch<ApiResponse>(`${environment.baseService}${'/package/delivery/softdelete'}`, null,
       { headers }
     );
   }

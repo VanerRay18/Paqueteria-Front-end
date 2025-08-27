@@ -92,8 +92,7 @@ export class DeliveryComponent implements OnInit {
   cargarDeliveryInfo() {
     this.pakage.getDeliveryByEmployeeId().subscribe(
       (response: ApiResponse) => {
-        if (response && response.data) {
-          console.log(response.data);
+        if (response && response.data) {3
           this.isRute = true;
           this.deliveryInfo = response.data;
           this.deliveryId = this.deliveryInfo.id; // Assuming the delivery ID is in the response

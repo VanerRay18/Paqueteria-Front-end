@@ -1,18 +1,28 @@
 <div class="cont col-auto row  mt-4 ms-4">
 
-    <div class="card d-flex m-3">
-        <div class="row">
-            <div class="icono-usuario d-flex justify-content-center mt-auto" >
-                <img src="assets/user-icon.png" alt="Icono usuario" />
-            </div>
+  <div class="card d-flex m-3">
+    <div class="row">
+      <div class="icono-usuario d-flex justify-content-center mt-auto">
+        <img src="assets/user-icon.png" alt="Icono usuario" />
+      </div>
 
-            <h3 class="mensaje d-flex justify-content-center mt-auto">Ingrese el Token para registrar su asistencia</h3>
+      <h3 class="mensaje d-flex justify-content-center mt-auto">Ingrese el Token
+        para registrar su asistencia</h3>
 
-            <div class="token-inputs">
-                <input type="text" maxlength="1" *ngFor="let box of tokenArray; let i = index" [(ngModel)]="token[i]"
-                    (input)="onInput($event, i)" (keydown.backspace)="onBackspace($event, i)" class="token-box" />
-            </div>
-
+      <div class="token-inputs">
+        <div class="token-inputs">
+          <input
+            *ngFor="let item of tokenArray; let i = index"
+            #tokenInput
+            maxlength="1"
+            [(ngModel)]="token[i]"
+            (input)="onInput($event, i)"
+            (keydown.backspace)="onBackspace($event, i)"
+            type="text"
+            class="token-box" />
         </div>
+      </div>
+
     </div>
+  </div>
 </div>
