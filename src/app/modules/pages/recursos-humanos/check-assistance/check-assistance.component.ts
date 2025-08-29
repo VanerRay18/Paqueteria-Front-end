@@ -10,7 +10,7 @@ import Swal from 'sweetalert2';
   styleUrls: ['./check-assistance.component.css']
 })
 export class CheckAssistanceComponent {
-token: string[] = ['', '', '', '', '', ''];
+  token: string[] = ['', '', '', '', '', ''];
   tokenArray = new Array(6);
 
   // 🔑 Aquí referenciamos TODOS los inputs con ViewChildren
@@ -19,19 +19,21 @@ token: string[] = ['', '', '', '', '', ''];
   constructor(
     private fb: FormBuilder,
     private rh: RHService
-  ) {}
+  ) { }
+
+
+  ngOnInit(): void {
+
+
+
+  }
 
   // 🔑 Cuando se monta el componente → foco en el primer input
   ngAfterViewInit(): void {
     this.setFocusFirst();
   }
 
-  setFocusFirst() {
-    const firstInput = this.inputs.first;
-    if (firstInput) {
-      firstInput.nativeElement.focus();
-    }
-  }
+
 
   onInput(event: any, index: number) {
     const input = event.target;
@@ -49,41 +51,31 @@ token: string[] = ['', '', '', '', '', ''];
     }
   }
 
+  private handleResponse(success: boolean, message: string) {
+    Swal.fire({
+      icon: success ? 'success' : 'error',
+      title: success ? 'Registro exitoso' : 'Ocurrió un error',
+      text: message,
+      confirmButtonText: 'Aceptar',
+      returnFocus: false
+    }).then(() => {
+      this.resetToken();
+
+    });
+  }
+
   enviarToken() {
     const tokenCompleto = this.token.join('').toUpperCase();
 
     this.rh.validateToken(tokenCompleto).subscribe({
       next: (response) => {
-        if (response.success) {
-          Swal.fire({
-            icon: 'success',
-            title: 'Registro exitoso',
-            text: response.message || 'Asistencia/Retardo registrada correctamente.',
-            confirmButtonText: 'Aceptar'
-          });
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Ocurrió un error',
-            text: response.message || 'Algo salió mal.',
-            confirmButtonText: 'Aceptar'
-          });
-        }
-
-        // 🚀 Limpiar e inmediatamente regresar foco al primer input
-        this.resetToken();
-        this.setFocusFirst();
+        this.handleResponse(
+          response.success,
+          response.message || (response.success ? 'Asistencia registrada correctamente.' : 'Algo salió mal.')
+        );
       },
       error: (err) => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Ocurrió un error',
-          text: err.error?.message || 'No se pudo registrar la asistencia',
-          confirmButtonText: 'Aceptar'
-        });
-
-        this.resetToken();
-        this.setFocusFirst();
+        this.handleResponse(false, err.error?.message || 'No se pudo registrar la asistencia');
       }
     });
   }
@@ -91,6 +83,23 @@ token: string[] = ['', '', '', '', '', ''];
   resetToken() {
     this.token = ['', '', '', '', '', ''];
     this.tokenArray = new Array(6);
+
+    // 🚀 Esperar a que Angular actualice la vista
+    setTimeout(() => {
+      const firstInput = this.inputs.first;
+      if (firstInput) {
+        firstInput.nativeElement.focus();
+      }
+    });
+  }
+
+  setFocusFirst() {
+    setTimeout(() => {
+      const firstInput = this.inputs.first;
+      if (firstInput) {
+        firstInput.nativeElement.focus();
+      }
+    }, 0); // 0ms es suficiente para esperar render
   }
 
   onBackspace(event: any, index: number) {
