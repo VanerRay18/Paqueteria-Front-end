@@ -101,16 +101,22 @@ export class PakageService {
       { headers });
   }
 
-    SentListPackageDelivery(data: any, deliveryId: any, packageOrgId: any): Observable<ApiResponse> {//envio de lista de paquetes
+  SentListPackageDelivery(data: any, deliveryId: any, packageOrgId: any): Observable<ApiResponse> {//envio de lista de paquetes
     let headers = new HttpHeaders({ 'deliveryId': deliveryId, 'packageOrgId': packageOrgId });
     return this.http.post<ApiResponse>(`${environment.baseService}${'/package/delivery/packagesList'}`, data,
       { headers });
   }
 
-  SentDataExel(data: any, incomingPackageId: any): Observable<ApiResponse> {//Trae la nomina actual
-    let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId });
-    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/incoming/load/delivery'}`, data,
-      { headers });
+  sendExcelDelivery(file: File, incomingPackageId: number): Observable<ApiResponse> {
+    const formData = new FormData();
+    formData.append('file', file, file.name); // @RequestParam MultipartFile file
+
+    const headers = new HttpHeaders().set('incomingPackageId', String(incomingPackageId));
+    return this.http.post<ApiResponse>(
+      `${environment.baseService}/package/incoming/load/delivery`,
+      formData,
+      { headers }
+    );
   }
 
 
@@ -184,10 +190,16 @@ export class PakageService {
     );
   }
 
-  SentDataExelCost(data: any, incomingPackageId: any): Observable<ApiResponse> {//Trae la nomina actual
-    let headers = new HttpHeaders({ 'incomingPackageId': incomingPackageId });
-    return this.http.post<ApiResponse>(`${environment.baseService}${'/package/incoming/load/cost'}`, data,
-      { headers });
+  sendExcelCost(file: File, incomingPackageId: number): Observable<ApiResponse> {
+    const formData = new FormData();
+    formData.append('file', file, file.name); // @RequestParam MultipartFile file
+
+    const headers = new HttpHeaders().set('incomingPackageId', String(incomingPackageId));
+    return this.http.post<ApiResponse>(
+      `${environment.baseService}/package/incoming/load/cost`,
+      formData,
+      { headers }
+    );
   }
 
   MatchingPackageCost(incomingPackageId: any): Observable<ApiResponse> {

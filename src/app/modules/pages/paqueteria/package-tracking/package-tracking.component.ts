@@ -9,6 +9,8 @@ import { PakageService } from 'src/app/services/pakage.service';
 import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
 import { DatePipe } from '@angular/common';
+import { Observable } from 'rxjs';
+import { ApiResponse } from 'src/app/models/ApiResponse';
 
 
 @Component({
@@ -447,170 +449,171 @@ export class PackageTrackingComponent implements OnInit {
     });
   }
 
-  onFileSelected(event: any, tipo: string): void {
-    const file: File = event.target.files[0];
+  // onFileSelected(event: any, tipo: string): void {
+  //   const file: File = event.target.files[0];
 
-    if (file) {
-      const reader: FileReader = new FileReader();
-      reader.onload = (e: any) => {
-        const arrayBuffer = e.target.result;
-        const uint8Array = new Uint8Array(arrayBuffer);
+  //   if (file) {
+  //     const reader: FileReader = new FileReader();
+  //     reader.onload = (e: any) => {
+  //       const arrayBuffer = e.target.result;
+  //       const uint8Array = new Uint8Array(arrayBuffer);
 
-        // Verificamos si el archivo contiene números en formato científico
-        const textReader = new FileReader();
-        textReader.onload = (event: any) => {
-          const textContent = event.target.result as string;
+  //       // Verificamos si el archivo contiene números en formato científico
+  //       const textReader = new FileReader();
+  //       textReader.onload = (event: any) => {
+  //         const textContent = event.target.result as string;
 
-          if (/[\d.]+e[+-]?\d+/i.test(textContent)) {
-            Swal.fire({
-              icon: 'error',
-              title: 'Formato inválido detectado',
-              text: 'El archivo contiene números en formato científico como "3.9068E+11", lo cual no es permitido.',
-            });
-            return;
-          }
+  //         if (/[\d.]+e[+-]?\d+/i.test(textContent)) {
+  //           Swal.fire({
+  //             icon: 'error',
+  //             title: 'Formato inválido detectado',
+  //             text: 'El archivo contiene números en formato científico como "3.9068E+11", lo cual no es permitido.',
+  //           });
+  //           return;
+  //         }
 
-          const workbook: XLSX.WorkBook = XLSX.read(uint8Array, { type: 'array' });
+  //         const workbook: XLSX.WorkBook = XLSX.read(uint8Array, { type: 'array' });
 
-          const sheetName = workbook.SheetNames[0];
-          const worksheet = workbook.Sheets[sheetName];
+  //         const sheetName = workbook.SheetNames[0];
+  //         const worksheet = workbook.Sheets[sheetName];
 
-          const jsonDataOriginal = XLSX.utils.sheet_to_json(worksheet, {
-            defval: '',
-            raw: false,
-            dateNF: 'mm/dd/yyyy' // Formato de fecha
-          });
+  //         const jsonDataOriginal = XLSX.utils.sheet_to_json(worksheet, {
+  //           defval: '',
+  //           raw: false,
+  //           dateNF: 'mm/dd/yyyy' // Formato de fecha
+  //         });
 
-          const toCamelCase = (str: string) => {
-            return str
-              .trim()
-              .toLowerCase()
-              .replace(/[^a-zA-Z0-9 ]/g, '')
-              .replace(/^(\w)/, (_, c) => c.toLowerCase())             // quita caracteres especiales
-              .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) =>
-                index === 0 ? word.toLowerCase() : word.toUpperCase()
+  //         const toCamelCase = (str: string) => {
+  //           return str
+  //             .trim()
+  //             .toLowerCase()
+  //             .replace(/[^a-zA-Z0-9 ]/g, '')
+  //             .replace(/^(\w)/, (_, c) => c.toLowerCase())             // quita caracteres especiales
+  //             .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) =>
+  //               index === 0 ? word.toLowerCase() : word.toUpperCase()
 
-              )
-              .replace(/\s+/g, '');
+  //             )
+  //             .replace(/\s+/g, '');
 
-          };
+  //         };
 
-          const jsonData = jsonDataOriginal.map((row: any) => {
-            const newRow: any = {};
+  //         const jsonData = jsonDataOriginal.map((row: any) => {
+  //           const newRow: any = {};
 
-            Object.keys(row).forEach(key => {
-              const newKey = toCamelCase(key);
-              const value = row[key];
+  //           Object.keys(row).forEach(key => {
+  //             const newKey = toCamelCase(key);
+  //             const value = row[key];
 
-              // Detectar si es una fecha
-              if (value instanceof Date || (!isNaN(Date.parse(value)) && typeof value === 'string')) {
-                const date = dayjs(value);
-                newRow[newKey] = date.isValid() ? date.format('MM/DD/YYYY') : value;
-              } else {
-                newRow[newKey] = value;
-              }
-            });
+  //             // Detectar si es una fecha
+  //             if (value instanceof Date || (!isNaN(Date.parse(value)) && typeof value === 'string')) {
+  //               const date = dayjs(value);
+  //               newRow[newKey] = date.isValid() ? date.format('MM/DD/YYYY') : value;
+  //             } else {
+  //               newRow[newKey] = value;
+  //             }
+  //           });
 
-            return newRow;
-          });
+  //           return newRow;
+  //         });
 
-          if (tipo === 'normal') {
-            this.enviarAlBackend(jsonData);
-          } else if (tipo === 'costos') {
-            this.enviarAlBackendCostos(jsonData);
-          }
-        };
+  //         if (tipo === 'normal') {
+  //           this.enviarAlBackend(jsonData);
+  //         } else if (tipo === 'costos') {
+  //           this.enviarAlBackendCostos(jsonData);
+  //         }
+  //       };
 
-        // Ahora leemos como texto para validación previa
-        textReader.readAsText(file);
-      };
+  //       // Ahora leemos como texto para validación previa
+  //       textReader.readAsText(file);
+  //     };
 
 
-      reader.readAsArrayBuffer(file); // ✅ lee como binario
-    }
-  }
+  //     reader.readAsArrayBuffer(file); // ✅ lee como binario
+  //   }
+  // }
 
   // Método para enviar los datos al backend
-enviarAlBackend(data: any): void {
+enviarArchivoAlBackend(event: any, tipo: string): void {
+  const file: File = event.target.files[0];
+  if (!file) return;
   Swal.fire({
     title: 'Cargando consolidado...',
     html: '<b>Por favor espera</b>',
     allowOutsideClick: false,
-    didOpen: () => {
-      Swal.showLoading();
-    }
+    didOpen: () => Swal.showLoading()
   });
 
-  this.pakage.SentDataExel(data, this.incomingPackageId).subscribe(
+  let request$: Observable<ApiResponse>;
+
+  if (tipo === 'normal') {
+    request$ = this.pakage.sendExcelDelivery(file, this.incomingPackageId);
+  } else if (tipo === 'costos') {
+    request$ = this.pakage.sendExcelCost(file, this.incomingPackageId);
+  } else {
+    Swal.fire('Error', 'Tipo de carga no soportado', 'error');
+    return;
+  }
+
+  request$.subscribe(
     (response) => {
       this.getData(this.page, this.size);
 
-      // 📌 Extraer guías duplicadas del response
       const duplicadas: string[] = response.data?.guiasDuplicadas || [];
-
-      let duplicadasHtml = '';
-      if (duplicadas.length > 0) {
-        duplicadasHtml = `
-          <div style="margin-top:10px; text-align:left;">
-            <p><b>📦 Guías duplicadas encontradas:</b></p>
-            <ul style="max-height:180px; overflow-y:auto; padding-left:18px; font-family:monospace; color:#b91c1c;">
-              ${duplicadas.map(g => `<li>${g}</li>`).join('')}
-            </ul>
-          </div>
-        `;
-      } else {
-        duplicadasHtml = `<p style="color:green;"><b>No se encontraron guías duplicadas 🎉</b></p>`;
-      }
+      const html = duplicadas.length
+        ? `<div style="margin-top:10px; text-align:left;">
+             <p><b>📦 Guías duplicadas encontradas:</b></p>
+             <ul style="max-height:180px; overflow-y:auto; padding-left:18px; font-family:monospace; color:#b91c1c;">
+               ${duplicadas.map(g => `<li>${g}</li>`).join('')}
+             </ul>
+           </div>`
+        : `<p style="color:green;"><b>No se encontraron guías duplicadas 🎉</b></p>`;
 
       Swal.fire({
         icon: 'success',
         title: '¡Éxito!',
-        html: `
-          <p>✅ Se cargó el consolidado correctamente.</p>
-          ${duplicadasHtml}
-        `,
+        html: `<p>✅ Se cargó el consolidado correctamente.</p>${html}`,
         confirmButtonText: 'Aceptar',
         width: 500
       });
     },
     (err) => {
-      Swal.fire('Error', ` ${err.error?.message}`, 'error');
+      Swal.fire('Error', `${err.error?.message}`, 'error');
     }
   );
 }
 
-  enviarAlBackendCostos(data: any): void { // Reemplaza con el ID real del paquete entrante
-    Swal.fire({
-      title: 'Cargando consolidado...',
-      html: '<b>Por favor espera</b>',
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading(); // icono de carga
-      }
-    });
-    this.pakage.SentDataExelCost(data, this.incomingPackageId).subscribe(
-      (response) => {
-        // console.log(response.data);
-        this.getData(this.page, this.size); // Actualiza la lista después de enviar los datos
-        Swal.fire({
-          title: '¡Éxito!',
-          text: 'Se cargo el consolidado correctamente.',
-          icon: 'success',
-          showConfirmButton: false,
-          timer: 1500,
-          timerProgressBar: true
-        });
-      },
-      (err) => {
-        Swal.fire(
-          'Error',
-          ` ${err.error?.message}`,
-          'error'
-        );
-      }
-    );
+  // enviarAlBackendCostos(data: any): void { // Reemplaza con el ID real del paquete entrante
+  //   Swal.fire({
+  //     title: 'Cargando consolidado...',
+  //     html: '<b>Por favor espera</b>',
+  //     allowOutsideClick: false,
+  //     didOpen: () => {
+  //       Swal.showLoading(); // icono de carga
+  //     }
+  //   });
+  //   this.pakage.SentDataExelCost(data, this.incomingPackageId).subscribe(
+  //     (response) => {
+  //       // console.log(response.data);
+  //       this.getData(this.page, this.size); // Actualiza la lista después de enviar los datos
+  //       Swal.fire({
+  //         title: '¡Éxito!',
+  //         text: 'Se cargo el consolidado correctamente.',
+  //         icon: 'success',
+  //         showConfirmButton: false,
+  //         timer: 1500,
+  //         timerProgressBar: true
+  //       });
+  //     },
+  //     (err) => {
+  //       Swal.fire(
+  //         'Error',
+  //         ` ${err.error?.message}`,
+  //         'error'
+  //       );
+  //     }
+  //   );
 
-  }
+  // }
 
   mostrarSwal(): void {
     const headers = new HttpHeaders({ 'incomingPackageId': this.incomingPackageId });

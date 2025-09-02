@@ -23,13 +23,13 @@
         <button class="btn btn-escanear" (click)="machoteExelPaquetes()">
           📊 Machote de excel
         </button>
-        <input id="csvFile" type="file" (change)="onFileSelected($event, 'normal')" accept=".csv" #fileInputNomal
+        <input id="csvFile" type="file" (change)="enviarArchivoAlBackend($event, 'normal')" accept=".csv" #fileInputNomal
           style="display: none" />
 
         <button class="btn  btn-escanear" (click)="fileInputNomal.click()">
           📁 Cargar Excel
         </button>
-        <input id="csvFile" type="file" (change)="onFileSelected($event, 'costos')" accept=".csv" #fileInputCostos
+        <input id="csvFile" type="file" (change)="enviarArchivoAlBackend($event, 'costos')" accept=".csv" #fileInputCostos
           style="display: none" />
 
         <button class="btn  btn-escanear" (click)="fileInputCostos.click()" *ngIf="isPrice">

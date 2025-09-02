@@ -17,9 +17,6 @@
 
       <input type="text" placeholder="Buscar..." class="buscador" [(ngModel)]="searchTerm" />
       <div class="acciones">
-        <input id="csvFile" type="file" (change)="onFileSelected($event)" accept=".csv" #fileInput
-          style="display: none" />
-
         <button class="btn btn-escanear" (click)="mostrarSwal()">
           Comenzar a escanear
         </button>
