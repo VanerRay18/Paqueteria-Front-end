@@ -532,55 +532,146 @@ export class PackageTrackingComponent implements OnInit {
   //   }
   // }
 
-  // Método para enviar los datos al backend
-enviarArchivoAlBackend(event: any, tipo: string): void {
-  const file: File = event.target.files[0];
-  if (!file) return;
-  Swal.fire({
-    title: 'Cargando consolidado...',
-    html: '<b>Por favor espera</b>',
-    allowOutsideClick: false,
-    didOpen: () => Swal.showLoading()
-  });
+  onFileSelected(event: any, tipo: string): void {
+    const file: File = event.target.files[0];
+    if (!file) return;
 
-  let request$: Observable<ApiResponse>;
+    // Definir las columnas esperadas según el tipo
+    const columnasEsperadas = {
+      normal: [
+        'Tracking No', 'Latest Dept Location', 'Latest Dept Cntry Cd', 'Origin Loc ID',
+        'Shpr Co', 'Shpr Name', 'Shpr Addr', 'Shpr City', 'Shpr State', 'Shpr Cntry',
+        'Shpr Postal', 'Destination Loc ID', 'Recip Co', 'Recip Name', 'Recip Addr',
+        'Recip City', 'Recip State', 'Recip Cntry', 'Recip Postal', 'Service',
+        'Commit Date', 'Commit Time', 'Shpr Phone', 'Recip Phone', 'Shpr Ref',
+        'No Pieces', 'Master Tracking No', 'Special Handling Codes'
+      ],
+      costos: [
+        'FECHA LLEGADA', 'GUIA', 'FECHA', 'TIPO', 'COSTO'
+      ]
+    };
 
-  if (tipo === 'normal') {
-    request$ = this.pakage.sendExcelDelivery(file, this.incomingPackageId);
-  } else if (tipo === 'costos') {
-    request$ = this.pakage.sendExcelCost(file, this.incomingPackageId);
-  } else {
-    Swal.fire('Error', 'Tipo de carga no soportado', 'error');
-    return;
+    const reader: FileReader = new FileReader();
+    reader.onload = (e: any) => {
+      const arrayBuffer = e.target.result;
+      const uint8Array = new Uint8Array(arrayBuffer);
+
+      // Validación de formato científico
+      const textReader = new FileReader();
+      textReader.onload = (event: any) => {
+        const textContent = event.target.result as string;
+
+        if (/[\d.]+e[+-]?\d+/i.test(textContent)) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Formato inválido detectado',
+            text: 'El archivo contiene números en formato científico como "3.9068E+11", lo cual no es permitido.',
+          });
+          return;
+        }
+
+        // Leer Excel para validar columnas
+        const workbook: XLSX.WorkBook = XLSX.read(uint8Array, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+
+        // Obtener solo la primera fila (headers)
+        const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1');
+        const headers: string[] = [];
+
+        for (let col = range.s.c; col <= range.e.c; col++) {
+          const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
+          const cell = worksheet[cellAddress];
+          headers.push(cell ? String(cell.v).trim() : '');
+        }
+
+        // Validar columnas según el tipo
+        const esperadas = columnasEsperadas[tipo as keyof typeof columnasEsperadas];
+        if (!esperadas) {
+          Swal.fire('Error', 'Tipo de carga no soportado', 'error');
+          return;
+        }
+
+        // Verificar que todas las columnas esperadas estén presentes
+        const faltantes = esperadas.filter(col => !headers.includes(col));
+        const extras = headers.filter(col => col && !esperadas.includes(col));
+
+        if (faltantes.length > 0 || extras.length > 0) {
+          let mensaje = 'Las columnas del archivo no coinciden con las esperadas.\n\n';
+
+          if (faltantes.length > 0) {
+            mensaje += `❌ Columnas faltantes:\n${faltantes.join(', ')}\n\n`;
+          }
+
+          if (extras.length > 0) {
+            mensaje += `⚠️ Columnas adicionales encontradas:\n${extras.join(', ')}\n\n`;
+          }
+
+          mensaje += `✅ Columnas esperadas para "${tipo}":\n${esperadas.join(', ')}`;
+
+          Swal.fire({
+            icon: 'error',
+            title: 'Estructura de columnas incorrecta',
+            text: mensaje,
+            width: 600
+          });
+          return;
+        }
+
+        // Si llegamos aquí, las columnas son correctas
+        if (tipo === 'normal') {
+          this.enviarArchivoAlBackend(file, 'delivery');
+        } else if (tipo === 'costos') {
+          this.enviarArchivoAlBackend(file, 'cost');
+        }
+      };
+
+      textReader.readAsText(file);
+    };
+
+    reader.readAsArrayBuffer(file);
   }
 
-  request$.subscribe(
-    (response) => {
-      this.getData(this.page, this.size);
+  // Método actualizado para enviar archivo
+  private enviarArchivoAlBackend(file: File, endpoint: 'delivery' | 'cost'): void {
+    Swal.fire({
+      title: 'Cargando consolidado...',
+      html: '<b>Por favor espera</b>',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
 
-      const duplicadas: string[] = response.data?.guiasDuplicadas || [];
-      const html = duplicadas.length
-        ? `<div style="margin-top:10px; text-align:left;">
+    const request$ = endpoint === 'delivery'
+      ? this.pakage.sendExcelDelivery(file, this.incomingPackageId)
+      : this.pakage.sendExcelCost(file, this.incomingPackageId);
+
+    request$.subscribe(
+      (response) => {
+        this.getData(this.page, this.size);
+
+        const duplicadas: string[] = response.data?.guiasDuplicadas || [];
+        const html = duplicadas.length
+          ? `<div style="margin-top:10px; text-align:left;">
              <p><b>📦 Guías duplicadas encontradas:</b></p>
              <ul style="max-height:180px; overflow-y:auto; padding-left:18px; font-family:monospace; color:#b91c1c;">
                ${duplicadas.map(g => `<li>${g}</li>`).join('')}
              </ul>
            </div>`
-        : `<p style="color:green;"><b>No se encontraron guías duplicadas 🎉</b></p>`;
+          : `<p style="color:green;"><b>No se encontraron guías duplicadas 🎉</b></p>`;
 
-      Swal.fire({
-        icon: 'success',
-        title: '¡Éxito!',
-        html: `<p>✅ Se cargó el consolidado correctamente.</p>${html}`,
-        confirmButtonText: 'Aceptar',
-        width: 500
-      });
-    },
-    (err) => {
-      Swal.fire('Error', `${err.error?.message}`, 'error');
-    }
-  );
-}
+        Swal.fire({
+          icon: 'success',
+          title: '¡Éxito!',
+          html: `<p>✅ Se cargó el consolidado correctamente.</p>${html}`,
+          confirmButtonText: 'Aceptar',
+          width: 500
+        });
+      },
+      (err) => {
+        Swal.fire('Error', `${err.error?.message}`, 'error');
+      }
+    );
+  }
 
   // enviarAlBackendCostos(data: any): void { // Reemplaza con el ID real del paquete entrante
   //   Swal.fire({
