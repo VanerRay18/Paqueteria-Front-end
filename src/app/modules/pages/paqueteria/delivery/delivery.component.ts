@@ -92,7 +92,8 @@ export class DeliveryComponent implements OnInit {
   cargarDeliveryInfo() {
     this.pakage.getDeliveryByEmployeeId().subscribe(
       (response: ApiResponse) => {
-        if (response && response.data) {3
+        if (response && response.data) {
+          3
           this.isRute = true;
           this.deliveryInfo = response.data;
           this.deliveryId = this.deliveryInfo.id; // Assuming the delivery ID is in the response
@@ -215,14 +216,14 @@ export class DeliveryComponent implements OnInit {
     let catStatusId = 7; // Asumiendo que 1 es el ID para "Entregado"
     let packageId = this.deliveryId; // Asegúrate de que el paquete tenga un ID
     let description = 'Paquetes en ruta'; // Descripción de la acción
-  Swal.fire({
-    title: 'Actualizando estado...',
-    text: 'Por favor espera mientras se procesa la información.',
-    allowOutsideClick: false,
-    didOpen: () => {
-      Swal.showLoading();
-    }
-  });
+    Swal.fire({
+      title: 'Actualizando estado...',
+      text: 'Por favor espera mientras se procesa la información.',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
     this.pakage.updateDeliveryStatus(packageId, catStatusId, description).subscribe(
       (response) => {
         Swal.close();
@@ -248,21 +249,21 @@ export class DeliveryComponent implements OnInit {
     let catStatusId = 10;
     let packageId = this.deliveryId; // Asegúrate de que el paquete tenga un ID
     let description = 'ruta terminada'; // Descripción de la acción
-      Swal.fire({
-    title: 'Actualizando estado...',
-    text: 'Por favor espera mientras se procesa la información.',
-    allowOutsideClick: false,
-    didOpen: () => {
-      Swal.showLoading();
-    }
-  });
+    Swal.fire({
+      title: 'Actualizando estado...',
+      text: 'Por favor espera mientras se procesa la información.',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
     this.pakage.updateDeliveryStatus(packageId, catStatusId, description).subscribe(
       (response) => {
 
         Swal.close();
         Swal.fire('Éxito', 'Ha terminado su ruta.', 'success');
         this.isRute = false;
-        this.paquetes =[];
+        this.paquetes = [];
         this.deliveryInfo = [];
         // Recargar la información de entrega
         // Aquí iría la lógica para actualizar el estado en el backend si aplica

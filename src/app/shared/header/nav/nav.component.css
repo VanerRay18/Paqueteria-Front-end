@@ -1,45 +1,75 @@
 .alert-time {
-  text-align: right; /* Alinea el texto de la fecha hacia la izquierda */
+  text-align: right;
+  /* Alinea el texto de la fecha hacia la izquierda */
   color: #858585;
   font-size: 12px;
 
 }
 
-.navbar{
-  background-color:#1e3a8a;
+/* Sube el logo dentro del navbar */
+.navbar .img {
+
+  margin-top: -20px;
+
+}
+
+/* Separa la campanita del logo */
+.navbar .bell {
+  margin-left: 25px;
+  /* 👉 separa más del logo */
+  font-size: 20px;
+  /* por si quieres hacerla un poco más grande */
+  cursor: pointer;
+}
+
+.navbar {
+  background-color: #1e3a8a;
   position: sticky;
   top: 0;
 }
 
-.centerIconDAD:hover{
-color:rgb(184, 184, 184);
+.centerIconDAD:hover {
+  color: rgb(184, 184, 184);
 }
-.icons{
 
-    margin-right: 8px; /* Ajusta el valor según el espacio que necesites */
+.icons {
+
+  margin-right: 8px;
+  /* Ajusta el valor según el espacio que necesites */
 
 
-  font-size: 1.3em; /* Ajusta el tamaño del icono si es necesario */
+  font-size: 1.3em;
+  /* Ajusta el tamaño del icono si es necesario */
 }
+
 .active-custom {
-  color: #FFD700; /* Cambia el color del texto a dorado */
-  background-color: #bb9f0063; /* Mantén el fondo verde o el color que prefieras */
-  border-radius: 23px; /* Bordes redondeados, ajusta el valor según lo que prefieras */
-  border: 2px solid #FFD700; /* Borde dorado */
+  color: #FFD700;
+  /* Cambia el color del texto a dorado */
+  background-color: #bb9f0063;
+  /* Mantén el fondo verde o el color que prefieras */
+  border-radius: 23px;
+  /* Bordes redondeados, ajusta el valor según lo que prefieras */
+  border: 2px solid #FFD700;
+  /* Borde dorado */
 
 
 }
-.generalHover:hover{
-color: #FFD700;
+
+.generalHover:hover {
+  color: #FFD700;
 }
-.centerIcon{
-  display: flex; /* Asegura que el enlace también use flexbox */
-  align-items: center; /* Centra el texto dentro del enlace */
+
+.centerIcon {
+  display: flex;
+  /* Asegura que el enlace también use flexbox */
+  align-items: center;
+  /* Centra el texto dentro del enlace */
 }
 
 /* Estilo de la marca (logo o nombre del sistema) */
 .navbar-brand {
-  color: white; /* blanco */
+  color: white;
+  /* blanco */
   font-size: 1.5rem;
   font-weight: bold;
 }
@@ -56,7 +86,8 @@ color: #FFD700;
 
 /* Estilo del offcanvas */
 .offcanvas {
-  background-color: #1e3a8a;;
+  background-color: #1e3a8a;
+  ;
   width: 290px;
 }
 
@@ -64,7 +95,9 @@ color: #FFD700;
 .offcanvas-title {
   font-size: 1.25rem;
   font-weight: bold;
-  color: white; /* Color Morena */ /* blanco */
+  color: white;
+  /* Color Morena */
+  /* blanco */
 }
 
 /* Botón de cerrar el offcanvas */
@@ -75,7 +108,8 @@ color: #FFD700;
 /* Estilo de los elementos del menú (links) */
 .nav-link {
 
-  color: white; /* blanco */
+  color: white;
+  /* blanco */
   font-weight: 500;
 }
 
@@ -112,21 +146,24 @@ color: #FFD700;
   border-color: #1e3a8a;
   box-shadow: none;
 }
-.img{
+
+.img {
   margin-left: 10px;
   margin-top: -10px;
   width: 140px;
 }
 
-.navbar-toggler{
+.navbar-toggler {
   color: #1e3a8a;
 
   margin-left: 10px;
   font-size: 22px;
 }
-.navbar-brand{
+
+.navbar-brand {
   margin-top: 30px;
 }
+
 .btn-outline-success {
   color: #1e3a8a;
   border-color: #1e3a8a;
@@ -134,7 +171,8 @@ color: #FFD700;
 
 .btn-outline-success:hover {
   background-color: #1e3a8a;
-  color: white; /* blanco */
+  color: white;
+  /* blanco */
 }
 
 
@@ -166,12 +204,13 @@ color: #FFD700;
   background-color: #f0dd38;
   top: -3px;
   right: -12px;
-max-width: 32px;
+  max-width: 32px;
   border-radius: 100%;
   color: rgb(0, 0, 0);
   font-size: 13px;
 }
-.bell{
+
+.bell {
   font-size: 24px;
   cursor: pointer;
 
@@ -184,32 +223,40 @@ max-width: 32px;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.527); /* Negro semitransparente */
-  z-index: 999; /* Debe estar por debajo del dropdown */
+  background-color: rgba(0, 0, 0, 0.527);
+  /* Negro semitransparente */
+  z-index: 999;
+  /* Debe estar por debajo del dropdown */
 }
 
 
 ::-webkit-scrollbar {
-  width: 10px; /* Ancho del scrollbar */
+  width: 10px;
+  /* Ancho del scrollbar */
 }
 
 /* Personaliza el track (fondo del scroll) */
 ::-webkit-scrollbar-track {
-  background-color: #0000008e; /* Fondo del track */
+  background-color: #0000008e;
+  /* Fondo del track */
   border-radius: 10px;
 }
 
 /* Personaliza el thumb (el "deslizador" del scroll) */
 ::-webkit-scrollbar-thumb {
-  background-color: #ffffffbb; /* Color del deslizador */
+  background-color: #ffffffbb;
+  /* Color del deslizador */
   border-radius: 10px;
-  border: 5px solid transparent; /* Hace que se vea un borde alrededor del deslizador */
+  border: 5px solid transparent;
+  /* Hace que se vea un borde alrededor del deslizador */
 }
 
 /* Hover para el thumb */
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #555; /* Color del deslizador al pasar el mouse */
+  background-color: #555;
+  /* Color del deslizador al pasar el mouse */
 }
+
 .notification-item {
   display: flex;
   align-items: center;
@@ -223,7 +270,7 @@ max-width: 32px;
   max-height: inherit;
   overflow-y: auto;
   overflow-x: auto;
-  
+
 }
 
 .notification-item:hover {
@@ -236,10 +283,14 @@ max-width: 32px;
   flex: 1;
   font-size: 14px;
   display: flex;
-  flex-direction: column; /* Hace que el título y mensaje queden en columnas */
-    justify-content: space-between; /* distribuye arriba/abajo */
-  min-height: 70px; /* o ajusta según necesidad */
+  flex-direction: column;
+  /* Hace que el título y mensaje queden en columnas */
+  justify-content: space-between;
+  /* distribuye arriba/abajo */
+  min-height: 70px;
+  /* o ajusta según necesidad */
 }
+
 .alert-time-below {
   margin-top: 8px;
   text-align: right;
@@ -251,7 +302,8 @@ max-width: 32px;
 
 .notification-content strong {
   font-weight: bold;
-  margin-bottom: 3px; /* Espacio entre título y mensaje */
+  margin-bottom: 3px;
+  /* Espacio entre título y mensaje */
   display: block;
 }
 
@@ -264,7 +316,7 @@ max-width: 32px;
   color: green;
 }
 
-.iconNoti{
+.iconNoti {
   font-size: 23px;
   margin-right: 12px;
 }
@@ -296,6 +348,7 @@ max-width: 32px;
   color: white;
   font-weight: bold;
 }
+
 .notification-dropdown {
   position: absolute;
   top: 62px;
@@ -332,11 +385,14 @@ max-width: 32px;
   background-color: #1e3a8a;
   color: white;
 }
+
 .nav-link.generalHover {
   display: flex;
   align-items: center;
-  gap: 8px; /* espacio entre icono y texto */
-  white-space: nowrap; /* evita salto de línea */
+  gap: 8px;
+  /* espacio entre icono y texto */
+  white-space: nowrap;
+  /* evita salto de línea */
   overflow: hidden;
   text-overflow: ellipsis;
 
