@@ -3,7 +3,6 @@ import { Component, ElementRef, QueryList, ViewChildren } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 
-
 @Component({
   selector: 'app-check-assistance',
   templateUrl: './check-assistance.component.html',
@@ -21,19 +20,16 @@ export class CheckAssistanceComponent {
     private rh: RHService
   ) { }
 
-
   ngOnInit(): void {
-
-
-
+    this.tokenArray[1];
   }
 
-  // 🔑 Cuando se monta el componente → foco en el primer input
   ngAfterViewInit(): void {
-    this.setFocusFirst();
+    // Aumentar el delay para que otros elementos terminen de renderizarse
+    setTimeout(() => {
+      this.setFocusFirst();
+    }, 1000); // En lugar de 0ms, usar 100ms
   }
-
-
 
   onInput(event: any, index: number) {
     const input = event.target;
@@ -51,18 +47,19 @@ export class CheckAssistanceComponent {
     }
   }
 
-  private handleResponse(success: boolean, message: string) {
-    Swal.fire({
-      icon: success ? 'success' : 'error',
-      title: success ? 'Registro exitoso' : 'Ocurrió un error',
-      text: message,
-      confirmButtonText: 'Aceptar',
-      returnFocus: false
-    }).then(() => {
-      this.resetToken();
-
-    });
-  }
+ private handleResponse(success: boolean, message: string) {
+  Swal.fire({
+    icon: success ? 'success' : 'error',
+    title: success ? 'Registro exitoso' : 'Ocurrió un error',
+    text: message,
+    confirmButtonText: 'Aceptar',
+    returnFocus: false,
+    timer: 7000,             // ⏱️ Dura 7 segundos
+    timerProgressBar: true    // 👀 Muestra barra de progreso
+  }).then(() => {
+    this.resetToken();
+  });
+}
 
   enviarToken() {
     const tokenCompleto = this.token.join('').toUpperCase();
@@ -86,20 +83,15 @@ export class CheckAssistanceComponent {
 
     // 🚀 Esperar a que Angular actualice la vista
     setTimeout(() => {
-      const firstInput = this.inputs.first;
-      if (firstInput) {
-        firstInput.nativeElement.focus();
-      }
-    });
+      this.setFocusFirst();
+    }, 0);
   }
 
   setFocusFirst() {
-    setTimeout(() => {
-      const firstInput = this.inputs.first;
-      if (firstInput) {
-        firstInput.nativeElement.focus();
-      }
-    }, 0); // 0ms es suficiente para esperar render
+    // ✅ Validación defensiva antes de acceder a .first
+    if (this.inputs && this.inputs.first) {
+      this.inputs.first.nativeElement.focus();
+    }
   }
 
   onBackspace(event: any, index: number) {

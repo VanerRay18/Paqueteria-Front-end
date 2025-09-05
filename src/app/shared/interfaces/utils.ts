@@ -50,10 +50,10 @@ export interface OrgItem {
   id: number;
   name: string;
   config: {
-    config: {
+   
       minvalue: number;
       maxvalue: number;
-    }
+    
   };
 }
 

@@ -115,7 +115,7 @@ export class PackageTrackingCarComponent implements OnInit {
   mostrarSwalFormularioPrevio(vehicle: VehicleCard): void {
     // Generar las opciones del dropdown con los empleados
     const opcionesConductor = this.catEmployees.map((emp: any) =>
-      `<option value="${emp.id}">${emp.name} ${emp.first_surname} ${emp.second_surname}</option>`
+      `<option value="${emp.id}">${emp.name}</option>`
     ).join('');
 
     Swal.fire({

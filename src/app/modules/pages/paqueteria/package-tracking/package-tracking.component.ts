@@ -533,90 +533,96 @@ export class PackageTrackingComponent implements OnInit {
   // }
 
   onFileSelected(event: any, tipo: string): void {
-    const file: File = event.target.files[0];
-    if (!file) return;
+const file: File = event.target.files[0];
+  if (!file) return;
 
-    // Definir las columnas esperadas según el tipo
-    const columnasEsperadas = {
-      normal: [
-        'Tracking No', 'Latest Dept Location', 'Latest Dept Cntry Cd', 'Origin Loc ID',
-        'Shpr Co', 'Shpr Name', 'Shpr Addr', 'Shpr City', 'Shpr State', 'Shpr Cntry',
-        'Shpr Postal', 'Destination Loc ID', 'Recip Co', 'Recip Name', 'Recip Addr',
-        'Recip City', 'Recip State', 'Recip Cntry', 'Recip Postal', 'Service',
-        'Commit Date', 'Commit Time', 'Shpr Phone', 'Recip Phone', 'Shpr Ref',
-        'No Pieces', 'Master Tracking No', 'Special Handling Codes'
-      ],
-      costos: [
-        'FECHA LLEGADA', 'GUIA', 'FECHA', 'TIPO', 'COSTO'
-      ]
-    };
+  // 🚨 Validar que NO sea CSV
+  const fileName = file.name.toLowerCase();
+  if (fileName.endsWith('.csv')) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Formato no permitido',
+      text: 'No se aceptan archivos CSV. Solo archivos Excel (.xls, .xlsx).'
+    });
+    return;
+  }
 
-    const reader: FileReader = new FileReader();
-    reader.onload = (e: any) => {
-      const arrayBuffer = e.target.result;
-      const uint8Array = new Uint8Array(arrayBuffer);
+  // Definir las columnas esperadas según el tipo
+  const columnasEsperadas = {
+    normal: [
+      'Tracking No', 'Latest Dept Location', 'Latest Dept Cntry Cd', 'Origin Loc ID',
+      'Shpr Co', 'Shpr Name', 'Shpr Addr', 'Shpr City', 'Shpr State', 'Shpr Cntry',
+      'Shpr Postal', 'Destination Loc ID', 'Recip Co', 'Recip Name', 'Recip Addr',
+      'Recip City', 'Recip State', 'Recip Cntry', 'Recip Postal', 'Service',
+      'Commit Date', 'Commit Time', 'Shpr Phone', 'Recip Phone', 'Shpr Ref',
+      'No Pieces', 'Master Tracking No', 'Special Handling Codes'
+    ],
+    costos: [
+      'FECHA LLEGADA', 'GUIA', 'FECHA', 'TIPO', 'COSTO'
+    ]
+  };
 
-      // Validación de formato científico
-      const textReader = new FileReader();
-      textReader.onload = (event: any) => {
-        const textContent = event.target.result as string;
+  const reader: FileReader = new FileReader();
+  reader.onload = (e: any) => {
+    const arrayBuffer = e.target.result;
+    const uint8Array = new Uint8Array(arrayBuffer);
 
-        if (/[\d.]+e[+-]?\d+/i.test(textContent)) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Formato inválido detectado',
-            text: 'El archivo contiene números en formato científico como "3.9068E+11", lo cual no es permitido.',
-          });
-          return;
+  
+    const textReader = new FileReader();
+    textReader.onload = (event: any) => {
+
+      // Leer Excel para validar columnas
+      const workbook: XLSX.WorkBook = XLSX.read(uint8Array, { type: 'array' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+
+      // Obtener solo la primera fila (headers)
+      const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1');
+      const headers: string[] = [];
+
+      for (let col = range.s.c; col <= range.e.c; col++) {
+        const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
+        const cell = worksheet[cellAddress];
+        headers.push(cell ? String(cell.v).trim() : '');
+      }
+
+      // Validar columnas según el tipo
+      const esperadas = columnasEsperadas[tipo as keyof typeof columnasEsperadas];
+      if (!esperadas) {
+        Swal.fire('Error', 'Tipo de carga no soportado', 'error');
+        return;
+      }
+
+      // Verificar que todas las columnas esperadas estén presentes
+      const faltantes = esperadas.filter(col => !headers.includes(col));
+      const extras = headers.filter(col => col && !esperadas.includes(col));
+
+      if (faltantes.length > 0 || extras.length > 0) {
+        let mensaje = 'Las columnas del archivo no coinciden con las esperadas.\n\n';
+
+        if (faltantes.length > 0) {
+          mensaje += `❌ Columnas faltantes:\n${faltantes.join(', ')}\n\n`;
         }
 
-        // Leer Excel para validar columnas
-        const workbook: XLSX.WorkBook = XLSX.read(uint8Array, { type: 'array' });
-        const sheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[sheetName];
-
-        // Obtener solo la primera fila (headers)
-        const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1');
-        const headers: string[] = [];
-
-        for (let col = range.s.c; col <= range.e.c; col++) {
-          const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
-          const cell = worksheet[cellAddress];
-          headers.push(cell ? String(cell.v).trim() : '');
+        if (extras.length > 0) {
+          mensaje += `⚠️ Columnas adicionales encontradas:\n${extras.join(', ')}\n\n`;
         }
 
-        // Validar columnas según el tipo
-        const esperadas = columnasEsperadas[tipo as keyof typeof columnasEsperadas];
-        if (!esperadas) {
-          Swal.fire('Error', 'Tipo de carga no soportado', 'error');
-          return;
-        }
+        mensaje += `✅ Columnas esperadas para "${tipo}":\n${esperadas.join(', ')}`;
 
-        // Verificar que todas las columnas esperadas estén presentes
-        const faltantes = esperadas.filter(col => !headers.includes(col));
-        const extras = headers.filter(col => col && !esperadas.includes(col));
+        Swal.fire({
+          icon: 'error',
+          title: 'Estructura de columnas incorrecta',
+          text: mensaje,
+          width: 600
+        });
+        return;
+      }
 
-        if (faltantes.length > 0 || extras.length > 0) {
-          let mensaje = 'Las columnas del archivo no coinciden con las esperadas.\n\n';
-
-          if (faltantes.length > 0) {
-            mensaje += `❌ Columnas faltantes:\n${faltantes.join(', ')}\n\n`;
-          }
-
-          if (extras.length > 0) {
-            mensaje += `⚠️ Columnas adicionales encontradas:\n${extras.join(', ')}\n\n`;
-          }
-
-          mensaje += `✅ Columnas esperadas para "${tipo}":\n${esperadas.join(', ')}`;
-
-          Swal.fire({
-            icon: 'error',
-            title: 'Estructura de columnas incorrecta',
-            text: mensaje,
-            width: 600
-          });
-          return;
-        }
+        // 🔥 CONVERTIR A XML y enviar
+        const xmlString = XLSX.write(workbook, { bookType: 'xlml', type: 'string' });
+        const xmlBlob = new Blob([xmlString], { type: 'application/xml' });
+        const xmlFile = new File([xmlBlob], `${file.name.split('.')[0]}.xml`, { type: 'application/xml' });
 
         // Si llegamos aquí, las columnas son correctas
         if (tipo === 'normal') {

@@ -469,7 +469,7 @@ this.pakage.getHistoryByPakage(paquete.id).subscribe((resp) => {
           <select id="select-org" class="swal2-input" style="margin-bottom: 10px;">
             <option value="">-- Selecciona organización --</option>
             ${organizaciones.map((org: OrgItem) =>
-            `<option value="${org.id}" data-min="${org.config.config.minvalue}" data-max="${org.config.config.maxvalue}">
+            `<option value="${org.id}" data-min="${org.config.minvalue}" data-max="${org.config.maxvalue}">
                 ${org.name}
               </option>`
           ).join('')}

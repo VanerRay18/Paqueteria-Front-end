@@ -87,7 +87,7 @@ export class PakageService {
   }
 
   getCatEmpl(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${environment.baseService}${'/employees/catEmployee'}`);
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/users'}`);
   }
 
   getHistoryByPakage(packageId: any): Observable<ApiResponse> {
