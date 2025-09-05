@@ -21,14 +21,15 @@
         </div>
         <div class="col-auto col-lg-2 d-flex justify-content-end mt-auto">
 
-            <button type="button" class="btn btn-sm">DESCARGAR REPORTES</button>
+          <button type="button" class="btn btn-sm">DESCARGAR REPORTES</button>
 
         </div>
         <div class="col-auto col-lg-2 d-flex justify-content-end mt-auto">
           <button type="button" class="btn btn-sm"
             (click)="seleccionarDiaNoLaboral()">DIAS NO LABORALES</button>
         </div>
-        <div class="card-person" *ngFor="let persona of pagedData | filter: searchTerm"
+        <div class="card-person"
+          *ngFor="let persona of pagedData | filter: searchTerm"
           style="cursor: default;">
           <h3>{{ persona.name }}</h3>
 
@@ -74,19 +75,18 @@
           </div>
 
         </div>
-<!-- Paginador dentro de la tarjeta al fondo -->
-<div class="col-12 d-flex justify-content-center mt-4 mb-2">
-  <app-paginador-component
-    [isLoading]="isLoading"
-    [page]="currentPage"
-    [size]="itemsPerPage"
-    [total]="data.length"
-    (pageChange)="cambiarPagina($event)">
-  </app-paginador-component>
-</div>
+        <!-- Paginador dentro de la tarjeta al fondo -->
+        <div class="col-12 d-flex justify-content-center mt-4 mb-2">
+          <app-paginador-component
+            [isLoading]="isLoading"
+            [page]="currentPage"
+            [size]="itemsPerPage"
+            [total]="data.length"
+            (pageChange)="cambiarPagina($event)">
+          </app-paginador-component>
+        </div>
 
       </div>
-
 
     </div>
 

@@ -18,7 +18,7 @@ export class InventoryComponent {
 
   searchTerm: string = '';
   headersB = ['Placa', 'Modelo', 'Marca', 'Submarca', 'Km', 'No. serie', 'color', 'verificacion', 'seguro', 'vigencia', 'Status', 'Bitacora', 'Acciones'];
-  displayedColumnsB = ['placa', 'anio', 'marca', 'modelo', 'km', 'vin', 'color', 'verificacion', 'seguro', 'vigencia', 'active'];
+  displayedColumnsB = ['numberPlate', 'modelYear', 'make', 'modelName', 'km', 'vin', 'color', 'inspection', 'insurance', 'expirationInsurance', 'active'];
   dataB: any[] = [];
   headersC = ['Articulo', 'Descripcion', 'Cantidad', 'para empleado', 'creado', 'Acciones'];
   displayedColumnsC = ['name', 'description', 'quantity', 'is_assignable', "ts_created"];
@@ -123,7 +123,7 @@ export class InventoryComponent {
 
   getData() {
     this.tabMaterial.getMateriales().subscribe((response: ApiResponse) => {
-    
+
       const fecha = response.data.ts_created
       this.dataC = response.data.map((item: any) => ({
         ...item,
@@ -136,10 +136,11 @@ export class InventoryComponent {
       });
 
     this.cars.getAllCars().subscribe((response: ApiResponse) => {
+      console.log(response);
      this.totalRecords = response.message;
       this.dataB = response.data.map((item: any) => ({
         ...item,
-        vigencia : formatDate(new Date(item.vigencia), 'yyyy-MM-dd', 'en-US'),
+        vigencia : formatDate(new Date(item.expirationInsurance), 'yyyy-MM-dd', 'en-US'),
         active: item.active ? 'Activo' : 'Inactivo',
       }));
 
@@ -285,7 +286,7 @@ export class InventoryComponent {
               return false;
             }
 
-            
+
 
             return {
               odometro: Number(odometro),
@@ -336,7 +337,7 @@ export class InventoryComponent {
       <div style="display: flex; flex-direction: column; gap: 12px; text-align: left;">
         <input id="swal-name" class="swal2-input" placeholder="📝 Nombre del material">
         <input id="swal-description" class="swal2-input" placeholder="📄 Descripción">
-        
+
         <div>
           <label style="font-weight: 600; margin-left: 5px;">📦 ¿Asignable al usuario?</label>
           <select id="swal-assignable" class="swal2-input" style="padding: 10px; font-size: 16px; height: auto;">
@@ -411,7 +412,7 @@ export class InventoryComponent {
   this.tabMaterial.getMaterialById(materialId.id).subscribe(response => {
     if (response.success) {
       const { quantity, catMaterial } = response.data;
-   
+
       const quantityMaterialId  = catMaterial.id;
       // Llenar los campos del modal con la respuesta
       Swal.fire({
@@ -436,7 +437,7 @@ export class InventoryComponent {
           </div>
           <button id="saveMaterialBtn" class="swal2-confirm swal2-styled" style="background-color: #28a745; color: white; padding: 10px 20px; border-radius: 5px; margin-top: 15px;">Guardar Material</button>
           <hr />
-          
+
           <!-- Sección de cantidad -->
           <div>
             <label for="swal-material-quantity" style="font-weight: 600; margin-bottom: 5px; display: block;">Cantidad:</label>

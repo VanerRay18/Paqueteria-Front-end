@@ -256,6 +256,7 @@ onFotoSelected(event: any): void {
         }
       });
   } else {
+    console.log('Creando nuevo vehículo con datos:', dto);
     this.car.createNewCar(dto).subscribe({
       next: (response) => {
         const carId = response.data; // Asegúrate que sea el ID directo
@@ -280,7 +281,7 @@ onFotoSelected(event: any): void {
       });
 
       this.car.SaveFoto(formData, '', carId, 'car').subscribe({
-        
+
         next: () => {
           Swal.fire({
             icon: 'success',
