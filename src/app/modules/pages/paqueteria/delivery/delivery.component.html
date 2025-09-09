@@ -59,9 +59,9 @@
         'N/A' }}
       </div>
       <div class="estado">
-        <span class="entregado" [ngClass]="{'disabled': paquete.status?.id === 8 || paquete.dex != null }"
+        <span class="entregado" [ngClass]="{'disabled': paquete.status?.id === 8 || paquete.dex != '' }"
           (click)="marcarEntregado(paquete)">✔️ Entregado</span>
-        <span class="no-entregado" [ngClass]="{'disabled': paquete.status?.id === 8 || paquete.dex != null }"
+        <span class="no-entregado" [ngClass]="{'disabled': paquete.status?.id === 8 || paquete.dex != '' }"
           (click)="marcarNoEntregado(paquete)">❌ Sin entregar</span>
       </div>
     </div>
