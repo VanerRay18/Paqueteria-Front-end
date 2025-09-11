@@ -13,7 +13,8 @@
       </div>
 
       <div class="botones-responsivos" *ngIf="isCharge">
-        <input type="text" placeholder="Buscar..." class="buscador" [(ngModel)]="searchTerm" />
+        <input type="text" placeholder="Buscar..." class="buscador"
+          [(ngModel)]="searchTerm" />
         <button class="btn btn-escanear" (click)="mostrarSwal()">
           📦 Comenzar a escanear
         </button>
@@ -23,19 +24,28 @@
         <button class="btn btn-escanear" (click)="machoteExelPaquetes()">
           📊 Machote de excel
         </button>
-        <input id="csvFile" type="file" (change)="onFileSelected($event, 'normal')" accept=".xls,.xlsx,.xml" #fileInputNomal
+        <button class="btn btn-escanear" (click)="machoteExelPaquetesCosto()">
+          📊🪙 Machote de excel costos
+        </button>
+        <input id="csvFile" type="file"
+          (change)="onFileSelected($event, 'normal')" accept=".xls,.xlsx,.xml"
+          #fileInputNomal
           style="display: none" />
 
         <button class="btn  btn-escanear" (click)="fileInputNomal.click()">
           📁 Cargar Excel
         </button>
-        <input id="csvFile" type="file" (change)="onFileSelected($event, 'costos')" accept=".xls,.xlsx,.xml" #fileInputCostos
+        <input id="csvFile" type="file"
+          (change)="onFileSelected($event, 'costos')" accept=".xls,.xlsx,.xml"
+          #fileInputCostos
           style="display: none" />
 
-        <button class="btn  btn-escanear" (click)="fileInputCostos.click()" *ngIf="isPrice">
+        <button class="btn  btn-escanear" (click)="fileInputCostos.click()"
+          *ngIf="isPrice">
           🗂️ Cargar Excel de Costos
         </button>
-        <button class="btn btn-escanear" (click)="macheoPaquetes()" [disabled]=" total <=0"
+        <button class="btn btn-escanear" (click)="macheoPaquetes()"
+          [disabled]=" total <=0"
           [class.disabled-btn]=" total <=0">
           🔄 Hacer macheo
         </button>
@@ -44,7 +54,8 @@
           [class.disabled-btn]="total <=0">
           🔄🪙 Macheo de costos
         </button>
-        <button class="btn btn-escanear" (click)="descargarTxtDeGuiasPorBloques()">
+        <button class="btn btn-escanear"
+          (click)="descargarTxtDeGuiasPorBloques()">
           📄 Copiar paquetes
         </button>
       </div>
@@ -64,7 +75,8 @@
               reconocida</small>
           </li>
           <li class="color-item d-flex align-items-center mb-2 me-3">
-            <span class="me-2 rounded-circle" style="width: 14px; height: 14px; background-color: orange;"></span>
+            <span class="me-2 rounded-circle"
+              style="width: 14px; height: 14px; background-color: orange;"></span>
             <small><strong>Naranja:</strong> Se entregan hoy</small>
           </li>
           <li class="color-item d-flex align-items-center mb-2 me-3">
@@ -75,7 +87,8 @@
           <li class="color-item d-flex align-items-center mb-2 me-3">
             <span class="me-2 rounded-circle"
               style="width: 14px; height: 14px; background-color: rgb(231, 96, 198);"></span>
-            <small><strong>Rosa:</strong> Paquete con mas de 3 reasignaciones</small>
+            <small><strong>Rosa:</strong> Paquete con mas de 3
+              reasignaciones</small>
           </li>
         </ul>
       </div>
@@ -83,8 +96,10 @@
     </div>
 
     <div class="tabs">
-      <button [class.active]="activeTab === 'normales'" (click)="activeTab = 'normales'">📦 Normales</button>
-      <button [class.active]="activeTab === 'costos'" (click)="activeTab = 'costos'" *ngIf="isPrice === true">💰 Con
+      <button [class.active]="activeTab === 'normales'"
+        (click)="activeTab = 'normales'">📦 Normales</button>
+      <button [class.active]="activeTab === 'costos'"
+        (click)="activeTab = 'costos'" *ngIf="isPrice === true">💰 Con
         costo</button>
     </div>
     <div *ngIf="activeTab === 'normales'">
@@ -92,15 +107,18 @@
         <div class="fecha-entrega-linea">
           <span>{{ grupo.fecha }}</span>
         </div>
-        <ng-container *ngFor="let paquete of grupo.paquetes | filter: searchTerm">
-          <ng-container *ngTemplateOutlet="paqueteTemplate; context:{ $implicit: paquete }"></ng-container>
+        <ng-container
+          *ngFor="let paquete of grupo.paquetes | filter: searchTerm">
+          <ng-container
+            *ngTemplateOutlet="paqueteTemplate; context:{ $implicit: paquete }"></ng-container>
         </ng-container>
       </div>
     </div>
 
     <div *ngIf="activeTab === 'costos'">
       <div *ngFor="let paquete of paquetesConCosto | filter: searchTerm">
-        <ng-container *ngTemplateOutlet="paqueteTemplate; context:{ $implicit: paquete, esCosto: true }"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="paqueteTemplate; context:{ $implicit: paquete, esCosto: true }"></ng-container>
 
       </div>
     </div>
@@ -109,14 +127,18 @@
     <ng-template #paqueteTemplate let-paquete let-esCosto="esCosto">
       <div class="paquete">
         <div class="codigo">
-          <i class="fa fa-eye" style="cursor:pointer; margin-left: 10px;" (click)="verdetallesPaquete(paquete)"></i>
-          <i class="fa-solid fa-pen-to-square" style="cursor:pointer; margin-left: 10px;"
+          <i class="fa fa-eye" style="cursor:pointer; margin-left: 10px;"
+            (click)="verdetallesPaquete(paquete)"></i>
+          <i class="fa-solid fa-pen-to-square"
+            style="cursor:pointer; margin-left: 10px;"
             (click)="editarConsolidado(paquete)"></i>&nbsp;
-          <i class="fa-solid fa-folder-open" style="cursor:pointer; margin-left: 10px;"
+          <i class="fa-solid fa-folder-open"
+            style="cursor:pointer; margin-left: 10px;"
             (click)="histotyPackage(paquete)"></i>&nbsp;
           <span [ngStyle]="{ color: paquete.color }">{{ paquete.guia
             }}</span>
-          <i class="fa-solid fa-trash-can" style="cursor:pointer; margin-left: 10px;"
+          <i class="fa-solid fa-trash-can"
+            style="cursor:pointer; margin-left: 10px;"
             (click)="deletePackage(paquete)"></i>&nbsp;
           <span *ngIf="paquete.passIncoming >= 3" class="me-2"
             style="display: inline-block; width: 14px; height: 14px; background-color: rgb(231, 96, 198); border-radius: 50%;">
@@ -146,12 +168,15 @@
       </div>
     </ng-template>
 
-    <app-paginador-component *ngIf="activeTab === 'normales'" [isLoading]="isLoading" [page]="page" [size]="size"
+    <app-paginador-component *ngIf="activeTab === 'normales'"
+      [isLoading]="isLoading" [page]="page" [size]="size"
       [total]="total" (pageChange)="cambiarPagina($event)">
     </app-paginador-component>
 
-    <app-paginador-component *ngIf="activeTab === 'costos'" [isLoading]="isLoadingCost" [page]="pageCost"
-      [size]="sizeCost" [total]="totalCost" (pageChange)="cambiarPaginaCost($event)">
+    <app-paginador-component *ngIf="activeTab === 'costos'"
+      [isLoading]="isLoadingCost" [page]="pageCost"
+      [size]="sizeCost" [total]="totalCost"
+      (pageChange)="cambiarPaginaCost($event)">
     </app-paginador-component>
 
   </div>

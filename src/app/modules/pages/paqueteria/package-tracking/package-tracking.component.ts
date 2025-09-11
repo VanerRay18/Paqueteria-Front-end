@@ -531,112 +531,42 @@ export class PackageTrackingComponent implements OnInit {
   //     reader.readAsArrayBuffer(file); // ✅ lee como binario
   //   }
   // }
-
-  onFileSelected(event: any, tipo: string): void {
-const file: File = event.target.files[0];
+onFileSelected(event: any, tipo: string): void {
+  const file: File = event.target.files[0];
   if (!file) return;
 
-  // 🚨 Validar que NO sea CSV
   const fileName = file.name.toLowerCase();
-  if (fileName.endsWith('.csv')) {
+  if (!(fileName.endsWith('.xls') || fileName.endsWith('.xlsx'))) {
     Swal.fire({
       icon: 'error',
       title: 'Formato no permitido',
-      text: 'No se aceptan archivos CSV. Solo archivos Excel (.xls, .xlsx).'
+      text: 'Solo se aceptan archivos Excel (.xls, .xlsx).'
     });
     return;
   }
 
-  // Definir las columnas esperadas según el tipo
-  const columnasEsperadas = {
-    normal: [
-      'Tracking No', 'Latest Dept Location', 'Latest Dept Cntry Cd', 'Origin Loc ID',
-      'Shpr Co', 'Shpr Name', 'Shpr Addr', 'Shpr City', 'Shpr State', 'Shpr Cntry',
-      'Shpr Postal', 'Destination Loc ID', 'Recip Co', 'Recip Name', 'Recip Addr',
-      'Recip City', 'Recip State', 'Recip Cntry', 'Recip Postal', 'Service',
-      'Commit Date', 'Commit Time', 'Shpr Phone', 'Recip Phone', 'Shpr Ref',
-      'No Pieces', 'Master Tracking No', 'Special Handling Codes'
-    ],
-    costos: [
-      'FECHA LLEGADA', 'GUIA', 'FECHA', 'TIPO', 'COSTO'
-    ]
-  };
-
   const reader: FileReader = new FileReader();
   reader.onload = (e: any) => {
     const arrayBuffer = e.target.result;
-    const uint8Array = new Uint8Array(arrayBuffer);
+    const workbook: XLSX.WorkBook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
 
-  
-    const textReader = new FileReader();
-    textReader.onload = (event: any) => {
+    // ✅ Generar archivo Excel actual (xlsx, formato OOXML)
+    const xlsxArray: ArrayBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const xlsxBlob = new Blob([xlsxArray], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const xlsxFile = new File([xlsxBlob], `${file.name.split('.')[0]}.xlsx`, {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    });
 
-      // Leer Excel para validar columnas
-      const workbook: XLSX.WorkBook = XLSX.read(uint8Array, { type: 'array' });
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
+    // 👉 Enviar .xlsx moderno al backend
+    if (tipo === 'normal') {
+      this.enviarArchivoAlBackend(xlsxFile, 'delivery');
+    } else if (tipo === 'costos') {
+      this.enviarArchivoAlBackend(xlsxFile, 'cost');
+    }
+  };
 
-      // Obtener solo la primera fila (headers)
-      const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1');
-      const headers: string[] = [];
-
-      for (let col = range.s.c; col <= range.e.c; col++) {
-        const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
-        const cell = worksheet[cellAddress];
-        headers.push(cell ? String(cell.v).trim() : '');
-      }
-
-      // Validar columnas según el tipo
-      const esperadas = columnasEsperadas[tipo as keyof typeof columnasEsperadas];
-      if (!esperadas) {
-        Swal.fire('Error', 'Tipo de carga no soportado', 'error');
-        return;
-      }
-
-      // Verificar que todas las columnas esperadas estén presentes
-      const faltantes = esperadas.filter(col => !headers.includes(col));
-      const extras = headers.filter(col => col && !esperadas.includes(col));
-
-      if (faltantes.length > 0 || extras.length > 0) {
-        let mensaje = 'Las columnas del archivo no coinciden con las esperadas.\n\n';
-
-        if (faltantes.length > 0) {
-          mensaje += `❌ Columnas faltantes:\n${faltantes.join(', ')}\n\n`;
-        }
-
-        if (extras.length > 0) {
-          mensaje += `⚠️ Columnas adicionales encontradas:\n${extras.join(', ')}\n\n`;
-        }
-
-        mensaje += `✅ Columnas esperadas para "${tipo}":\n${esperadas.join(', ')}`;
-
-        Swal.fire({
-          icon: 'error',
-          title: 'Estructura de columnas incorrecta',
-          text: mensaje,
-          width: 600
-        });
-        return;
-      }
-
-        // 🔥 CONVERTIR A XML y enviar
-        const xmlString = XLSX.write(workbook, { bookType: 'xlml', type: 'string' });
-        const xmlBlob = new Blob([xmlString], { type: 'application/xml' });
-        const xmlFile = new File([xmlBlob], `${file.name.split('.')[0]}.xml`, { type: 'application/xml' });
-
-        // Si llegamos aquí, las columnas son correctas
-        if (tipo === 'normal') {
-          this.enviarArchivoAlBackend(file, 'delivery');
-        } else if (tipo === 'costos') {
-          this.enviarArchivoAlBackend(file, 'cost');
-        }
-      };
-
-      textReader.readAsText(file);
-    };
-
-    reader.readAsArrayBuffer(file);
-  }
+  reader.readAsArrayBuffer(file);
+}
 
   // Método actualizado para enviar archivo
   private enviarArchivoAlBackend(file: File, endpoint: 'delivery' | 'cost'): void {
@@ -910,79 +840,87 @@ const file: File = event.target.files[0];
 
 
   machoteExelPaquetes() {
-    const headers = [
-      'Tracking No',
-      'Latest Dept Location',
-      'Latest Dept Cntry Cd',
-      'Origin Loc ID',
-      'Shpr Co',
-      'Shpr Name',
-      'Shpr Addr',
-      'Shpr City',
-      'Shpr State',
-      'Shpr Cntry',
-      'Shpr Postal',
-      'Destination Loc ID',
-      'Recip Co',
-      'Recip Name',
-      'Recip Addr',
-      'Recip City',
-      'Recip State',
-      'Recip Cntry',
-      'Recip Postal',
-      'Service',
-      'Commit Date',
-      'Commit Time',
-      'Shpr Phone',
-      'Recip Phone',
-      'Shpr Ref',
-      'No Pieces',
-      'Master Tracking No',
-      'Special Handling Codes'
-    ];
+  // 1. Encabezados
+  const headers = [
+    'tracking_no',
+    'delivery_date',
+    'recipient_postal',
+    'recipient_city',
+    'recipient_state',
+    'recipient_country',
+    'recipient_addr',
+    'recipient_name',
+    'recipient_phone',
+    'sender_postal',
+    'sender_city',
+    'sender_state',
+    'sender_country',
+    'sender_addr',
+    'sender_name',
+    'sender_phone',
+    'service',
+    'pieces_no',
+    'code'
+  ];
 
-    const data = this.paquetes.map(p => {
-      const d = p.consolidado || {};
-      return {
-        'Tracking No': d.trackingNo || p.guia || '',
-        'Latest Dept Location': '',
-        'Latest Dept Cntry Cd': '',
-        'Origin Loc ID': '',
-        'Shpr Co': '',
-        'Shpr Name': '',
-        'Shpr Addr': '',
-        'Shpr City': '',
-        'Shpr State': '',
-        'Shpr Cntry': '',
-        'Shpr Postal': '',
-        'Destination Loc ID': '',
-        'Recip Co': '',
-        'Recip Name': '',
-        'Recip Addr': '',
-        'Recip City': '',
-        'Recip State': '',
-        'Recip Cntry': '',
-        'Recip Postal': '',
-        'Service': '',
-        'Commit Date': '',
-        'Commit Time': '',
-        'Shpr Phone': '',
-        'Recip Phone': '',
-        'Shpr Ref': '',
-        'No Pieces': '',
-        'Master Tracking No': '',
-        'Special Handling Codes': ''
-      };
-    });
 
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data, { header: headers });
-    const workbook: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Paquetes');
 
-    XLSX.writeFile(workbook, `Machote_Paquetes_${this.incomingPackageId}.xlsx`);
+  // 3. Construimos "data" como filas iniciales
+  const data: any[] = [];
 
-    // Aquí puedes usar un servicio para generar el archivo Excel
-  }
+  // Fila 1 => headers
+  const headerRow: any = {};
+  headers.forEach((h, i) => headerRow[h] = h);
+  data.push(headerRow);
+
+
+  // 4. Convertir a hoja Excel
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data, { header: headers, skipHeader: true });
+
+  // 5. Ajustar ancho de columnas (opcional para que se vean bien)
+  worksheet['!cols'] = headers.map(() => ({ wch: 20 }));
+
+  // 6. Crear libro y hoja
+  const workbook: XLSX.WorkBook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Paquetes');
+
+  // 7. Exportar
+  XLSX.writeFile(workbook, `Machote_Paquetes_${this.incomingPackageId}.xlsx`);
+}
+
+ machoteExelPaquetesCosto() {
+  // 1. Encabezados
+  const headers = [
+    'scan_date',
+    'tracking_no',
+    'type',
+    'price',
+  ];
+
+
+
+  // 3. Construimos "data" como filas iniciales
+  const data: any[] = [];
+
+  // Fila 1 => headers
+  const headerRow: any = {};
+  headers.forEach((h, i) => headerRow[h] = h);
+  data.push(headerRow);
+
+
+  // 4. Convertir a hoja Excel
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data, { header: headers, skipHeader: true });
+
+  // 5. Ajustar ancho de columnas (opcional para que se vean bien)
+  worksheet['!cols'] = headers.map(() => ({ wch: 20 }));
+
+  // 6. Crear libro y hoja
+  const workbook: XLSX.WorkBook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Paquetes');
+
+  // 7. Exportar
+  XLSX.writeFile(workbook, `Machote_Paquetes_Costo_${this.incomingPackageId}.xlsx`);
+}
 
   descargarTxtDeGuiasPorBloques(): void {
     this.pakage.getGuiasByIncomingPackage(this.incomingPackageId).subscribe({
