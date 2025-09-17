@@ -7,6 +7,7 @@ import { PakageIncomingComponent } from './pakage-incoming/pakage-incoming.compo
 import { DeliveryComponent } from './delivery/delivery.component';
 import { DeliveryPackagesComponent } from './delivery-packages/delivery-packages.component';
 import { SearchDeliveryComponent } from './search-delivery/search-delivery.component';
+import { CarsComponent } from './cars/cars.component';
 
 const routes: Routes = [
    {path: 'Registro-en-vehiculos',component: PackageTrackingCarComponent},
@@ -16,6 +17,7 @@ const routes: Routes = [
    {path: 'Entrega-paquetes', component: DeliveryComponent},
    {path: 'Paquetes-vehiculo/:id', component: DeliveryPackagesComponent},
    {path: 'Busqueda-Paquetes', component: SearchDeliveryComponent},
+   {path: 'Control-de-vehiculos', component: CarsComponent}
 ];
 
 @NgModule({

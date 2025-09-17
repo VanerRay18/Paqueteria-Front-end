@@ -11,6 +11,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { DeliveryComponent } from './delivery/delivery.component';
 import { DeliveryPackagesComponent } from './delivery-packages/delivery-packages.component';
 import { SearchDeliveryComponent } from './search-delivery/search-delivery.component';
+import { CarsComponent } from './cars/cars.component';
 
 
 
@@ -24,7 +25,8 @@ import { SearchDeliveryComponent } from './search-delivery/search-delivery.compo
     PakageIncomingComponent,
     DeliveryComponent,
     DeliveryPackagesComponent,
-    SearchDeliveryComponent
+    SearchDeliveryComponent,
+    CarsComponent
   ],
   imports: [
     CommonModule,

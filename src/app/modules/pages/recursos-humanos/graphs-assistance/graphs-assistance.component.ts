@@ -5,6 +5,8 @@ import { Justificacion, Persona } from 'src/app/shared/interfaces/utils';
 import Swal from 'sweetalert2';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 
 @Component({
@@ -24,53 +26,64 @@ export class GraphsAssistanceComponent implements OnInit {
   constructor(
     private rh: RHService
   ) {
-  (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;  }
-
-  ngOnInit(): void {
-  this.getDatos();
-  // this.detectScreenSize();
-  // window.addEventListener('resize', this.detectScreenSize.bind(this));
+    (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
   }
 
-getDatos() {
-  this.rh.getAttencendance().subscribe((response: ApiResponse) => {
-    this.data = response.data;
-    this.currentPage = 0;
-    this.isLoading = false;
-    this.paginar();
-  }, error => {
-    console.error('Ocurrió un error:', error);
-  });
-}
+  ngOnInit(): void {
+    this.getDatos();
+    // this.detectScreenSize();
+    // window.addEventListener('resize', this.detectScreenSize.bind(this));
+  }
 
-// detectScreenSize() {
-//   const isMobile = window.innerWidth <= 768;
-//   this.itemsPerPage = isMobile ? 3 : 10;
-//   this.paginar();
-// }
+  getDatos() {
+    this.rh.getAttencendance().subscribe((response: ApiResponse) => {
+      this.data = response.data;
+      this.currentPage = 0;
+      this.isLoading = false;
+      this.paginar();
+    }, error => {
+      console.error('Ocurrió un error:', error);
+    });
+  }
 
-paginar() {
-  const startIndex = this.currentPage * this.itemsPerPage;
-  const endIndex = startIndex + this.itemsPerPage;
-  this.pagedData = this.data.slice(startIndex, endIndex);
-}
+  // detectScreenSize() {
+  //   const isMobile = window.innerWidth <= 768;
+  //   this.itemsPerPage = isMobile ? 3 : 10;
+  //   this.paginar();
+  // }
+
+  paginar() {
+    const startIndex = this.currentPage * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.pagedData = this.data.slice(startIndex, endIndex);
+  }
 
 
-cambiarPagina(pagina: number) {
-this.currentPage = pagina ;
-this.isLoading = true;
-this.pagedData = [];
-  setTimeout(() => {
-    this.paginar();
-    this.isLoading = false;
-  }, 500);
-}
+  cambiarPagina(pagina: number) {
+    this.currentPage = pagina;
+    this.isLoading = true;
+    this.pagedData = [];
+    setTimeout(() => {
+      this.paginar();
+      this.isLoading = false;
+    }, 500);
+  }
 
   // Si se actualiza la data (ej: después de un filtro o fetch)
   actualizarPaginado() {
     this.currentPage = 1;
     this.paginar();
   }
+
+  formatearHora = (timestamp: string | number | Date) => {
+    if (!timestamp) return '';
+    const fecha = new Date(timestamp);
+    return fecha.toLocaleTimeString('es-ES', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  };
 
 
 
@@ -156,7 +169,7 @@ this.pagedData = [];
         <tr>
           <td style="padding: 8px;">${i + 1}</td>
           <td style="padding: 8px;">${item.fecha ? new Date(item.fecha).toISOString().split('T')[0] : ''}</td>
-          <td style="padding: 8px;">${item.hora || ''}</td>
+          <td style="padding: 8px;">${item.capturated ? this.formatearHora(item.capturated) : ''}</td>
           <td style="padding: 8px;">${item.motivo || ''}</td>
           <td style="padding: 8px;">${item.justificada ? 'Sí' : 'No'}</td>
           <td style="padding: 8px;">${item.comentarios || ''}</td>
@@ -203,13 +216,12 @@ this.pagedData = [];
 
             const btn = document.getElementById('btnReporte');
             btn?.addEventListener('click', () => {
-              console.log('📄 Datos que van al PDF:', dataTabla); // 👈 verifica esto
-
               if (!dataTabla || dataTabla.length === 0) {
                 Swal.fire('Sin datos', 'No hay información para generar el PDF.', 'warning');
                 return;
               }
               this.generarReportePDF(dataTabla, fechaDesde, fechaHasta, persona.name, 'Reporte de justificantes pendinetes');
+              this.generarReporteExcel(dataTabla, fechaDesde, fechaHasta, persona.name, 'Reporte de justificantes pendinetes');
               Swal.fire('Reporte generado', 'Tu archivo ha sido descargado.', 'success');
             });
             document.querySelectorAll('.btn-justificar').forEach(btn => {
@@ -383,7 +395,7 @@ this.pagedData = [];
             <tr>
               <td style="border: 1px solid #ccc; padding: 8px;">${i + 1}</td>
               <td style="border: 1px solid #ccc; padding: 8px;"> ${item.fecha ? new Date(item.fecha).toISOString().split('T')[0] : ''}</td>
-              <td style="border: 1px solid #ccc; padding: 8px;">${item.hora || ''}</td>
+              <td style="border: 1px solid #ccc; padding: 8px;">${item.capturated ? this.formatearHora(item.capturated) : ''}</td>
               <td style="border: 1px solid #ccc; padding: 8px;">${item.motivo || ''}</td>
               <td style="border: 1px solid #ccc; padding: 8px;">${item.justificada ? 'Sí' : 'No'}</td>
               <td style="border: 1px solid #ccc; padding: 8px;">${item.comentarios || ''}</td>
@@ -424,13 +436,13 @@ this.pagedData = [];
 
             const btn = document.getElementById('btnReporte');
             btn?.addEventListener('click', () => {
-              console.log('📄 Datos que van al PDF:', dataTabla); // 👈 verifica esto
 
               if (!dataTabla || dataTabla.length === 0) {
                 Swal.fire('Sin datos', 'No hay información para generar el PDF.', 'warning');
                 return;
               }
               this.generarReportePDF(dataTabla, fechaDesde, fechaHasta, persona.name, 'Reporte de justificantes');
+              this.generarReporteExcel(dataTabla, fechaDesde, fechaHasta, persona.name, 'Reporte de Retardos');
               Swal.fire('Reporte generado', 'Tu archivo ha sido descargado.', 'success');
             });
           }, 0);
@@ -541,7 +553,7 @@ this.pagedData = [];
             <tr>
               <td style="border: 1px solid #ccc; padding: 8px;">${i + 1}</td>
               <td style="border: 1px solid #ccc; padding: 8px;"> ${item.fecha ? new Date(item.fecha).toISOString().split('T')[0] : ''}</td>
-              <td style="border: 1px solid #ccc; padding: 8px;">${item.hora || ''}</td>
+              <td style="border: 1px solid #ccc; padding: 8px;">${item.capturated ? this.formatearHora(item.capturated) : ''}</td>
               <td style="border: 1px solid #ccc; padding: 8px;">${item.motivo || ''}</td>
               <td style="border: 1px solid #ccc; padding: 8px;">${item.justificada ? 'Sí' : 'No'}</td>
               <td style="border: 1px solid #ccc; padding: 8px;">${item.comentarios || ''}</td>
@@ -582,13 +594,14 @@ this.pagedData = [];
 
             const btn = document.getElementById('btnReporte');
             btn?.addEventListener('click', () => {
-              console.log('📄 Datos que van al PDF:', dataTabla); // 👈 verifica esto
+
 
               if (!dataTabla || dataTabla.length === 0) {
                 Swal.fire('Sin datos', 'No hay información para generar el PDF.', 'warning');
                 return;
               }
               this.generarReportePDF(dataTabla, fechaDesde, fechaHasta, persona.name, 'Reporte de Faltas');
+              this.generarReporteExcel(dataTabla, fechaDesde, fechaHasta, persona.name, 'Reporte de Faltas');
               Swal.fire('Reporte generado', 'Tu archivo ha sido descargado.', 'success');
             });
           }, 0);
@@ -624,16 +637,12 @@ this.pagedData = [];
   }
 
 
-
-
-
-
   abrirSwalInasistencias(persona: Persona) {
     const fechaHoy = new Date().toISOString().split('T')[0];
     let dataTabla: any[] = [];
     let fechaDesde = fechaHoy;
     let fechaHasta = fechaHoy;
-
+    console.log(dataTabla);
 
     // Función para generar el HTML con los datos
     const htmlContent = (data: any[] = [], desdeValue = fechaHoy, hastaValue = fechaHoy) => `
@@ -701,10 +710,11 @@ this.pagedData = [];
         </thead>
         <tbody>
           ${data.length > 0 ? data.map((item, i) => `
+            
             <tr>
               <td style="border: 1px solid #ccc; padding: 8px;">${i + 1}</td>
               <td style="border: 1px solid #ccc; padding: 8px;"> ${item.fecha ? new Date(item.fecha).toISOString().split('T')[0] : ''}</td>
-              <td style="border: 1px solid #ccc; padding: 8px;">${item.hora || ''}</td>
+              <td style="border: 1px solid #ccc; padding: 8px;">${item.capturated ? this.formatearHora(item.capturated) : ''}</td>
               <td style="border: 1px solid #ccc; padding: 8px;">${item.motivo || ''}</td>
               <td style="border: 1px solid #ccc; padding: 8px;">${item.justificada ? 'Sí' : 'No'}</td>
               <td style="border: 1px solid #ccc; padding: 8px;">${item.comentarios || ''}</td>
@@ -746,13 +756,13 @@ this.pagedData = [];
 
             const btn = document.getElementById('btnReporte');
             btn?.addEventListener('click', () => {
-              console.log('📄 Datos que van al PDF:', dataTabla); // 👈 verifica esto
 
               if (!dataTabla || dataTabla.length === 0) {
                 Swal.fire('Sin datos', 'No hay información para generar el PDF.', 'warning');
                 return;
               }
               this.generarReportePDF(dataTabla, fechaDesde, fechaHasta, persona.name, 'Reporte de Asistencias');
+              this.generarReporteExcel(dataTabla, fechaDesde, fechaHasta, persona.name, 'Reporte de Asistencias');
               Swal.fire('Reporte generado', 'Tu archivo ha sido descargado.', 'success');
             });
           }, 0);
@@ -862,7 +872,7 @@ this.pagedData = [];
             <tr>
               <td style="border: 1px solid #ccc; padding: 8px;">${i + 1}</td>
               <td style="border: 1px solid #ccc; padding: 8px;"> ${item.fecha ? new Date(item.fecha).toISOString().split('T')[0] : ''}</td>
-              <td style="border: 1px solid #ccc; padding: 8px;">${item.hora || ''}</td>
+              <td style="border: 1px solid #ccc; padding: 8px;">${item.capturated ? this.formatearHora(item.capturated) : ''}</td>
               <td style="border: 1px solid #ccc; padding: 8px;">${item.motivo || ''}</td>
               <td style="border: 1px solid #ccc; padding: 8px;">${item.justificada ? 'Sí' : 'No'}</td>
               <td style="border: 1px solid #ccc; padding: 8px;">${item.comentarios || ''}</td>
@@ -904,13 +914,14 @@ this.pagedData = [];
 
             const btn = document.getElementById('btnReporte');
             btn?.addEventListener('click', () => {
-              console.log('📄 Datos que van al PDF:', dataTabla); // 👈 verifica esto
+
 
               if (!dataTabla || dataTabla.length === 0) {
                 Swal.fire('Sin datos', 'No hay información para generar el PDF.', 'warning');
                 return;
               }
               this.generarReportePDF(dataTabla, fechaDesde, fechaHasta, persona.name, 'Reporte de Retardos');
+              this.generarReporteExcel(dataTabla, fechaDesde, fechaHasta, persona.name, 'Reporte de Retardos');
               Swal.fire('Reporte generado', 'Tu archivo ha sido descargado.', 'success');
             });
           }, 0);
@@ -1017,7 +1028,7 @@ this.pagedData = [];
       ...data.map((item, index) => [
         index + 1,
         item.fecha ? new Date(item.fecha).toISOString().split('T')[0] : '',
-        item.hora || '',
+        item.capturated ? this.formatearHora(item.capturated) : '',
         item.motivo || '',
         item.justificada ? 'Sí' : 'No',
         item.comentarios || '',
@@ -1069,6 +1080,31 @@ this.pagedData = [];
 
     (pdfMake as any).createPdf(docDefinition).download(`reporte_asistencias_${nombreEmpleado}_${fechaHoy}.pdf`);
 
+  }
+
+  generarReporteExcel(data: any[], nombreEmpleado: string, desde: string, hasta: string, p0: string) {
+    const fechaHoy = new Date().toLocaleDateString();
+
+    // Mapeo de filas igual que en PDF
+    const datosExcel = data.map((item, index) => ({
+      '#': index + 1,
+      'Fecha': item.fecha ? new Date(item.fecha).toISOString().split('T')[0] : '',
+      'Hora': item.capturated ? this.formatearHora(item.capturated) : '',
+      'Motivo': item.motivo || '',
+      'Justificada': item.justificada ? 'Sí' : 'No',
+      'Comentario': item.comentarios || '',
+      'E/S': item.ES || ''
+    }));
+
+    // Crear hoja y libro
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(datosExcel);
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Reporte');
+
+    // Exportar
+    const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const dataBlob: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(dataBlob, `reporte_asistencias_${nombreEmpleado}_${fechaHoy}.xlsx`);
   }
 
 
