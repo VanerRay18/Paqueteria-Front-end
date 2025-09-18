@@ -27,9 +27,9 @@ export class InventoryComponent {
   totalRecords: any ;
   info: any;
   arrayUserRecibido: any;
-  activeTab: string = 'base';
+  activeTab: string = 'contrato';
   tabs = [
-    { id: 'base', title: 'Vehiculos', icon: 'fa-solid fa-file-csv' },
+    // { id: 'base', title: 'Uniformes', icon: 'fa-solid fa-file-csv' },
     { id: 'contrato', title: 'Materiales', icon: 'fa-solid fa-file-csv' }
   ];
 
