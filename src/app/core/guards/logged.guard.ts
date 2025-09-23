@@ -1,14 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  ActivatedRouteSnapshot,
-  CanActivate,
-  CanLoad,
-  Route,
-  RouterStateSnapshot,
-  UrlSegment,
-  UrlTree,
-  Router
-} from '@angular/router';
+import { ActivatedRouteSnapshot, Route, RouterStateSnapshot, UrlSegment, UrlTree, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { Module } from 'src/app/shared/interfaces/utils';
@@ -17,7 +8,7 @@ import { ApiResponse } from 'src/app/models/ApiResponse';
 @Injectable({
   providedIn: 'root'
 })
-export class LoggedGuard implements CanActivate, CanLoad {
+export class LoggedGuard  {
   constructor(
     private router: Router,
     private authService: AuthService,
