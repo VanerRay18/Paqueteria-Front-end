@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ApiResponse } from 'src/app/models/ApiResponse';
 import { RHService } from 'src/app/services/rh.service';
 import { Justificacion, Persona } from 'src/app/shared/interfaces/utils';
-import Swal from 'sweetalert2';
-import * as pdfMake from 'pdfmake/build/pdfmake';
+import pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 
@@ -26,7 +26,7 @@ export class GraphsAssistanceComponent implements OnInit {
   constructor(
     private rh: RHService
   ) {
-    (pdfMake as any).vfs = (pdfFonts as any).pdfMake.vfs;
+   (pdfMake as any).vfs = (pdfFonts as any).pdfMake.vfs;
   }
 
   ngOnInit(): void {

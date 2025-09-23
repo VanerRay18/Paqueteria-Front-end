@@ -2,7 +2,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthModule } from './core/auth/auth.module';
@@ -30,42 +30,36 @@ import { GraphsModule } from './modules/pages/graphs/graphs.module';
 import { DatePipe } from '@angular/common'; // 👈 Importar aquí
 
 
-@NgModule({
-  declarations: [
-    AppComponent,
-  ],
-  imports: [
-    AdministrationModule,
-    AuthModule,
-    SharedModule,
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule,
-    RouterModule,
-    HttpClientModule,
-    HomeRoutingModule,
-    HomeModule,
-    ExtrasRoutingModule,
-    LayoutModule,
-    ReactiveFormsModule,
-    AdminRoutingModule,
-    RecursosHumanosModule,
-    PaqueteriaModule,
-    RHRoutingModule,
-    PaqueteriaRoutingModule,
-    NgxDaterangepickerMd.forRoot(),
-    NgChartsModule,
-    GraphsRoutingModule,
-    GraphsModule
-  ],
-  providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: TokenInterceptor,
-      multi: true
-    },
-    DatePipe
-  ],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+    ],
+    bootstrap: [AppComponent], imports: [AdministrationModule,
+        AuthModule,
+        SharedModule,
+        BrowserModule,
+        AppRoutingModule,
+        FormsModule,
+        RouterModule,
+        HomeRoutingModule,
+        HomeModule,
+        ExtrasRoutingModule,
+        LayoutModule,
+        ReactiveFormsModule,
+        AdminRoutingModule,
+        RecursosHumanosModule,
+        PaqueteriaModule,
+        RHRoutingModule,
+        PaqueteriaRoutingModule,
+        NgxDaterangepickerMd.forRoot(),
+        NgChartsModule,
+        GraphsRoutingModule,
+        GraphsModule], providers: [
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: TokenInterceptor,
+            multi: true
+        },
+        DatePipe,
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AppModule { }

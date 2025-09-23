@@ -7,7 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PakageService } from 'src/app/services/pakage.service';
 import { FileTransferService } from 'src/app/services/file-transfer.service';
 import { take } from 'rxjs';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';   // ✅ correcto
 import utc from 'dayjs/plugin/utc';
 
 dayjs.extend(utc);
