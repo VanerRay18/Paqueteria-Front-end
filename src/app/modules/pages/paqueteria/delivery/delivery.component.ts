@@ -155,6 +155,7 @@ export class DeliveryComponent implements OnInit {
     const guia = paquete.guia;
 
     const d = paquete.consolidado;
+    console.log(d);
 
     Swal.fire({
       title: `<strong>Datos del paquete</strong>`,
@@ -165,17 +166,17 @@ export class DeliveryComponent implements OnInit {
       <div style="padding: 12px; border-radius: 8px; background: #f1f5f9; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
         <h4 style="margin-bottom: 8px; color: #0f172a;">${guia}</h4>
         ${d ? `
-          <p><strong>Destino:</strong> ${d.destinationLocId} - ${d.recipCity}, ${d.recipState}</p>
-          <p><strong>Persona que recibe:</strong> ${d.recipName}</p>
+          <p><strong>Destino:</strong> ${d.recipientAddr} - ${d.recipientCity}, ${d.recipientState}</p>
+          <p><strong>Persona que recibe:</strong> ${d.recipientName}</p>
           <p>
             <strong>Numero de Telefono:</strong>
-            <span id="phone-text">${d.recipPhone}</span>
+            <span id="phone-text">${d.recipientPhone}</span>
             <button id="copy-phone" style="margin-left: 8px; cursor: pointer; border: none; background: none;" title="Copiar">
               📋
             </button>
           </p>
           <span id="alert-copy" style="color: green; font-size: 13px; display: none;">Teléfono copiado</span>
-          <p><strong>Referencias:</strong> ${d.shprRef}</p>
+          <p><strong>Código Postal:</strong> ${d.recipientPostal}</p>
         ` : `<p>No hay información de consolidado</p>`}
       </div>
 

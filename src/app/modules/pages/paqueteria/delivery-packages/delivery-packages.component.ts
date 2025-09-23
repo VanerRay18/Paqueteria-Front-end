@@ -462,6 +462,7 @@ this.pakage.getHistoryByPakage(paquete.id).subscribe((resp) => {
     this.pakage.getCatPakageOrg().subscribe({
       next: (response) => {
         const organizaciones: OrgItem[] = response.data || [];
+        console.log(organizaciones);
 
         Swal.fire({
           title: 'Selecciona la organización y comienza a escanear',
@@ -535,7 +536,7 @@ this.pakage.getHistoryByPakage(paquete.id).subscribe((resp) => {
               this.paquetesEsc.push(recortado);
 
               // ✅ Enviar de inmediato al backend como string (uno por uno)
-              this.pakage.addPackagesInDelivery(recortado, this.deliveryId).subscribe({
+              this.pakage.addPackagesInDelivery(recortado, this.deliveryId, select.value).subscribe({
                 next: () => {
                   renderLista();
                   input.value = ''; // limpiar input

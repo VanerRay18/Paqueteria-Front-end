@@ -126,8 +126,8 @@ export class PakageService {
       { headers });
   }
 
-  addPackagesInDelivery(guia: any, deliveryId: any): Observable<ApiResponse> {//Trae la nomina actual
-    let headers = new HttpHeaders({ 'deliveryId': deliveryId, 'guia': guia });
+  addPackagesInDelivery(guia: any, deliveryId: any, packageOrgId: any): Observable<ApiResponse> {//Trae la nomina actual
+    let headers = new HttpHeaders({ 'deliveryId': deliveryId, 'guia': guia, 'packageOrgId': packageOrgId });
     console.log(headers)
     return this.http.post<ApiResponse>(`${environment.baseService}${'/package/delivery/package'}`, null,
       { headers });

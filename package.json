@@ -23,7 +23,7 @@
     "@ng-bootstrap/ng-bootstrap": "^14.2.0",
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.3",
-    "chart.js": "^4.2.1",
+    "chart.js": "^3.9.1",
     "dayjs": "^1.11.13",
     "exceljs": "^4.4.0",
     "file-saver": "^2.0.5",
