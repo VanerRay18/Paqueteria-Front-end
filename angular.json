@@ -63,10 +63,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "sistemas_SEPH:build:production"
+              "buildTarget": "sistemas_SEPH:build:production"
             },
             "development": {
-              "browserTarget": "sistemas_SEPH:build:development"
+              "buildTarget": "sistemas_SEPH:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -74,7 +74,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "sistemas_SEPH:build"
+            "buildTarget": "sistemas_SEPH:build"
           }
         },
         "test": {
