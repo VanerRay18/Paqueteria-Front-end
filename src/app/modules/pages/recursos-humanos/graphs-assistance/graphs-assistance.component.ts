@@ -26,7 +26,7 @@ export class GraphsAssistanceComponent implements OnInit {
   constructor(
     private rh: RHService
   ) {
-    (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
+    (pdfMake as any).vfs = (pdfFonts as any).pdfMake.vfs;
   }
 
   ngOnInit(): void {
