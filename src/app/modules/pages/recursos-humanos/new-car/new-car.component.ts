@@ -9,9 +9,10 @@ import { CarsService } from 'src/app/services/cars.service';
 import { take } from 'rxjs';
 
 @Component({
-  selector: 'app-new-car',
-  templateUrl: './new-car.component.html',
-  styleUrls: ['./new-car.component.css']
+    selector: 'app-new-car',
+    templateUrl: './new-car.component.html',
+    styleUrls: ['./new-car.component.css'],
+    standalone: false
 })
 export class NewCarComponent implements OnInit {
   carForm!: FormGroup;

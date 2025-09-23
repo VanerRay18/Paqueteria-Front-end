@@ -7,9 +7,10 @@ import { OrgItem } from 'src/app/shared/interfaces/utils';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-delivery',
-  templateUrl: './delivery.component.html',
-  styleUrls: ['./delivery.component.css']
+    selector: 'app-delivery',
+    templateUrl: './delivery.component.html',
+    styleUrls: ['./delivery.component.css'],
+    standalone: false
 })
 export class DeliveryComponent implements OnInit {
   searchGuia: string = '';

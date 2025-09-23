@@ -10,9 +10,10 @@ import { take } from 'rxjs/operators';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 
 @Component({
-  selector: 'app-new-employee',
-  templateUrl: './new-employee.component.html',
-  styleUrls: ['./new-employee.component.css']
+    selector: 'app-new-employee',
+    templateUrl: './new-employee.component.html',
+    styleUrls: ['./new-employee.component.css'],
+    standalone: false
 })
 export class NewEmployeeComponent implements OnInit {
 

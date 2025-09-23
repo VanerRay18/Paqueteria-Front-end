@@ -7,9 +7,10 @@ import { BusquedaserlService } from 'src/app/services/busquedaserl.service';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-users',
-  templateUrl: './users.component.html',
-  styleUrls: ['./users.component.css']
+    selector: 'app-users',
+    templateUrl: './users.component.html',
+    styleUrls: ['./users.component.css'],
+    standalone: false
 })
 export class UsersComponent implements OnInit {
   allRoles: { id: number, name: string }[] = [];

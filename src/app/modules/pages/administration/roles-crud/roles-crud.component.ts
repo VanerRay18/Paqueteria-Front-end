@@ -6,9 +6,10 @@ import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-roles-crud',
-  templateUrl: './roles-crud.component.html',
-  styleUrls: ['./roles-crud.component.css']
+    selector: 'app-roles-crud',
+    templateUrl: './roles-crud.component.html',
+    styleUrls: ['./roles-crud.component.css'],
+    standalone: false
 })
 export class RolesCRUDComponent {
   searchTerm: string = '';

@@ -10,9 +10,10 @@ import { OrgItem } from 'src/app/shared/interfaces/utils';
 import { DatePipe } from '@angular/common';
 
 @Component({
-  selector: 'app-delivery-packages',
-  templateUrl: './delivery-packages.component.html',
-  styleUrls: ['./delivery-packages.component.css']
+    selector: 'app-delivery-packages',
+    templateUrl: './delivery-packages.component.html',
+    styleUrls: ['./delivery-packages.component.css'],
+    standalone: false
 })
 export class DeliveryPackagesComponent implements OnInit {
   paqueteEncontrado: any = null;

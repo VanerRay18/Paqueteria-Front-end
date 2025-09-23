@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
-  selector: 'app-roles',
-  templateUrl: './roles.component.html',
-  styleUrls: ['./roles.component.css']
+    selector: 'app-roles',
+    templateUrl: './roles.component.html',
+    styleUrls: ['./roles.component.css'],
+    standalone: false
 })
 export class RolesComponent implements OnInit{
   allModules: string[] = ['Ingreso-licencias', 'Archivo-licenicas', 'Oficio-licenias', 'Logs-licenicas'];

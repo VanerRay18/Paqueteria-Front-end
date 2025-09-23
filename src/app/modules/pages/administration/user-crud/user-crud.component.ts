@@ -9,9 +9,10 @@ import Swal from 'sweetalert2';
 import { User } from 'src/app/shared/interfaces/usuario.model';
 
 @Component({
-  selector: 'app-user-crud',
-  templateUrl: './user-crud.component.html',
-  styleUrls: ['./user-crud.component.css']
+    selector: 'app-user-crud',
+    templateUrl: './user-crud.component.html',
+    styleUrls: ['./user-crud.component.css'],
+    standalone: false
 })
 export class UserCRUDComponent {
   searchTerm: string = '';

@@ -5,9 +5,10 @@ import { Oficio } from 'src/app/shared/interfaces/utils';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 @Component({
-  selector: 'app-endopoint-crud',
-  templateUrl: './endopoint-crud.component.html',
-  styleUrls: ['./endopoint-crud.component.css']
+    selector: 'app-endopoint-crud',
+    templateUrl: './endopoint-crud.component.html',
+    styleUrls: ['./endopoint-crud.component.css'],
+    standalone: false
 })
 export class EndopointCRUDComponent {
   searchTerm: string = '';

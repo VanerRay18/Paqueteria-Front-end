@@ -8,9 +8,10 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { RHService } from 'src/app/services/rh.service';
 
 @Component({
-  selector: 'app-crudemployee',
-  templateUrl: './crudemployee.component.html',
-  styleUrls: ['./crudemployee.component.css']
+    selector: 'app-crudemployee',
+    templateUrl: './crudemployee.component.html',
+    styleUrls: ['./crudemployee.component.css'],
+    standalone: false
 })
 export class CRUDEmployeeComponent {
   searchTerm: string = '';

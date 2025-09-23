@@ -4,9 +4,10 @@ import { Oficio } from 'src/app/shared/interfaces/utils';
 import { ApiResponse } from 'src/app/models/ApiResponse';
 
 @Component({
-  selector: 'app-logs-admin',
-  templateUrl: './logs-admin.component.html',
-  styleUrls: ['./logs-admin.component.css']
+    selector: 'app-logs-admin',
+    templateUrl: './logs-admin.component.html',
+    styleUrls: ['./logs-admin.component.css'],
+    standalone: false
 })
 export class LogsAdminComponent {
   searchTerm: string = '';

@@ -1,9 +1,10 @@
 import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 
 @Component({
-  selector: 'app-paginador-component',
-  templateUrl: './paginador-component.component.html',
-  styleUrls: ['./paginador-component.component.css']
+    selector: 'app-paginador-component',
+    templateUrl: './paginador-component.component.html',
+    styleUrls: ['./paginador-component.component.css'],
+    standalone: false
 })
 export class PaginadorComponentComponent implements OnInit {
   @Input() page: number = 0;        // Lo controla el padre

@@ -6,9 +6,10 @@ import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-modules-crud',
-  templateUrl: './modules-crud.component.html',
-  styleUrls: ['./modules-crud.component.css']
+    selector: 'app-modules-crud',
+    templateUrl: './modules-crud.component.html',
+    styleUrls: ['./modules-crud.component.css'],
+    standalone: false
 })
 export class ModulesCRUDComponent {
   searchTerm: string = '';

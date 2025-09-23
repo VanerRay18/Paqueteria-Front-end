@@ -6,9 +6,10 @@ import { PakageService } from 'src/app/services/pakage.service';
 import { PermisosUserService } from 'src/app/services/permisos-user.service';
 
 @Component({
-  selector: 'app-inicio',
-  templateUrl: './inicio.component.html',
-  styleUrls: ['./inicio.component.css']
+    selector: 'app-inicio',
+    templateUrl: './inicio.component.html',
+    styleUrls: ['./inicio.component.css'],
+    standalone: false
 })
 export class InicioComponent implements OnInit {
   empresas: any[] = [];

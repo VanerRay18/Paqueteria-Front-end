@@ -3,9 +3,10 @@ import { PakageService } from 'src/app/services/pakage.service';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-pakage-token',
-  templateUrl: './pakage-token.component.html',
-  styleUrls: ['./pakage-token.component.css']
+    selector: 'app-pakage-token',
+    templateUrl: './pakage-token.component.html',
+    styleUrls: ['./pakage-token.component.css'],
+    standalone: false
 })
 export class PakageTokenComponent {
   token: string | null = null;

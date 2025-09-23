@@ -4,9 +4,10 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-check-assistance',
-  templateUrl: './check-assistance.component.html',
-  styleUrls: ['./check-assistance.component.css']
+    selector: 'app-check-assistance',
+    templateUrl: './check-assistance.component.html',
+    styleUrls: ['./check-assistance.component.css'],
+    standalone: false
 })
 export class CheckAssistanceComponent {
   token: string[] = ['', '', '', '', '', ''];

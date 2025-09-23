@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
-  selector: 'app-endpoint',
-  templateUrl: './endpoint.component.html',
-  styleUrls: ['./endpoint.component.css']
+    selector: 'app-endpoint',
+    templateUrl: './endpoint.component.html',
+    styleUrls: ['./endpoint.component.css'],
+    standalone: false
 })
 export class EndpointComponent implements OnInit{
   userForm: FormGroup;

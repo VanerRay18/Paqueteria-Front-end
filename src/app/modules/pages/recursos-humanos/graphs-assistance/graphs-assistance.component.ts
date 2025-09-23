@@ -10,9 +10,10 @@ import { saveAs } from 'file-saver';
 
 
 @Component({
-  selector: 'app-graphs-assistance',
-  templateUrl: './graphs-assistance.component.html',
-  styleUrls: ['./graphs-assistance.component.css']
+    selector: 'app-graphs-assistance',
+    templateUrl: './graphs-assistance.component.html',
+    styleUrls: ['./graphs-assistance.component.css'],
+    standalone: false
 })
 export class GraphsAssistanceComponent implements OnInit {
   searchTerm: string = '';

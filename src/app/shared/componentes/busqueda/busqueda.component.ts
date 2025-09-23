@@ -9,9 +9,10 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-busqueda',
-  templateUrl: './busqueda.component.html',
-  styleUrls: ['./busqueda.component.css']
+    selector: 'app-busqueda',
+    templateUrl: './busqueda.component.html',
+    styleUrls: ['./busqueda.component.css'],
+    standalone: false
 })
 export class BusquedaComponent implements OnDestroy {
   data = [];

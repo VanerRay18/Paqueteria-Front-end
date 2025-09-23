@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-home-admin',
-  templateUrl: './home-admin.component.html',
-  styleUrls: ['./home-admin.component.css']
+    selector: 'app-home-admin',
+    templateUrl: './home-admin.component.html',
+    styleUrls: ['./home-admin.component.css'],
+    standalone: false
 })
 export class HomeAdminComponent {
 

@@ -12,9 +12,10 @@ import { HttpHeaders } from '@angular/common/http';
 import { ApiResponse } from 'src/app/models/ApiResponse';
 import { DatePipe } from '@angular/common';
 @Component({
-  selector: 'app-search-delivery',
-  templateUrl: './search-delivery.component.html',
-  styleUrls: ['./search-delivery.component.css']
+    selector: 'app-search-delivery',
+    templateUrl: './search-delivery.component.html',
+    styleUrls: ['./search-delivery.component.css'],
+    standalone: false
 })
 export class SearchDeliveryComponent implements OnInit {
   searchTerm: string = '';

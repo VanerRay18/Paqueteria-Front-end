@@ -10,9 +10,10 @@ import { formatDate } from '@angular/common';
 import { CarsService } from 'src/app/services/cars.service';
 
 @Component({
-  selector: 'app-inventory',
-  templateUrl: './inventory.component.html',
-  styleUrls: ['./inventory.component.css']
+    selector: 'app-inventory',
+    templateUrl: './inventory.component.html',
+    styleUrls: ['./inventory.component.css'],
+    standalone: false
 })
 export class InventoryComponent {
 

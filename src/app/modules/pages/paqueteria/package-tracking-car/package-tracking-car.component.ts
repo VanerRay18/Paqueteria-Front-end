@@ -7,9 +7,10 @@ import { VehicleCard } from 'src/app/shared/interfaces/utils';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-package-tracking-car',
-  templateUrl: './package-tracking-car.component.html',
-  styleUrls: ['./package-tracking-car.component.css']
+    selector: 'app-package-tracking-car',
+    templateUrl: './package-tracking-car.component.html',
+    styleUrls: ['./package-tracking-car.component.css'],
+    standalone: false
 })
 export class PackageTrackingCarComponent implements OnInit {
   filtro: string = '';

@@ -14,9 +14,10 @@ import { ApiResponse } from 'src/app/models/ApiResponse';
 
 
 @Component({
-  selector: 'app-package-tracking',
-  templateUrl: './package-tracking.component.html',
-  styleUrls: ['./package-tracking.component.css']
+    selector: 'app-package-tracking',
+    templateUrl: './package-tracking.component.html',
+    styleUrls: ['./package-tracking.component.css'],
+    standalone: false
 })
 export class PackageTrackingComponent implements OnInit {
   paquetesEsc: string[] = [];

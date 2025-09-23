@@ -14,9 +14,10 @@ dayjs.extend(utc);
 
 
 @Component({
-  selector: 'app-pakage-incoming',
-  templateUrl: './pakage-incoming.component.html',
-  styleUrls: ['./pakage-incoming.component.css']
+    selector: 'app-pakage-incoming',
+    templateUrl: './pakage-incoming.component.html',
+    styleUrls: ['./pakage-incoming.component.css'],
+    standalone: false
 })
 export class PakageIncomingComponent implements OnInit {
   searchTerm: string = '';

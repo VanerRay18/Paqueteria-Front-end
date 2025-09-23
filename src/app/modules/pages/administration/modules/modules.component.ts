@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 @Component({
-  selector: 'app-modules',
-  templateUrl: './modules.component.html',
-  styleUrls: ['./modules.component.css']
+    selector: 'app-modules',
+    templateUrl: './modules.component.html',
+    styleUrls: ['./modules.component.css'],
+    standalone: false
 })
 export class ModulesComponent {
   allRoles: string[] = ['Administrador', 'Licencias Admin', 'Licencias', 'Archivo Admin'];
