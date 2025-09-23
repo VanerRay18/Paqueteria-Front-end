@@ -5,179 +5,203 @@
     <div class="paquetes-header">
       <div class="left">
         <strong>Paquetes registrados&nbsp;&nbsp;&nbsp;</strong>
-        <span *ngIf="activeTab === 'costos'">&nbsp;&nbsp;&nbsp;Total:
+        @if (activeTab === 'costos') {
+          <span>&nbsp;&nbsp;&nbsp;Total:
           {{this.totalCost}}</span>
-        <span *ngIf="activeTab === 'normales'">&nbsp;&nbsp;&nbsp;Total:
+        }
+        @if (activeTab === 'normales') {
+          <span>&nbsp;&nbsp;&nbsp;Total:
           {{this.total}}</span>
+        }
 
       </div>
 
-      <div class="botones-responsivos" *ngIf="isCharge">
-        <input type="text" placeholder="Buscar..." class="buscador"
-          [(ngModel)]="searchTerm" />
-        <button class="btn btn-escanear" (click)="mostrarSwal()">
-          📦 Comenzar a escanear
-        </button>
-        <button class="btn btn-escanear" (click)="enviarListadoDePaquetes()">
-          📤 Subir listado de paquetes
-        </button>
-        <button class="btn btn-escanear" (click)="machoteExelPaquetes()">
-          📊 Machote de excel
-        </button>
-        <button class="btn btn-escanear" (click)="machoteExelPaquetesCosto()">
-          📊🪙 Machote de excel costos
-        </button>
-        <input id="csvFile" type="file"
-          (change)="onFileSelected($event, 'normal')" accept=".xls,.xlsx,.xml"
-          #fileInputNomal
-          style="display: none" />
-
-        <button class="btn  btn-escanear" (click)="fileInputNomal.click()">
-          📁 Cargar Excel
-        </button>
-        <input id="csvFile" type="file"
-          (change)="onFileSelected($event, 'costos')" accept=".xls,.xlsx,.xml"
-          #fileInputCostos
-          style="display: none" />
-
-        <button class="btn  btn-escanear" (click)="fileInputCostos.click()"
-          *ngIf="isPrice">
-          🗂️ Cargar Excel de Costos
-        </button>
-        <button class="btn btn-escanear" (click)="macheoPaquetes()"
-          [disabled]=" total <=0"
-          [class.disabled-btn]=" total <=0">
-          🔄 Hacer macheo
-        </button>
-        <button class="btn btn-escanear" (click)="macheoPaquetesCostos()"
-          [disabled]="total <=0" *ngIf="isPrice"
-          [class.disabled-btn]="total <=0">
-          🔄🪙 Macheo de costos
-        </button>
-        <button class="btn btn-escanear"
-          (click)="descargarTxtDeGuiasPorBloques()">
-          📄 Copiar paquetes
-        </button>
-      </div>
-      <!-- Tarjeta de Colores -->
-      <div class="card row mt-3 col-auto col-lg-12 p-3 shadow-sm">
-        <h5 class="card-title">Significado de Colores</h5>
-        <ul class="list-unstyled mt-2 mb-0 color-list d-flex flex-wrap">
-          <li class="color-item d-flex align-items-center mb-2 me-3">
-            <span class="me-2 rounded-circle"
-              style="width: 14px; height: 14px; background-color: rgb(243, 205, 35);"></span>
-            <small><strong>Amarillo:</strong> No tiene consolidado</small>
-          </li>
-          <li class="color-item d-flex align-items-center mb-2 me-3">
-            <span class="me-2 rounded-circle"
-              style="width: 14px; height: 14px; background-color: rgb(42, 121, 212);"></span>
-            <small><strong>Azul:</strong> Sin fecha o fecha no
-              reconocida</small>
-          </li>
-          <li class="color-item d-flex align-items-center mb-2 me-3">
-            <span class="me-2 rounded-circle"
-              style="width: 14px; height: 14px; background-color: orange;"></span>
-            <small><strong>Naranja:</strong> Se entregan hoy</small>
-          </li>
-          <li class="color-item d-flex align-items-center mb-2 me-3">
-            <span class="me-2 rounded-circle"
-              style="width: 14px; height: 14px; background-color: rgb(204, 1, 1);"></span>
-            <small><strong>Rojo:</strong> Entrega atrasada</small>
-          </li>
-          <li class="color-item d-flex align-items-center mb-2 me-3">
-            <span class="me-2 rounded-circle"
-              style="width: 14px; height: 14px; background-color: rgb(231, 96, 198);"></span>
-            <small><strong>Rosa:</strong> Paquete con mas de 3
+      @if (isCharge) {
+        <div class="botones-responsivos">
+          <input type="text" placeholder="Buscar..." class="buscador"
+            [(ngModel)]="searchTerm" />
+            <button class="btn btn-escanear" (click)="mostrarSwal()">
+              📦 Comenzar a escanear
+            </button>
+            <button class="btn btn-escanear" (click)="enviarListadoDePaquetes()">
+              📤 Subir listado de paquetes
+            </button>
+            <button class="btn btn-escanear" (click)="machoteExelPaquetes()">
+              📊 Machote de excel
+            </button>
+            <button class="btn btn-escanear" (click)="machoteExelPaquetesCosto()">
+              📊🪙 Machote de excel costos
+            </button>
+            <input id="csvFile" type="file"
+              (change)="onFileSelected($event, 'normal')" accept=".xls,.xlsx,.xml"
+              #fileInputNomal
+              style="display: none" />
+              <button class="btn  btn-escanear" (click)="fileInputNomal.click()">
+                📁 Cargar Excel
+              </button>
+              <input id="csvFile" type="file"
+                (change)="onFileSelected($event, 'costos')" accept=".xls,.xlsx,.xml"
+                #fileInputCostos
+                style="display: none" />
+                @if (isPrice) {
+                  <button class="btn  btn-escanear" (click)="fileInputCostos.click()"
+                    >
+                    🗂️ Cargar Excel de Costos
+                  </button>
+                }
+                <button class="btn btn-escanear" (click)="macheoPaquetes()"
+                  [disabled]=" total <=0"
+                  [class.disabled-btn]=" total <=0">
+                  🔄 Hacer macheo
+                </button>
+                @if (isPrice) {
+                  <button class="btn btn-escanear" (click)="macheoPaquetesCostos()"
+                    [disabled]="total <=0"
+                    [class.disabled-btn]="total <=0">
+                    🔄🪙 Macheo de costos
+                  </button>
+                }
+                <button class="btn btn-escanear"
+                  (click)="descargarTxtDeGuiasPorBloques()">
+                  📄 Copiar paquetes
+                </button>
+              </div>
+            }
+            <!-- Tarjeta de Colores -->
+            <div class="card row mt-3 col-auto col-lg-12 p-3 shadow-sm">
+              <h5 class="card-title">Significado de Colores</h5>
+              <ul class="list-unstyled mt-2 mb-0 color-list d-flex flex-wrap">
+                <li class="color-item d-flex align-items-center mb-2 me-3">
+                  <span class="me-2 rounded-circle"
+                  style="width: 14px; height: 14px; background-color: rgb(243, 205, 35);"></span>
+                  <small><strong>Amarillo:</strong> No tiene consolidado</small>
+                </li>
+                <li class="color-item d-flex align-items-center mb-2 me-3">
+                  <span class="me-2 rounded-circle"
+                  style="width: 14px; height: 14px; background-color: rgb(42, 121, 212);"></span>
+                  <small><strong>Azul:</strong> Sin fecha o fecha no
+                reconocida</small>
+              </li>
+              <li class="color-item d-flex align-items-center mb-2 me-3">
+                <span class="me-2 rounded-circle"
+                style="width: 14px; height: 14px; background-color: orange;"></span>
+                <small><strong>Naranja:</strong> Se entregan hoy</small>
+              </li>
+              <li class="color-item d-flex align-items-center mb-2 me-3">
+                <span class="me-2 rounded-circle"
+                style="width: 14px; height: 14px; background-color: rgb(204, 1, 1);"></span>
+                <small><strong>Rojo:</strong> Entrega atrasada</small>
+              </li>
+              <li class="color-item d-flex align-items-center mb-2 me-3">
+                <span class="me-2 rounded-circle"
+                style="width: 14px; height: 14px; background-color: rgb(231, 96, 198);"></span>
+                <small><strong>Rosa:</strong> Paquete con mas de 3
               reasignaciones</small>
-          </li>
-        </ul>
+            </li>
+          </ul>
+        </div>
+
       </div>
 
-    </div>
-
-    <div class="tabs">
-      <button [class.active]="activeTab === 'normales'"
+      <div class="tabs">
+        <button [class.active]="activeTab === 'normales'"
         (click)="activeTab = 'normales'">📦 Normales</button>
-      <button [class.active]="activeTab === 'costos'"
-        (click)="activeTab = 'costos'" *ngIf="isPrice === true">💰 Con
-        costo</button>
-    </div>
-    <div *ngIf="activeTab === 'normales'">
-      <div *ngFor="let grupo of paquetesAgrupados">
-        <div class="fecha-entrega-linea">
-          <span>{{ grupo.fecha }}</span>
+        @if (isPrice === true) {
+          <button [class.active]="activeTab === 'costos'"
+            (click)="activeTab = 'costos'">💰 Con
+          costo</button>
+        }
+      </div>
+      @if (activeTab === 'normales') {
+        <div>
+          @for (grupo of paquetesAgrupados; track grupo) {
+            <div>
+              <div class="fecha-entrega-linea">
+                <span>{{ grupo.fecha }}</span>
+              </div>
+              @for (paquete of grupo.paquetes | filter: searchTerm; track paquete) {
+                <ng-container
+                *ngTemplateOutlet="paqueteTemplate; context:{ $implicit: paquete }"></ng-container>
+              }
+            </div>
+          }
         </div>
-        <ng-container
-          *ngFor="let paquete of grupo.paquetes | filter: searchTerm">
-          <ng-container
-            *ngTemplateOutlet="paqueteTemplate; context:{ $implicit: paquete }"></ng-container>
-        </ng-container>
-      </div>
-    </div>
+      }
 
-    <div *ngIf="activeTab === 'costos'">
-      <div *ngFor="let paquete of paquetesConCosto | filter: searchTerm">
-        <ng-container
-          *ngTemplateOutlet="paqueteTemplate; context:{ $implicit: paquete, esCosto: true }"></ng-container>
+      @if (activeTab === 'costos') {
+        <div>
+          @for (paquete of paquetesConCosto | filter: searchTerm; track paquete) {
+            <div>
+              <ng-container
+              *ngTemplateOutlet="paqueteTemplate; context:{ $implicit: paquete, esCosto: true }"></ng-container>
+            </div>
+          }
+        </div>
+      }
 
-      </div>
-    </div>
-
-    <!-- Template único para renderizar un paquete -->
-    <ng-template #paqueteTemplate let-paquete let-esCosto="esCosto">
-      <div class="paquete">
-        <div class="codigo">
-          <i class="fa fa-eye" style="cursor:pointer; margin-left: 10px;"
+      <!-- Template único para renderizar un paquete -->
+      <ng-template #paqueteTemplate let-paquete let-esCosto="esCosto">
+        <div class="paquete">
+          <div class="codigo">
+            <i class="fa fa-eye" style="cursor:pointer; margin-left: 10px;"
             (click)="verdetallesPaquete(paquete)"></i>
-          <i class="fa-solid fa-pen-to-square"
-            style="cursor:pointer; margin-left: 10px;"
+            <i class="fa-solid fa-pen-to-square"
+              style="cursor:pointer; margin-left: 10px;"
             (click)="editarConsolidado(paquete)"></i>&nbsp;
-          <i class="fa-solid fa-folder-open"
-            style="cursor:pointer; margin-left: 10px;"
+            <i class="fa-solid fa-folder-open"
+              style="cursor:pointer; margin-left: 10px;"
             (click)="histotyPackage(paquete)"></i>&nbsp;
-          <span [ngStyle]="{ color: paquete.color }">{{ paquete.guia
+            <span [ngStyle]="{ color: paquete.color }">{{ paquete.guia
             }}</span>
-          <i class="fa-solid fa-trash-can"
-            style="cursor:pointer; margin-left: 10px;"
+            <i class="fa-solid fa-trash-can"
+              style="cursor:pointer; margin-left: 10px;"
             (click)="deletePackage(paquete)"></i>&nbsp;
-          <span *ngIf="paquete.passIncoming >= 3" class="me-2"
-            style="display: inline-block; width: 14px; height: 14px; background-color: rgb(231, 96, 198); border-radius: 50%;">
-          </span>&nbsp;
-        </div>
+            @if (paquete.passIncoming >= 3) {
+              <span class="me-2"
+                style="display: inline-block; width: 14px; height: 14px; background-color: rgb(231, 96, 198); border-radius: 50%;">
+              </span>
+              }&nbsp;
+            </div>
 
-        <div *ngIf="esCosto" style="margin-top:5px; color:#16a34a;">
-          <strong>Costo:</strong> {{ paquete.costLoad.price ? '$' +
-          paquete.costLoad.price :
-          'N/A' }}
-        </div>
+            @if (esCosto) {
+              <div style="margin-top:5px; color:#16a34a;">
+                <strong>Costo:</strong> {{ paquete.costLoad.price ? '$' +
+                paquete.costLoad.price :
+                'N/A' }}
+              </div>
+            }
 
-        <div class="barra-progreso">
+            <div class="barra-progreso">
           <div class="segmento progreso" [ngStyle]="{
         width: getBarraEstado(paquete),
         backgroundColor: paquete.status.config.color
       }"></div>
-        </div>
+            </div>
 
-        <div class="etapas">
-          <span>{{paquete.nameOrg}}&nbsp;&nbsp; Intentos:
-            {{paquete.totalEntregas}}&nbsp; Rutas: {{paquete.totalRutas}}</span>
-          <span class="center-info">{{paquete.status.name}} - {{
-            paquete.status.tiempo | date: 'dd-MM-yyyy HH:mm' }} - {{
-            paquete.dex.description || 'No tiene DEX asignado'}}</span>
-        </div>
+            <div class="etapas">
+              <span>{{paquete.nameOrg}}&nbsp;&nbsp; Intentos:
+              {{paquete.totalEntregas}}&nbsp; Rutas: {{paquete.totalRutas}}</span>
+              <span class="center-info">{{paquete.status.name}} - {{
+                paquete.status.tiempo | date: 'dd-MM-yyyy HH:mm' }} - {{
+              paquete.dex.description || 'No tiene DEX asignado'}}</span>
+            </div>
+          </div>
+        </ng-template>
+
+        @if (activeTab === 'normales') {
+          <app-paginador-component
+            [isLoading]="isLoading" [page]="page" [size]="size"
+            [total]="total" (pageChange)="cambiarPagina($event)">
+          </app-paginador-component>
+        }
+
+        @if (activeTab === 'costos') {
+          <app-paginador-component
+            [isLoading]="isLoadingCost" [page]="pageCost"
+            [size]="sizeCost" [total]="totalCost"
+            (pageChange)="cambiarPaginaCost($event)">
+          </app-paginador-component>
+        }
+
       </div>
-    </ng-template>
-
-    <app-paginador-component *ngIf="activeTab === 'normales'"
-      [isLoading]="isLoading" [page]="page" [size]="size"
-      [total]="total" (pageChange)="cambiarPagina($event)">
-    </app-paginador-component>
-
-    <app-paginador-component *ngIf="activeTab === 'costos'"
-      [isLoading]="isLoadingCost" [page]="pageCost"
-      [size]="sizeCost" [total]="totalCost"
-      (pageChange)="cambiarPaginaCost($event)">
-    </app-paginador-component>
-
-  </div>
-</div>
+    </div>

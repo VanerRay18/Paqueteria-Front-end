@@ -1,22 +1,28 @@
 <div class="container text-center mt-5">
   <button class="btn btn-primary mb-3"
-          (click)="generarToken()"
-          [disabled]="buttonDisabled || maxAttemptsReached">
+    (click)="generarToken()"
+    [disabled]="buttonDisabled || maxAttemptsReached">
     {{ buttonDisabled && !maxAttemptsReached ? 'Espera (' + countdown + 's)' : 'Generar token' }}
   </button>
 
-  <div *ngIf="token" class="card shadow mx-auto" style="max-width: 300px;">
-    <div class="card-body">
-      <p class="card-title mb-0">Su token es:</p>
-      <h4 class="text-primary mt-1">{{ token }}</h4>
+  @if (token) {
+    <div class="card shadow mx-auto" style="max-width: 300px;">
+      <div class="card-body">
+        <p class="card-title mb-0">Su token es:</p>
+        <h4 class="text-primary mt-1">{{ token }}</h4>
+      </div>
     </div>
-  </div>
+  }
 
-  <div *ngIf="tokenExpired && !token" class="alert alert-danger mt-3" style="max-width: 300px; margin: 0 auto;">
-    Su tiempo ha expirado. Genere un nuevo token.
-  </div>
+  @if (tokenExpired && !token) {
+    <div class="alert alert-danger mt-3" style="max-width: 300px; margin: 0 auto;">
+      Su tiempo ha expirado. Genere un nuevo token.
+    </div>
+  }
 
-  <div *ngIf="maxAttemptsReached" class="alert alert-warning mt-3" style="max-width: 300px; margin: 0 auto;">
-    Ultimo token generado ({{ maxAttempts }}).
-  </div>
+  @if (maxAttemptsReached) {
+    <div class="alert alert-warning mt-3" style="max-width: 300px; margin: 0 auto;">
+      Ultimo token generado ({{ maxAttempts }}).
+    </div>
+  }
 </div>

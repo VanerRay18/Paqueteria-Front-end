@@ -1,34 +1,39 @@
 
-  <div *ngIf="isLoading" class="loader-contenedor">
+@if (isLoading) {
+  <div class="loader-contenedor">
     <!-- <div class="spinner"></div> -->
     <img src="assets\package-animation.gif" alt="">
     <h4>Cargando..</h4>
   </div>
+}
 
-  
-  <div *ngIf="!isLoading && total == 0" class="title">
+
+@if (!isLoading && total == 0) {
+  <div class="title">
     <h2>{{message}}</h2>
   </div>
+}
 
 
-<div *ngIf="!isLoading && total > 0 && visible" class="pagination d-flex justify-content-center mt-4 w-100">
-  <button
-    class="btn btn-sm mx-1 rounded-circle btn-nav"
-    (click)="cambiarPagina(page - 1)">
-    &laquo;
-  </button>
-
-  <button
-    class="btn btn-sm mx-1 rounded-circle"
-    *ngFor="let p of totalPages"
-    [ngClass]="(p - 1) === page ? 'btn-primary' : 'btn-outline-primary'"
-    (click)="cambiarPagina(p - 1)">
-    {{ p }}
-  </button>
-
-  <button
-    class="btn btn-sm mx-1 rounded-circle btn-nav"
-    (click)="cambiarPagina(page + 1)">
-    &raquo;
-  </button>
-</div>
+@if (!isLoading && total > 0 && visible) {
+  <div class="pagination d-flex justify-content-center mt-4 w-100">
+    <button
+      class="btn btn-sm mx-1 rounded-circle btn-nav"
+      (click)="cambiarPagina(page - 1)">
+      &laquo;
+    </button>
+    @for (p of totalPages; track p) {
+      <button
+        class="btn btn-sm mx-1 rounded-circle"
+        [ngClass]="(p - 1) === page ? 'btn-primary' : 'btn-outline-primary'"
+        (click)="cambiarPagina(p - 1)">
+        {{ p }}
+      </button>
+    }
+    <button
+      class="btn btn-sm mx-1 rounded-circle btn-nav"
+      (click)="cambiarPagina(page + 1)">
+      &raquo;
+    </button>
+  </div>
+}

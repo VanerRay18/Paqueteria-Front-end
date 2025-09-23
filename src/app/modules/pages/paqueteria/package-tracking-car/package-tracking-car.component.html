@@ -8,21 +8,24 @@
     <div class="row d-flex justify-content-center m-4">
 
 
-      <div class="m-12" *ngIf="!isLoading"><input type="text" placeholder="🔍 Buscar..." class="buscador" [(ngModel)]="searchTerm" /></div>
+      @if (!isLoading) {
+        <div class="m-12"><input type="text" placeholder="🔍 Buscar..." class="buscador" [(ngModel)]="searchTerm" /></div>
+      }
 
 
-      <div class="vehicle-card m-4" *ngFor="let vehicle of vehicleCards | filter: searchTerm"
-        (click)="mostrarSwalVehiculo(vehicle)">
-        <div class="vehicle-header">
-          <img [src]="vehicle?.imagen?.url" alt="auto" class="vehicle-img" (error)="handleImageError($event)" />
-          <div class="vehicle-info">
-            <strong>{{ vehicle.placa }}</strong>
-            <div class="vehicle-model">{{ vehicle.modelo }}</div>
-            <div class="vehicle-driver"><strong>Conductor:</strong> {{
-              vehicle.conductor }}</div>
+      @for (vehicle of vehicleCards | filter: searchTerm; track vehicle) {
+        <div class="vehicle-card m-4"
+          (click)="mostrarSwalVehiculo(vehicle)">
+          <div class="vehicle-header">
+            <img [src]="vehicle?.imagen?.url" alt="auto" class="vehicle-img" (error)="handleImageError($event)" />
+            <div class="vehicle-info">
+              <strong>{{ vehicle.placa }}</strong>
+              <div class="vehicle-model">{{ vehicle.modelo }}</div>
+              <div class="vehicle-driver"><strong>Conductor:</strong> {{
+            vehicle.conductor }}</div>
             <div class="vehicle-destination"><strong>Destino:</strong> {{
-              vehicle.destino }}</div>
-          </div>
+          vehicle.destino }}</div>
+        </div>
           <div class="vehicle-status" [ngClass]="{
                       'status-activo': vehicle.estado.id === 7 || vehicle.estado.id === 8 || vehicle.estado.id === 9,
                       'status-inactivo': vehicle.estado.id !== 7 && vehicle.estado.id !== 8 && vehicle.estado.id !== 9
@@ -31,27 +34,26 @@
                            'fa-truck-fast': vehicle.estado.id === 7 || vehicle.estado.id === 8 || vehicle.estado.id === 9,
                           'fa-truck': vehicle.estado.id !== 7 && vehicle.estado.id !== 8 && vehicle.estado.id !== 9
                           }" class="fa-solid"></i>
-            <div>{{ vehicle.estado.name }}</div>
-          </div>
+          <div>{{ vehicle.estado.name }}</div>
         </div>
-
-        <div class="progress-bar-container">
-          <div class="progress-bar-bg">
-            <div class="progress-bar-fill" [style.width.%]="vehicle.porcentaje">
-            </div>
-          </div>
-          <div class="progress-labels">
-            <div>Entregados <br /><small>{{ vehicle.entregados
-                }}</small></div>
-            <div>No entregados <br /><small>{{ vehicle.faltantes
-                }}</small></div>
-          </div>
-        </div>
-
       </div>
-      <app-paginador-component [isLoading]="isLoading" [message]="'No hay cargamentos registrados en este día.'"
-        [page]="page" [size]="size" [total]="total" (pageChange)="cambiarPagina($event)">
-      </app-paginador-component>
+      <div class="progress-bar-container">
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" [style.width.%]="vehicle.porcentaje">
+          </div>
+        </div>
+        <div class="progress-labels">
+          <div>Entregados <br /><small>{{ vehicle.entregados
+          }}</small></div>
+          <div>No entregados <br /><small>{{ vehicle.faltantes
+          }}</small></div>
+        </div>
+      </div>
     </div>
-  </div>
+  }
+  <app-paginador-component [isLoading]="isLoading" [message]="'No hay cargamentos registrados en este día.'"
+    [page]="page" [size]="size" [total]="total" (pageChange)="cambiarPagina($event)">
+  </app-paginador-component>
+</div>
+</div>
 </div>

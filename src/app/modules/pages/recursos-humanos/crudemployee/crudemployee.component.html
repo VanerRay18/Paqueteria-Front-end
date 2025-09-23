@@ -10,92 +10,94 @@
 
   <div class="col-auto col-lg-12 mt-4" >
     <ul class="nav nav-tabs d-flex flex-row flex-wrap" role="tablist">
-      <li class="nav-item" *ngFor="let tab of tabs">
-        <a class="nav-link"
-          [class.active]="tab.id === activeTab"
-          (click)="setActiveTab(tab.id)">
-          <i [class]="tab.icon"></i>
-          {{ tab.title }}
-        </a>
-      </li>
+      @for (tab of tabs; track tab) {
+        <li class="nav-item">
+          <a class="nav-link"
+            [class.active]="tab.id === activeTab"
+            (click)="setActiveTab(tab.id)">
+            <i [class]="tab.icon"></i>
+            {{ tab.title }}
+          </a>
+        </li>
+      }
     </ul>
 
     <div class="tab-content" role="tabpanel">
-      <ng-container *ngIf="activeTab === 'base'">
+      @if (activeTab === 'base') {
         <div class="row card2">
-
           <div class="form-floating col-auto col-lg-4 m-3 row">
             <input type="text" class=" buscar form-control" id="busqueda"
               placeholder="Buscar"
               [(ngModel)]="searchTerm" name="busqueda">
-            <label for="User">&nbsp;&nbsp;<i
+              <label for="User">&nbsp;&nbsp;<i
+              class="fa-solid fa-magnifying-glass"></i> Buscar</label>
+            </div>
+            <div class="col-auto col-lg-4 mt-4">
+              <h5>Total de registros:  {{this.totalIndividual}}</h5>
+            </div>
+            @if (dataB.length > 0) {
+              <div
+                class="col-auto col-lg-12 mt-4 justify-content-center align-items-center"
+                >
+                <app-tables
+                  [headers]="headersB"
+                  [data]="dataB"
+                  [displayedColums]="displayedColumnsB"
+                  [searchTerm]="searchTerm"
+                  [maxHeight]="'630px'"
+                  [itemsPerPage]="10"
+                  [showActionsEdit]=true
+                  (edit)="onEdit($event.id)"
+                  [showActionsDeleted]=true
+                  (delete)="onDelete($event)"
+                  [showActionsPdf]=false
+                  [showActiveCheckbox]=false
+                  [showDetailsColumn]=false
+                  [isLoading]="isLoading">
+                </app-tables>
+              </div>
+            }
+          </div>
+        }
+
+        @if (activeTab === 'contrato' ) {
+          <div class="row card2">
+            <div class="form-floating col-auto col-lg-4 m-3 row">
+              <input type="text" class=" buscar form-control" id="busqueda"
+                placeholder="Buscar"
+                [(ngModel)]="searchTerm" name="busqueda">
+                <label for="User">&nbsp;&nbsp;<i
                 class="fa-solid fa-magnifying-glass"></i> Buscar</label>
-          </div>
-          <div class="col-auto col-lg-4 mt-4">
-            <h5>Total de registros:  {{this.totalIndividual}}</h5>
-          </div>
+              </div>
+              <div class="col-auto col-lg-4 mt-4">
+                <h5>Total de registros: {{this.totalHonorarios}}</h5>
+              </div>
+              @if (dataC.length > 0) {
+                <div
+                  class="col-auto col-lg-12 mt-4 justify-content-center align-items-center"
+                  >
+                  <app-tables
+                    [headers]="headersC"
+                    [data]="dataC"
+                    [displayedColums]="displayedColumnsC"
+                    [searchTerm]="searchTerm"
+                    [maxHeight]="'630px'"
+                    [itemsPerPage]="10"
+                    [showActionsEdit]=true
+                    (edit)="onEdit($event.id)"
+                    [showActionsDeleted]=true
+                    (delete)="onDelete($event)"
+                    [showActionsPdf]=false
+                    [showActiveCheckbox]=false
+                    [showDetailsColumn]=false
+                    [isLoading]="isLoading">
+                  </app-tables>
+                </div>
+              }
+            </div>
+          }
 
-          <div
-            class="col-auto col-lg-12 mt-4 justify-content-center align-items-center"
-            *ngIf="dataB.length > 0">
-            <app-tables
-              [headers]="headersB"
-              [data]="dataB"
-              [displayedColums]="displayedColumnsB"
-              [searchTerm]="searchTerm"
-              [maxHeight]="'630px'"
-              [itemsPerPage]="10"
-              [showActionsEdit]=true
-              (edit)="onEdit($event.id)"
-              [showActionsDeleted]=true
-              (delete)="onDelete($event)"
-              [showActionsPdf]=false
-              [showActiveCheckbox]=false
-              [showDetailsColumn]=false
-              [isLoading]="isLoading">
-            </app-tables>
-          </div>
         </div>
-      </ng-container>
-
-      <ng-container *ngIf="activeTab === 'contrato' ">
-        <div class="row card2">
-
-          <div class="form-floating col-auto col-lg-4 m-3 row">
-            <input type="text" class=" buscar form-control" id="busqueda"
-              placeholder="Buscar"
-              [(ngModel)]="searchTerm" name="busqueda">
-            <label for="User">&nbsp;&nbsp;<i
-                class="fa-solid fa-magnifying-glass"></i> Buscar</label>
-          </div>
-          <div class="col-auto col-lg-4 mt-4">
-            <h5>Total de registros: {{this.totalHonorarios}}</h5>
-          </div>
-
-          <div
-            class="col-auto col-lg-12 mt-4 justify-content-center align-items-center"
-            *ngIf="dataC.length > 0">
-            <app-tables
-              [headers]="headersC"
-              [data]="dataC"
-              [displayedColums]="displayedColumnsC"
-              [searchTerm]="searchTerm"
-              [maxHeight]="'630px'"
-              [itemsPerPage]="10"
-              [showActionsEdit]=true
-              (edit)="onEdit($event.id)"
-              [showActionsDeleted]=true
-              (delete)="onDelete($event)"
-              [showActionsPdf]=false
-              [showActiveCheckbox]=false
-              [showDetailsColumn]=false
-              [isLoading]="isLoading">
-            </app-tables>
-          </div>
-        </div>
-      </ng-container>
+      </div>
 
     </div>
-  </div>
-
-</div>

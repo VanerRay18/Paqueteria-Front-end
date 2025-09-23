@@ -8,42 +8,47 @@
     </div>
     <h2>Iniciar sesión</h2>
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-  <div class="form-group icon-input">
-    <label for="usuario">Usuario</label>
-    <div class="input-wrapper">
-      <i class="fa-solid fa-user"></i>
-      <input id="usuario" formControlName="user" type="text" class="form-control" placeholder="Ingrese su usuario" />
-    </div>
-    <div *ngIf="loginForm.get('user')?.invalid && loginForm.get('user')?.touched" class="error">
-      Usuario es requerido
-    </div>
-  </div>
+      <div class="form-group icon-input">
+        <label for="usuario">Usuario</label>
+        <div class="input-wrapper">
+          <i class="fa-solid fa-user"></i>
+          <input id="usuario" formControlName="user" type="text" class="form-control" placeholder="Ingrese su usuario" />
+        </div>
+        @if (loginForm.get('user')?.invalid && loginForm.get('user')?.touched) {
+          <div class="error">
+            Usuario es requerido
+          </div>
+        }
+      </div>
 
-  <div class="form-group icon-input">
-    <label for="password">Contraseña</label>
-    <div class="input-wrapper">
-      <i class="fa-solid fa-lock"></i>
-      <input id="password" formControlName="password" type="password" class="form-control" placeholder="Ingrese su contraseña" />
-    </div>
-    <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="error">
-      Contraseña es requerida 6 dígitos min.
-    </div>
-  </div>
+      <div class="form-group icon-input">
+        <label for="password">Contraseña</label>
+        <div class="input-wrapper">
+          <i class="fa-solid fa-lock"></i>
+          <input id="password" formControlName="password" type="password" class="form-control" placeholder="Ingrese su contraseña" />
+        </div>
+        @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+          <div class="error">
+            Contraseña es requerida 6 dígitos min.
+          </div>
+        }
+      </div>
 
-<button
-  type="submit"
-  id="loginButton"
-  class="btn-login btn-primary"
-  [class.loading]="isLoading"
-  [disabled]="loginForm.invalid || isLoading"
->
-  <ng-container *ngIf="!isLoading; else loadingTemplate">Iniciar sesión</ng-container>
-  <ng-template #loadingTemplate>
-    <div class="loader"></div>
-  </ng-template>
-</button>
+      <button
+        type="submit"
+        id="loginButton"
+        class="btn-login btn-primary"
+        [class.loading]="isLoading"
+        [disabled]="loginForm.invalid || isLoading"
+        >
+        @if (!isLoading) {
+          Iniciar sesión
+        } @else {
+          <div class="loader"></div>
+        }
+      </button>
 
-</form>
+    </form>
 
   </div>
 </div>

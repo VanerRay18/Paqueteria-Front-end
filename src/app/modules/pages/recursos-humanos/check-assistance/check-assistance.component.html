@@ -7,19 +7,20 @@
       </div>
 
       <h3 class="mensaje d-flex justify-content-center mt-auto">Ingrese el Token
-        para registrar su asistencia</h3>
+      para registrar su asistencia</h3>
 
       <div class="token-inputs">
         <div class="token-inputs">
-          <input
-            *ngFor="let item of tokenArray; let i = index"
-            #tokenInput
-            maxlength="1"
-            [(ngModel)]="token[i]"
-            (input)="onInput($event, i)"
-            (keydown.backspace)="onBackspace($event, i)"
-            type="text"
-            class="token-box" />
+          @for (item of tokenArray; track item; let i = $index) {
+            <input
+              #tokenInput
+              maxlength="1"
+              [(ngModel)]="token[i]"
+              (input)="onInput($event, i)"
+              (keydown.backspace)="onBackspace($event, i)"
+              type="text"
+              class="token-box" />
+          }
         </div>
       </div>
 

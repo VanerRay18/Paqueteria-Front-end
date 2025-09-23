@@ -3,54 +3,62 @@
 
   <div class="dashboard-grid">
     <!-- EMPRESAS -->
-<div class="card card-empresas">
-  <h3 class="card-title">📦 EMPRESAS</h3>
-  <div class="card-header-options">
-    <button (click)="filtrarPor('dia')">Día</button>
-    <button (click)="filtrarPor('semana')">Semana</button>
-    <button (click)="filtrarPor('mes')">Mes</button>
-  </div>
+    <div class="card card-empresas">
+      <h3 class="card-title">📦 EMPRESAS</h3>
+      <div class="card-header-options">
+        <button (click)="filtrarPor('dia')">Día</button>
+        <button (click)="filtrarPor('semana')">Semana</button>
+        <button (click)="filtrarPor('mes')">Mes</button>
+      </div>
 
-  <div *ngIf="empresas && !isLoading">
-    <div class="empresa-card" *ngFor="let empresa of empresas" (click)="irAEmpresa(empresa.id)">
-      <h4 class="empresa-nombre">{{ empresa.nombre }}</h4>
-      <div class="progress-bar">
-        <div class="progress-fill" [style.width.%]="empresa.porcentaje"
-             [ngClass]="getColorFromPorcentaje(empresa.porcentaje)">
+      @if (empresas && !isLoading) {
+        <div>
+          @for (empresa of empresas; track empresa) {
+            <div class="empresa-card" (click)="irAEmpresa(empresa.id)">
+              <h4 class="empresa-nombre">{{ empresa.nombre }}</h4>
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="empresa.porcentaje"
+                  [ngClass]="getColorFromPorcentaje(empresa.porcentaje)">
+                </div>
+              </div>
+              <div class="empresa-info">
+                <span>Entregados: {{ empresa.entregados }}</span>
+                <span>No entregados: {{ empresa.faltantes }}</span>
+              </div>
+            </div>
+          }
         </div>
-      </div>
-      <div class="empresa-info">
-        <span>Entregados: {{ empresa.entregados }}</span>
-        <span>No entregados: {{ empresa.faltantes }}</span>
-      </div>
-    </div>
-  </div>
+      }
 
 
       <app-paginador-component [isLoading]="isLoading" [visible] = "false" [total]="10">
-    </app-paginador-component>
-</div>
+      </app-paginador-component>
+    </div>
 
 
     <!-- ASISTENCIAS Y ALERTAS -->
     <div class="card-group">
       <!-- ASISTENCIAS -->
-      <div class="card" *ngIf="autorizar == true">
-        <h4 class="card-title">🕒 Asistencias del personal</h4>
-        <p>Consulta las asistencias y faltas del personal registrado.</p>
-        <button class="btn" (click)="irAsistencias()">IR</button>
-      </div>
+      @if (autorizar == true) {
+        <div class="card">
+          <h4 class="card-title">🕒 Asistencias del personal</h4>
+          <p>Consulta las asistencias y faltas del personal registrado.</p>
+          <button class="btn" (click)="irAsistencias()">IR</button>
+        </div>
+      }
 
       <!-- ALERTAS -->
       <div class="card">
         <h4 class="card-title alert-title">⚠️ ALERTAS</h4>
-        <div *ngFor="let alerta of alertas" class="alerta">
-          <span class="alerta-icon"></span>
-          <div>
-            <p class="alerta-tiempo">Hace {{ alerta.dias }} días</p>
-            <p class="alerta-mensaje">{{ alerta.mensaje }}</p>
+        @for (alerta of alertas; track alerta) {
+          <div class="alerta">
+            <span class="alerta-icon"></span>
+            <div>
+              <p class="alerta-tiempo">Hace {{ alerta.dias }} días</p>
+              <p class="alerta-mensaje">{{ alerta.mensaje }}</p>
+            </div>
           </div>
-        </div>
+        }
         <button class="btn-outline">Ver todas</button>
       </div>
     </div>

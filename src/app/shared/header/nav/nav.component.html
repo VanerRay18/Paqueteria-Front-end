@@ -15,31 +15,36 @@
       </span>
     </i>
 
-    <div *ngIf="showNotifications" class="overlay" (click)="toggleNotifications()"></div>
+    @if (showNotifications) {
+      <div class="overlay" (click)="toggleNotifications()"></div>
+    }
 
-<div *ngIf="showNotifications" class="notification-dropdown">
-  <!-- Filtros fijos arriba -->
-  <div class="notification-filters">
-    <button (click)="filterNotifications('day')" [class.active]="activeFilter === 'day'">Día</button>
-    <button (click)="filterNotifications('week')" [class.active]="activeFilter === 'week'">Semana</button>
-    <button (click)="filterNotifications('month')" [class.active]="activeFilter === 'month'">Mes</button>
-  </div>
-
-  <!-- Scroll SOLO en esta parte -->
-  <div class="notification-list">
-    <div class="notification-item" *ngFor="let notification of filteredNotifications; let i = index">
-      <i class="{{notification.icon}} iconNoti"></i>
-      <div class="notification-content">
-        <strong>{{ notification.title }}</strong>
-        <span>{{ notification.message }}</span>
-        <div class="alert-time-below">
-          {{ notification.timeAgo }}
+    @if (showNotifications) {
+      <div class="notification-dropdown">
+        <!-- Filtros fijos arriba -->
+        <div class="notification-filters">
+          <button (click)="filterNotifications('day')" [class.active]="activeFilter === 'day'">Día</button>
+          <button (click)="filterNotifications('week')" [class.active]="activeFilter === 'week'">Semana</button>
+          <button (click)="filterNotifications('month')" [class.active]="activeFilter === 'month'">Mes</button>
+        </div>
+        <!-- Scroll SOLO en esta parte -->
+        <div class="notification-list">
+          @for (notification of filteredNotifications; track notification; let i = $index) {
+            <div class="notification-item">
+              <i class="{{notification.icon}} iconNoti"></i>
+              <div class="notification-content">
+                <strong>{{ notification.title }}</strong>
+                <span>{{ notification.message }}</span>
+                <div class="alert-time-below">
+                  {{ notification.timeAgo }}
+                </div>
+              </div>
+              <i class="fa-solid fa-check" (click)="visto(i, notification.id)"></i>
+            </div>
+          }
         </div>
       </div>
-      <i class="fa-solid fa-check" (click)="visto(i, notification.id)"></i>
-    </div>
-  </div>
-</div>
+    }
 
 
     <!-- Menú lateral -->
@@ -50,34 +55,40 @@
       </div>
       <div class="offcanvas-body">
         <ul class="navbar-nav justify-content-start flex-grow-1 pe-3">
-          <li *ngFor="let node of menuItems" class="nav-item">
-            <!-- Enlace sin hijos -->
-            <div class="nav-link centerIconDAD" [ngClass]="{'dropdown': node.children.length > 0}">
-              <a *ngIf="node.children.length === 0" class="nav-link centerIconDAD" [routerLink]="node.config">
-                <i class="{{node.icon}} icons"></i>{{ node.moduleName }}
-              </a>
-            </div>
-
-            <!-- Enlace con hijos -->
-            <button *ngIf="node.children.length > 0" class="nav-link dropdown-toggle centerIconDAD" type="button"
-              data-bs-toggle="collapse" [attr.data-bs-target]="'#collapse-' + node.moduleId" aria-expanded="false"
-              [attr.aria-controls]="'collapse-' + node.children">
-              <i class="{{node.icon}} icons"></i> {{ node.moduleName }}
-            </button>
-
-            <!-- Submenú -->
-            <div class="collapse" [id]="'collapse-' + node.moduleId">
-              <ul class="nav flex-column ms-3">
-                <li *ngFor="let subNode of node.children" class="nav-item"
-                  [ngClass]="{'active-custom': currentRoute === ('/' + subNode.config)}">
-                  <a class="nav-link generalHover" [routerLink]="subNode.config"
-                    (click)="handleChildClick(subNode.config)" data-bs-dismiss="offcanvas">
-                    <i class="{{subNode.icon}} icons"></i> {{ subNode.moduleName }}
+          @for (node of menuItems; track node) {
+            <li class="nav-item">
+              <!-- Enlace sin hijos -->
+              <div class="nav-link centerIconDAD" [ngClass]="{'dropdown': node.children.length > 0}">
+                @if (node.children.length === 0) {
+                  <a class="nav-link centerIconDAD" [routerLink]="node.config">
+                    <i class="{{node.icon}} icons"></i>{{ node.moduleName }}
                   </a>
-                </li>
-              </ul>
-            </div>
-          </li>
+                }
+              </div>
+              <!-- Enlace con hijos -->
+              @if (node.children.length > 0) {
+                <button class="nav-link dropdown-toggle centerIconDAD" type="button"
+                  data-bs-toggle="collapse" [attr.data-bs-target]="'#collapse-' + node.moduleId" aria-expanded="false"
+                  [attr.aria-controls]="'collapse-' + node.children">
+                  <i class="{{node.icon}} icons"></i> {{ node.moduleName }}
+                </button>
+              }
+              <!-- Submenú -->
+              <div class="collapse" [id]="'collapse-' + node.moduleId">
+                <ul class="nav flex-column ms-3">
+                  @for (subNode of node.children; track subNode) {
+                    <li class="nav-item"
+                      [ngClass]="{'active-custom': currentRoute === ('/' + subNode.config)}">
+                      <a class="nav-link generalHover" [routerLink]="subNode.config"
+                        (click)="handleChildClick(subNode.config)" data-bs-dismiss="offcanvas">
+                        <i class="{{subNode.icon}} icons"></i> {{ subNode.moduleName }}
+                      </a>
+                    </li>
+                  }
+                </ul>
+              </div>
+            </li>
+          }
         </ul>
       </div>
     </div>

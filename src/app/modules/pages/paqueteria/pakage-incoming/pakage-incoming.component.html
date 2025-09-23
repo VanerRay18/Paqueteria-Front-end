@@ -9,61 +9,59 @@
         <div class="form-floating col-12 col-md-6 col-lg-3 mb-3">
           <input type="text" class=" buscar form-control" id="busqueda" placeholder="Buscar" [(ngModel)]="searchTerm"
             name="busqueda">
-          <label for="User">&nbsp;&nbsp;<i class="fa-solid fa-magnifying-glass"></i> Buscar</label>
-        </div>
-        <div class="col-12 col-md-6 col-lg-2 mb-3">
-          <input type="text" ngxDaterangepickerMd [(ngModel)]="rango" [showDropdowns]="true" [autoApply]="true"
-            class="form-control" placeholder="Seleccionar fechas" (ngModelChange)="getDatos(this.page, this.size)" />
-        </div>
+            <label for="User">&nbsp;&nbsp;<i class="fa-solid fa-magnifying-glass"></i> Buscar</label>
+          </div>
+          <div class="col-12 col-md-6 col-lg-2 mb-3">
+            <input type="text" ngxDaterangepickerMd [(ngModel)]="rango" [showDropdowns]="true" [autoApply]="true"
+              class="form-control" placeholder="Seleccionar fechas" (ngModelChange)="getDatos(this.page, this.size)" />
+            </div>
 
-        <div class="col-auto col-lg-3 d-flex justify-content-end mt-auto">
-          <button type="button" class="btn btn-sm" (click)="crearCargamento()">CREAR CARGAMENTO</button>
-        </div>
+            <div class="col-auto col-lg-3 d-flex justify-content-end mt-auto">
+              <button type="button" class="btn btn-sm" (click)="crearCargamento()">CREAR CARGAMENTO</button>
+            </div>
 
-        <div class="col-auto col-lg-3 d-flex justify-content-end mt-auto">
-          <a [routerLink]="['/pages/RH/Registrar-Trabajador']">
-            <button type="button" class="btn btn-sm">DESCARGAR REPORTES</button>
-          </a>
-        </div>
-        <div *ngFor="let item of data"  class="card-person" (click)="infocard(item.id)">
-          <h3 class="title">Cargamento {{ item.id }}</h3>
-
-          <div class="progress-container">
+            <div class="col-auto col-lg-3 d-flex justify-content-end mt-auto">
+              <a [routerLink]="['/pages/RH/Registrar-Trabajador']">
+                <button type="button" class="btn btn-sm">DESCARGAR REPORTES</button>
+              </a>
+            </div>
+            @for (item of data; track item) {
+              <div  class="card-person" (click)="infocard(item.id)">
+                <h3 class="title">Cargamento {{ item.id }}</h3>
+                <div class="progress-container">
             <div class="progress-bar" [ngClass]="{
               'green': porcentaje(item) > 70,
               'yellow': porcentaje(item) <= 70 && porcentaje(item) >= 30,
               'red': porcentaje(item) < 30
             }" [style.width.%]="porcentaje(item)">
+                  </div>
+                </div>
+                <div class="labels">
+                  <div class="left">Entregados: {{ item.entregados }}</div>
+                  <div class="right">No entregados: {{ item.noEntregados }}</div>
+                </div>
+                <div class="total">
+                  Total de paquetes: {{ item.paquetesTotal }}
+                </div>
+                <hr>
+                  <div class="footer">
+                    <span><strong>Fecha:</strong> {{ item.ts_created | date: 'dd-MM-yyyy HH:mm' }}</span>
+                    <span><strong>ID:</strong> {{ item.id }}</span>
+                  </div>
+                </div>
+              }
+
+
+              <app-paginador-component [isLoading]="isLoading" [message]="'No hay cargamentos registrados en este día.'"
+                [page]="page" [size]="size" [total]="total" (pageChange)="cambiarPagina($event)">
+              </app-paginador-component>
+
             </div>
+
+
+
+
           </div>
 
-          <div class="labels">
-            <div class="left">Entregados: {{ item.entregados }}</div>
-            <div class="right">No entregados: {{ item.noEntregados }}</div>
-          </div>
-
-          <div class="total">
-            Total de paquetes: {{ item.paquetesTotal }}
-          </div>
-
-          <hr>
-          <div class="footer">
-            <span><strong>Fecha:</strong> {{ item.ts_created | date: 'dd-MM-yyyy HH:mm' }}</span>
-            <span><strong>ID:</strong> {{ item.id }}</span>
-          </div>
         </div>
-
-
-        <app-paginador-component [isLoading]="isLoading" [message]="'No hay cargamentos registrados en este día.'"
-          [page]="page" [size]="size" [total]="total" (pageChange)="cambiarPagina($event)">
-        </app-paginador-component>
-
       </div>
-
-
-
-
-    </div>
-
-  </div>
-</div>
