@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
-import { NominaBecService } from 'src/app/services/nomina-bec.service';
+
 @Component({
     selector: 'app-tables',
     templateUrl: './tables.component.html',
@@ -58,7 +58,7 @@ currentPage: number = 1;
 totalPages: number = 1;
  constructor(
 
-    private NominaBecService: NominaBecService
+
   ) {
     // Registrar las fuentes necesarias
   }

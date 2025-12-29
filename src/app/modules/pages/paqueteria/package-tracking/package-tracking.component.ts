@@ -299,13 +299,13 @@ export class PackageTrackingComponent implements OnInit {
         <div style="padding: 12px; border-radius: 8px; background: #f1f5f9; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
           <h4 style="margin-bottom: 8px; color: #0f172a;">Consolidado</h4>
           ${d ? `
-            <p><strong>Origen:</strong> ${d.originLocId} - ${d.shprCity}, ${d.shprState}</p>
-            <p><strong>Destino:</strong> ${d.destinationLocId} - ${d.recipCity}, ${d.recipState}</p>
-            <p><strong>Remitente:</strong> ${d.shprCoShprName}</p>
-            <p><strong>Destinatario:</strong> ${d.recipName}</p>
-            <p><strong>Tel. Remitente:</strong> ${d.shprPhone}</p>
-            <p><strong>Tel. Destinatario:</strong> ${d.recipPhone}</p>
-            <p><strong>Referencias:</strong> ${d.shprRef}</p>
+            <p><strong>Origen:</strong> ${d.senderAddr} - ${d.senderCity}, ${d.senderState}</p>
+            <p><strong>Destino:</strong> ${d.recipientAddr} - ${d.recipientCity}, ${d.recipientState}</p>
+            <p><strong>Remitente:</strong> ${d.senderName}</p>
+            <p><strong>Destinatario:</strong> ${d.recipientName}</p>
+            <p><strong>Tel. Remitente:</strong> ${d.senderPhone}</p>
+            <p><strong>Tel. Destinatario:</strong> ${d.recipientPhone}</p>
+            <p><strong>Codigo postal Destinatario:</strong> ${d.recipientPostal}</p>
           ` : `<p>No hay información de consolidado</p>`}
         </div>
 
@@ -551,20 +551,22 @@ onFileSelected(event: any, tipo: string): void {
     const arrayBuffer = e.target.result;
     const workbook: XLSX.WorkBook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
 
-    // ✅ Generar archivo Excel actual (xlsx, formato OOXML)
-    const xlsxArray: ArrayBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    const xlsxBlob = new Blob([xlsxArray], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    const xlsxFile = new File([xlsxBlob], `${file.name.split('.')[0]}.xlsx`, {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    });
+    // // ✅ Generar archivo Excel actual (xlsx, formato OOXML)
+    // const xlsxArray: ArrayBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    // const xlsxBlob = new Blob([xlsxArray], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    // const xlsxFile = new File([xlsxBlob], `${file.name.split('.')[0]}.xlsx`, {
+    //   type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    // });
 
     // 👉 Enviar .xlsx moderno al backend
     if (tipo === 'normal') {
-      this.enviarArchivoAlBackend(xlsxFile, 'delivery');
+      this.enviarArchivoAlBackend(file, 'delivery');
     } else if (tipo === 'costos') {
-      this.enviarArchivoAlBackend(xlsxFile, 'cost');
+      this.enviarArchivoAlBackend(file, 'cost');
     }
   };
+
+  event.target.value = '';
 
   reader.readAsArrayBuffer(file);
 }
@@ -844,24 +846,14 @@ onFileSelected(event: any, tipo: string): void {
   // 1. Encabezados
   const headers = [
     'tracking_no',
-    'delivery_date',
-    'recipient_postal',
-    'recipient_city',
-    'recipient_state',
-    'recipient_country',
-    'recipient_addr',
-    'recipient_name',
-    'recipient_phone',
-    'sender_postal',
-    'sender_city',
-    'sender_state',
-    'sender_country',
-    'sender_addr',
-    'sender_name',
-    'sender_phone',
+    'recip_name',
+    'recip_addr',
+    'recip_city',
+    'recip_postal',
     'service',
-    'pieces_no',
-    'code'
+    'commit_date',
+    'recip_phone',
+    'consolidado_no'
   ];
 
 
@@ -892,9 +884,8 @@ onFileSelected(event: any, tipo: string): void {
  machoteExelPaquetesCosto() {
   // 1. Encabezados
   const headers = [
-    'scan_date',
     'tracking_no',
-    'type',
+    'code',
     'price',
   ];
 

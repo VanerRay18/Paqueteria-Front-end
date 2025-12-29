@@ -62,5 +62,18 @@ export class TabMaterialService {
     );
   }
 
+  //uniformes
+  getUniformes(): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/uniforms/inventory'}`);
+  }
+
+  addUniformeToEmployee(employeeId: any, productItemId: any, cant: any): Observable<ApiResponse> {
+    return this.http.post<ApiResponse>(`${environment.baseService}${`/uniforms/assiged/employee/${employeeId}/product-item/${productItemId}/cant/${cant}`}`, null);
+  }
+
+  updateCantUniform(itemId: any, productItemId: any, cant: any, uniformId: any): Observable<ApiResponse> {
+    return this.http.patch<ApiResponse>(`${environment.baseService}${`/uniforms/${uniformId}/item/${itemId}/product/${productItemId}/cant/${cant}`}`, null);
+  }
+
 
 }

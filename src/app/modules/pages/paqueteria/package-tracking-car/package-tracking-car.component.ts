@@ -7,10 +7,10 @@ import { VehicleCard } from 'src/app/shared/interfaces/utils';
 import Swal from 'sweetalert2';
 
 @Component({
-    selector: 'app-package-tracking-car',
-    templateUrl: './package-tracking-car.component.html',
-    styleUrls: ['./package-tracking-car.component.css'],
-    standalone: false
+  selector: 'app-package-tracking-car',
+  templateUrl: './package-tracking-car.component.html',
+  styleUrls: ['./package-tracking-car.component.css'],
+  standalone: false
 })
 export class PackageTrackingCarComponent implements OnInit {
   filtro: string = '';
@@ -113,11 +113,39 @@ export class PackageTrackingCarComponent implements OnInit {
   }
 
 
+
+  safeStr(s: any): string {
+    return typeof s === 'string' ? s.trim() : '';
+  }
+
+  formatearNombre(full: string): string {
+    const txt = this.safeStr(full);
+    if (!txt) return '';
+    const partes = txt.split(/\s+/);
+
+    // Si no sigue el patrón típico, regresa tal cual
+    if (partes.length < 3) return txt;
+
+    const apellidos = partes.slice(0, 2).join(' ');
+    const nombres = partes.slice(2).join(' ');
+    return `${nombres} ${apellidos}`.trim();
+  }
+
+
   mostrarSwalFormularioPrevio(vehicle: VehicleCard): void {
     // Generar las opciones del dropdown con los empleados
-    const opcionesConductor = this.catEmployees.map((emp: any) =>
-      `<option value="${emp.id}">${emp.name}</option>`
-    ).join('');
+    const opcionesConductor = (this.catEmployees ?? [])
+      .filter((emp: { employeeId: null; }) => emp && emp.employeeId != null)                    // filtra sin ID
+      .map((emp: { name: string; }) => {
+        const nombreFormateado = this.formatearNombre(emp?.name);
+        return { ...emp, nombreFormateado };
+      })
+      .filter((emp: { nombreFormateado: any; }) => emp.nombreFormateado)                             // filtra sin nombre
+      .sort((a: { nombreFormateado: string; }, b: { nombreFormateado: any; }) => a.nombreFormateado.localeCompare(b.nombreFormateado, 'es', {
+        sensitivity: 'base'
+      }))
+      .map((emp: { employeeId: any; nombreFormateado: any; }) => `<option value="${emp.employeeId}">${emp.nombreFormateado}</option>`)
+      .join('');
 
     Swal.fire({
       title: 'Asignar datos al vehículo',

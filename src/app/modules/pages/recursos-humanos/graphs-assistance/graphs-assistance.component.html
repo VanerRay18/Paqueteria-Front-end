@@ -5,82 +5,74 @@
   <div class=" mt-3 justify-content-center align-items-center">
     <div class="col-auto col-lg-12">
 
-      <div
-        class="card2 col-auto col-lg-12  justify-content-center align-items-center">
+      <div class="card2 col-auto col-lg-12  justify-content-center align-items-center">
         <div class="form-floating col-auto col-lg-3 m-3 row">
-          <input type="text" class=" buscar form-control" id="busqueda"
-            placeholder="Buscar" [(ngModel)]="searchTerm"
+          <input type="text" class=" buscar form-control" id="busqueda" placeholder="Buscar" [(ngModel)]="searchTerm"
             name="busqueda">
-            <label for="User">&nbsp;&nbsp;<i
-            class="fa-solid fa-magnifying-glass"></i> Buscar</label>
-          </div>
-          <div class="col-auto col-lg-3 d-flex justify-content-end mt-auto">
-            <a [routerLink]="['/pages/RH/Trabajadores-Registrados']">
-              <button type="button" class="btn btn-sm">VER TRABAJADORES</button>
-            </a>
-          </div>
+          <label for="User">&nbsp;&nbsp;<i class="fa-solid fa-magnifying-glass"></i> Buscar</label>
+        </div>
+        <div class="col-auto col-lg-3 d-flex justify-content-end mt-auto">
+          <button class="btn btn-sm" type="button" (click)="descargarReporte()">
+            DESCARGAR REPORTE
+          </button>
+        </div>
+        <div class="col-auto col-lg-3 d-flex justify-content-end mt-auto">
+          <a [routerLink]="['/pages/RH/Trabajadores-Registrados']">
+            <button type="button" class="btn btn-sm">VER TRABAJADORES</button>
+          </a>
+        </div>
 
-          <div class="col-auto col-lg-2 d-flex justify-content-end mt-auto">
-            <button type="button" class="btn btn-sm"
-            (click)="seleccionarDiaNoLaboral()">DIAS NO LABORALES</button>
-          </div>
-          @for (persona of pagedData | filter: searchTerm; track persona) {
-            <div class="card-person"
-              style="cursor: default;">
-              <h3>{{ persona.name }}</h3>
-              <!-- Barra de FALTAS (roja) -->
-              <span class="datos">Faltas<br><strong>{{ persona.faltas
+        <div class="col-auto col-lg-2 d-flex justify-content-end mt-auto">
+          <button type="button" class="btn btn-sm" (click)="seleccionarDiaNoLaboral()">DIAS NO LABORALES</button>
+        </div>
+        @for (persona of pagedData | filter: searchTerm; track persona) {
+        <div class="card-person" style="cursor: default;">
+          <h3>{{ persona.name }}</h3>
+          <!-- Barra de FALTAS (roja) -->
+          <span class="datos">Faltas<br><strong>{{ persona.faltas
               }}</strong></span>
-              <div class="barra" (click)="abrirSwalFaltas(persona)">
-                <div class="progreso" [style.width.%]="(persona.faltasBarra ) "
-                  style="background: red; cursor: pointer;">
-                </div>
-              </div>
-              <!-- Barra de INASISTENCIAS (verde) -->
-              <span class="datos">Asistencias<br><strong>{{ persona.asistencias
-              }}</strong></span>
-              <div class="barra" (click)="abrirSwalInasistencias(persona)">
-                <div class="progreso"
-                  [style.width.%]="(persona.asistenciaBarra) "
-                  style="background: green; cursor: pointer;">
-                </div>
-              </div>
-              <span class="datos">Retardos<br><strong>{{ persona.retardos
-              }}</strong></span>
-              <div class="barra" (click)="abrirSwalRetardos(persona)">
-                <div class="progreso"
-                  [style.width.%]="(persona.retardosBarra) "
-                  style="background: rgb(255, 166, 0); cursor: pointer;">
-                </div>
-              </div>
-              <hr>
-                <div
-                  style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                  <span (click)="abrirSwalPendientes(persona)"
-                    style="color:  #3E5F8A; cursor: pointer; text-decoration: underline;">Pendientes:
-                    {{ persona.pendientes
-                  }}</span>
-                  <span (click)="abrirSwalJustificados(persona)"
-                    style="color:  #3E5F8A; cursor: pointer; text-decoration: underline;">Justificadas:
-                    {{
-                  persona.justificadas }}</span>
-                </div>
-              </div>
-            }
-            <!-- Paginador dentro de la tarjeta al fondo -->
-            <div class="col-12 d-flex justify-content-center mt-4 mb-2">
-              <app-paginador-component
-                [isLoading]="isLoading"
-                [page]="currentPage"
-                [size]="itemsPerPage"
-                [total]="data.length"
-                (pageChange)="cambiarPagina($event)">
-              </app-paginador-component>
+          <div class="barra" (click)="abrirSwalFaltas(persona)">
+            <div class="progreso" [style.width.%]="(persona.faltasBarra ) " style="background: red; cursor: pointer;">
             </div>
-
           </div>
-
+          <!-- Barra de INASISTENCIAS (verde) -->
+          <span class="datos">Asistencias<br><strong>{{ persona.asistencias
+              }}</strong></span>
+          <div class="barra" (click)="abrirSwalInasistencias(persona)">
+            <div class="progreso" [style.width.%]="(persona.asistenciaBarra) "
+              style="background: green; cursor: pointer;">
+            </div>
+          </div>
+          <span class="datos">Retardos<br><strong>{{ persona.retardos
+              }}</strong></span>
+          <div class="barra" (click)="abrirSwalRetardos(persona)">
+            <div class="progreso" [style.width.%]="(persona.retardosBarra) "
+              style="background: rgb(255, 166, 0); cursor: pointer;">
+            </div>
+          </div>
+          <hr>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+            <span (click)="abrirSwalPendientes(persona)"
+              style="color:  #3E5F8A; cursor: pointer; text-decoration: underline;">Pendientes:
+              {{ persona.pendientes
+              }}</span>
+            <span (click)="abrirSwalJustificados(persona)"
+              style="color:  #3E5F8A; cursor: pointer; text-decoration: underline;">Justificadas:
+              {{
+              persona.justificadas }}</span>
+          </div>
+        </div>
+        }
+        <!-- Paginador dentro de la tarjeta al fondo -->
+        <div class="col-12 d-flex justify-content-center mt-4 mb-2">
+          <app-paginador-component [isLoading]="isLoading" [page]="currentPage" [size]="itemsPerPage"
+            [total]="data.length" (pageChange)="cambiarPagina($event)">
+          </app-paginador-component>
         </div>
 
       </div>
+
     </div>
+
+  </div>
+</div>

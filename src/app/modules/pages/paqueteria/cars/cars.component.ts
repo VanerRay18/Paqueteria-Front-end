@@ -10,10 +10,10 @@ import { formatDate } from '@angular/common';
 import { CarsService } from 'src/app/services/cars.service';
 
 @Component({
-    selector: 'app-cars',
-    templateUrl: './cars.component.html',
-    styleUrls: ['./cars.component.css'],
-    standalone: false
+  selector: 'app-cars',
+  templateUrl: './cars.component.html',
+  styleUrls: ['./cars.component.css'],
+  standalone: false
 })
 export class CarsComponent {
 
@@ -173,6 +173,8 @@ export class CarsComponent {
               <th>Precio</th>
               <th>Recorrido</th>
               <th>Km/L</th>
+              <th>Estación</th>
+              <th>Ruta</th>
               <th>Empleado</th>
             </tr>
           </thead>
@@ -186,6 +188,8 @@ export class CarsComponent {
                 <td data-label="Precio">${r.precio}</td>
                 <td data-label="Recorrido">${r.recorridos}</td>
                 <td data-label="Km/L">${r.km_litro?.toFixed(2)}</td>
+                <td data-label="Estación">${r.estacion || '—'}</td>
+                <td data-label="Ruta">${r.ruta || '—'}</td>
                 <td data-label="Empleado">${r.employee?.name || '—'}</td>
               </tr>
             `).join('')}
@@ -221,6 +225,8 @@ export class CarsComponent {
           <input type="number" id="km" class="swal2-input" placeholder="Kilómetros">
           <input type="number" step="0.1" id="litros" class="swal2-input" placeholder="Litros">
           <input type="number" step="0.1" id="costo" class="swal2-input" placeholder="Costo">
+          <input type="text" step="0.1" id="estacion" class="swal2-input" placeholder="Estación">
+          <input type="text" id="ruta" class="swal2-input" placeholder="Ruta">
           <textarea id="comentarios" class="swal2-textarea" placeholder="Comentarios"></textarea>
         `,
           focusConfirm: false,
@@ -231,9 +237,11 @@ export class CarsComponent {
             const odometro = (document.getElementById('km') as HTMLInputElement).value;
             const litros = (document.getElementById('litros') as HTMLInputElement).value;
             const precio = (document.getElementById('costo') as HTMLInputElement).value;
+            const estacion = (document.getElementById('estacion') as HTMLInputElement).value;
+            const ruta = (document.getElementById('ruta') as HTMLInputElement).value;
             const comentarios = (document.getElementById('comentarios') as HTMLTextAreaElement).value;
 
-            if (!odometro || !litros || !precio) {
+            if (!odometro || !litros || !precio || !estacion || !ruta) {
               Swal.showValidationMessage('Todos los campos excepto comentarios son obligatorios');
               return false;
             }
@@ -246,6 +254,8 @@ export class CarsComponent {
               odometro: Number(odometro),
               litros: parseFloat(litros),
               precio: parseFloat(precio),
+              estacion,
+              ruta,
               comentarios
             };
           }

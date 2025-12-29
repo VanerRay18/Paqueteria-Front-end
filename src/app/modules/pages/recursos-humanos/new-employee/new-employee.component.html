@@ -10,16 +10,12 @@
       <div class="foto-container">
         <div class="preview">
           @if (fotoPreview || fotoAntigua) {
-            <img
-              [src]="fotoPreview || fotoAntigua"
-              alt="Foto del empleado"
-              (error)="handleImageError($event)" />
+          <img [src]="fotoPreview || fotoAntigua" alt="Foto del empleado" (error)="handleImageError($event)" />
           }
         </div>
 
         <label for="foto" class="foto-label">
-          <i class="fas fa-info-circle info-icon"
-          data-tooltip="Seleccione la fotografía del trabajador"></i>
+          <i class="fas fa-info-circle info-icon" data-tooltip="Seleccione la fotografía del trabajador"></i>
           Fotografía de la persona
         </label>
 
@@ -27,94 +23,83 @@
       </div>
 
       <div class="group">
-        <i class="fas fa-info-circle info-icon"
-        data-tooltip="Nombre completo oficial del trabajador."></i>
+        <i class="fas fa-info-circle info-icon" data-tooltip="Nombre completo oficial del trabajador."></i>
         <label>Nombre completo del trabajador:</label>
         <input type="text" formControlName="nombreCompleto" />
         @if (datosPersonalesForm.get('nombreCompleto')?.touched && datosPersonalesForm.get('nombreCompleto')?.invalid) {
-          <div
-            class="invalid-feedback d-block">
-            @if (datosPersonalesForm.get('nombreCompleto')?.errors?.['required']) {
-              <div
-                >
-                El nombre completo es obligatorio.
-              </div>
-            }
-            @if (datosPersonalesForm.get('nombreCompleto')?.errors?.['nombreCompletoInvalido']) {
-              <div
-                >
-                {{
-                datosPersonalesForm.get('nombreCompleto')?.errors?.['nombreCompletoInvalido']
-                }}
-              </div>
-            }
+        <div class="invalid-feedback d-block">
+          @if (datosPersonalesForm.get('nombreCompleto')?.errors?.['required']) {
+          <div>
+            El nombre completo es obligatorio.
           </div>
+          }
+          @if (datosPersonalesForm.get('nombreCompleto')?.errors?.['nombreCompletoInvalido']) {
+          <div>
+            {{
+            datosPersonalesForm.get('nombreCompleto')?.errors?.['nombreCompletoInvalido']
+            }}
+          </div>
+          }
+        </div>
         }
 
         <i class="fas fa-info-circle info-icon"
-        data-tooltip="Registro Federal de Contribuyentes (RFC) del trabajador."></i>
+          data-tooltip="Registro Federal de Contribuyentes (RFC) del trabajador."></i>
         <label>RFC:</label>
         <input type="text" formControlName="rfc" />
         @if (datosPersonalesForm.get('rfc')?.touched && datosPersonalesForm.get('rfc')?.invalid) {
-          <div
-            class="invalid-feedback d-block">
-            El RFC es requerido y debe tener un formato válido.
-          </div>
+        <div class="invalid-feedback d-block">
+          El RFC es requerido y debe tener un formato válido.
+        </div>
         }
 
-        <i class="fas fa-info-circle info-icon"
-        data-tooltip="Clave Única de Registro de Población."></i>
+        <i class="fas fa-info-circle info-icon" data-tooltip="Clave Única de Registro de Población."></i>
         <label>Curp:</label>
         <input type="text" formControlName="curp" />
         @if (datosPersonalesForm.get('curp')?.touched && datosPersonalesForm.get('curp')?.invalid) {
-          <div
-            class="invalid-feedback d-block">
-            El CURP es requerido y debe tener un formato válido.
-          </div>
+        <div class="invalid-feedback d-block">
+          El CURP es requerido y debe tener un formato válido.
+        </div>
         }
 
-        <i class="fas fa-info-circle info-icon"
-        data-tooltip="Fecha de nacimiento del trabajador."></i>
+        <i class="fas fa-info-circle info-icon" data-tooltip="Fecha de nacimiento del trabajador."></i>
         <label>Fecha de nacimiento:</label>
         <input type="date" formControlName="fechaNacimiento" />
-        @if (datosPersonalesForm.get('fechaNacimiento')?.touched && datosPersonalesForm.get('fechaNacimiento')?.invalid) {
-          <div
-            class="invalid-feedback d-block">
-            La fecha de nacimiento es requerida.
-          </div>
+        @if (datosPersonalesForm.get('fechaNacimiento')?.touched && datosPersonalesForm.get('fechaNacimiento')?.invalid)
+        {
+        <div class="invalid-feedback d-block">
+          La fecha de nacimiento es requerida.
+        </div>
         }
 
-        <i class="fas fa-info-circle info-icon"
-        data-tooltip="Seleccione el tipo de seguro medico del trabajador."></i>
+        <i class="fas fa-info-circle info-icon" data-tooltip="Seleccione el tipo de seguro medico del trabajador."></i>
         <label>Tipo de seguro:</label>
         <select formControlName="tipoSeguro">
           <option value>Seleccione</option>
           @for (seguro of catSeguros; track seguro) {
-            <option [value]="seguro.id">{{
+          <option [value]="seguro.id">{{
             seguro.name }}</option>
           }
         </select>
         @if (datosPersonalesForm.get('tipoSeguro')?.touched && datosPersonalesForm.get('tipoSeguro')?.invalid) {
-          <div
-            class="invalid-feedback d-block">
-            El tipo de seguro es requerido.
-          </div>
+        <div class="invalid-feedback d-block">
+          El tipo de seguro es requerido.
+        </div>
         }
 
         <i class="fas fa-info-circle info-icon"
-        data-tooltip="Ingrese los 10 digitos del numero de telefono personal del trabajador."></i>
+          data-tooltip="Ingrese los 10 digitos del numero de telefono personal del trabajador."></i>
         <label>Teléfono:</label>
         <input type="tel" formControlName="telefono" />
         @if (datosPersonalesForm.get('telefono')?.touched && datosPersonalesForm.get('telefono')?.invalid) {
-          <div
-            class="invalid-feedback d-block">
-            El teléfono es requerido y debe tener 10 dígitos.
-          </div>
+        <div class="invalid-feedback d-block">
+          El teléfono es requerido y debe tener 10 dígitos.
+        </div>
         }
 
         <div class="radio-group mt-2">
           <i class="fas fa-info-circle info-icon"
-          data-tooltip="Indique si el empleado utiliza el checador de asistencia."></i>
+            data-tooltip="Indique si el empleado utiliza el checador de asistencia."></i>
           <label class="switch-label">¿Usa sistema de checkado?</label>
           <label class="switch">
             <input type="checkbox" formControlName="usaChecador" />
@@ -123,497 +108,466 @@
         </div>
 
         @if (datosPersonalesForm.get('usaChecador')?.touched && datosPersonalesForm.get('usaChecador')?.invalid) {
-          <div
-            class="invalid-feedback d-block">
-            Seleccione una opción.
-          </div>
+        <div class="invalid-feedback d-block">
+          Seleccione una opción.
+        </div>
         }
       </div>
 
       <div class="group">
-        <i class="fas fa-info-circle info-icon"
-        data-tooltip="Fecha de inicio de labores del trabajador."></i>
+        <i class="fas fa-info-circle info-icon" data-tooltip="Fecha de inicio de labores del trabajador."></i>
         <label>Fecha de inicio laboral:</label>
         <input type="date" formControlName="fechaInicio" />
         @if (datosPersonalesForm.get('fechaInicio')?.touched && datosPersonalesForm.get('fechaInicio')?.invalid) {
-          <div
-            class="invalid-feedback d-block">
-            La fecha de inicio laboral es requerida.
-          </div>
+        <div class="invalid-feedback d-block">
+          La fecha de inicio laboral es requerida.
+        </div>
         }
 
-        <i class="fas fa-info-circle info-icon"
-        data-tooltip="Seleccione el puesto laboral actual."></i>
+        <i class="fas fa-info-circle info-icon" data-tooltip="Seleccione el puesto laboral actual."></i>
         <label>Puesto laboral:</label>
         <select formControlName="puestoLaboral">
           <option value>Seleccione</option>
           @for (Employments of catEmployments; track Employments) {
-            <option
-            [value]="Employments.id">{{ Employments.name }}</option>
+          <option [value]="Employments.id">{{ Employments.name }}</option>
           }
         </select>
         @if (datosPersonalesForm.get('puestoLaboral')?.touched && datosPersonalesForm.get('puestoLaboral')?.invalid) {
-          <div
-            class="invalid-feedback d-block">
-            El puesto laboral es requerido.
-          </div>
+        <div class="invalid-feedback d-block">
+          El puesto laboral es requerido.
+        </div>
         }
 
-        <i class="fas fa-info-circle info-icon"
-        data-tooltip="Seleccione el tipo de contratación del trabajador."></i>
+        <i class="fas fa-info-circle info-icon" data-tooltip="Seleccione el tipo de contratación del trabajador."></i>
         <label>Tipo de contratación:</label>
         <select formControlName="tipoContratacion">
           <option value>Seleccione</option>
           @for (job of catJobs; track job) {
-            <option [value]="job.id">{{ job.name
+          <option [value]="job.id">{{ job.name
             }}</option>
           }
         </select>
-        @if (datosPersonalesForm.get('tipoContratacion')?.touched && datosPersonalesForm.get('tipoContratacion')?.invalid) {
-          <div
-            class="invalid-feedback d-block">
-            El tipo de contratación es requerido.
-          </div>
+        @if (datosPersonalesForm.get('tipoContratacion')?.touched &&
+        datosPersonalesForm.get('tipoContratacion')?.invalid) {
+        <div class="invalid-feedback d-block">
+          El tipo de contratación es requerido.
+        </div>
         }
 
-        <i class="fas fa-info-circle info-icon"
-        data-tooltip="Horario de entrada del trabajador."></i>
+        <i class="fas fa-info-circle info-icon" data-tooltip="Horario de entrada del trabajador."></i>
         <label>Horario de entrada:</label>
         <input type="text" formControlName="horarioEnt" placeholder="08:00" />
         @if (datosPersonalesForm.get('horarioEnt')?.touched && datosPersonalesForm.get('horarioEnt')?.invalid) {
-          <div
-            class="invalid-feedback d-block">
-            El horario de entrada es requerido.
-          </div>
+        <div class="invalid-feedback d-block">
+          El horario de entrada es requerido.
+        </div>
         }
         @if (datosPersonalesForm.get('horarioEnt')?.errors?.['pattern']) {
-          <div
-            class="invalid-feedback d-block">
-            Formato inválido. Usa HH:mm (24 hrs).
-          </div>
+        <div class="invalid-feedback d-block">
+          Formato inválido. Usa HH:mm (24 hrs).
+        </div>
         }
-        <i class="fas fa-info-circle info-icon"
-        data-tooltip="Horario de salida del trabajador."></i>
+        <i class="fas fa-info-circle info-icon" data-tooltip="Horario de salida del trabajador."></i>
         <label>Horario de salida:</label>
         <input type="text" formControlName="horarioSal" placeholder="16:00" />
         @if (datosPersonalesForm.get('horarioSal')?.touched && datosPersonalesForm.get('horarioSal')?.invalid) {
-          <div
-            class="invalid-feedback d-block">
-            El horario de salida es requerido.
-          </div>
+        <div class="invalid-feedback d-block">
+          El horario de salida es requerido.
+        </div>
         }
         @if (datosPersonalesForm.get('horarioSal')?.errors?.['pattern']) {
-          <div
-            class="invalid-feedback d-block">
-            Formato inválido. Usa HH:mm (24 hrs).
-          </div>
+        <div class="invalid-feedback d-block">
+          Formato inválido. Usa HH:mm (24 hrs).
+        </div>
         }
 
         <div class="dias-semana">
           <!-- Icono con tooltip (asegúrate de tener un estilo adecuado para el tooltip) -->
-          <i class="fas fa-info-circle info-icon"
-          data-tooltip="Días que el empleado va a trabajar."></i>
+          <i class="fas fa-info-circle info-icon" data-tooltip="Días que el empleado va a trabajar."></i>
 
           <!-- Primer label arriba de los checkboxes -->
           <label class="dias-label">Días laborables:</label>
           <!-- Lista de checkboxes -->
           @for (dia of diasSemana; track dia) {
-            <label class="custom-checkbox">
-              <input type="checkbox" [formControlName]="dia.nombre" />
-              <span class="checkmark"></span>
-              {{ dia.nombre }}
-            </label>
+          <label class="custom-checkbox">
+            <input type="checkbox" [formControlName]="dia.nombre" />
+            <span class="checkmark"></span>
+            {{ dia.nombre }}
+          </label>
           }
         </div>
         <br>
-          <div class="radio-group mt-2">
-            <i class="fas fa-info-circle info-icon"
-            data-tooltip="Indique si el empleado está actualmente activo."></i>
-            <label class="switch-label">¿Empleado activo?</label>
-            <label class="switch">
-              <input type="checkbox" formControlName="activo" />
-              <span class="slider"></span>
-            </label>
-          </div>
-          @if (datosPersonalesForm.get('activo')?.touched && datosPersonalesForm.get('activo')?.invalid) {
-            <div
-              class="invalid-feedback d-block">
-              Seleccione una opción.
+        <div class="radio-group mt-2">
+          <i class="fas fa-info-circle info-icon" data-tooltip="Indique si el empleado está actualmente activo."></i>
+          <label class="switch-label">¿Empleado activo?</label>
+          <label class="switch">
+            <input type="checkbox" formControlName="activo" />
+            <span class="slider"></span>
+          </label>
+        </div>
+        @if (datosPersonalesForm.get('activo')?.touched && datosPersonalesForm.get('activo')?.invalid) {
+        <div class="invalid-feedback d-block">
+          Seleccione una opción.
+        </div>
+        }
+
+      </div>
+
+    </div>
+    <div class="col-auto d-flex justify-content-end mt-auto  botones-responsivos">
+      <button type="submit" [disabled]="datosPersonalesForm.disabled" class="btn  btn-sm">Guardar sección</button>
+      @if (isEditMode) {
+      <button type="button" class="btn btn-outline-secondary btn-sm ms-2" (click)="editarDatosPersonales()">
+        Editar sección
+      </button>
+      }
+    </div>
+
+  </form>
+
+  <!-- DIRECCIÓN DEL TRABAJADOR -->
+  <form [formGroup]="direccionForm" (ngSubmit)="guardarDireccion()">
+    <h4>Dirección del trabajador</h4>
+    <div class="grid-2">
+      <div>
+        <input type="text" formControlName="codigoPostal" placeholder="Código Postal" />
+        @if (direccionForm.get('codigoPostal')?.invalid && direccionForm.get('codigoPostal')?.touched) {
+        <div class="invalid-feedback d-block">
+          Código postal inválido
+        </div>
+        }
+      </div>
+
+      <div>
+        <input type="text" formControlName="municipio" placeholder="Municipio" />
+        @if (direccionForm.get('municipio')?.invalid && direccionForm.get('municipio')?.touched) {
+        <div class="invalid-feedback d-block">
+          Municipio requerido
+        </div>
+        }
+      </div>
+
+      <div>
+        <input type="text" formControlName="estado" placeholder="Estado" />
+        @if (direccionForm.get('estado')?.invalid && direccionForm.get('estado')?.touched) {
+        <div class="invalid-feedback d-block">
+          Estado requerido
+        </div>
+        }
+      </div>
+
+      <div>
+        <input type="text" formControlName="colonia" placeholder="Colonia" />
+        @if (direccionForm.get('colonia')?.invalid && direccionForm.get('colonia')?.touched) {
+        <div class="invalid-feedback d-block">
+          Colonia requerida
+        </div>
+        }
+      </div>
+
+      <div>
+        <input type="text" formControlName="calle" placeholder="Calle" />
+        @if (direccionForm.get('calle')?.invalid && direccionForm.get('calle')?.touched) {
+        <div class="invalid-feedback d-block">
+          Calle requerida
+        </div>
+        }
+      </div>
+
+      <div>
+        <input type="text" formControlName="numInterior" placeholder="No. Interior" />
+        @if (direccionForm.get('numInterior')?.invalid && direccionForm.get('numInterior')?.touched) {
+        <div class="invalid-feedback d-block">
+          Número interior requerido
+        </div>
+        }
+      </div>
+
+      <div>
+        <input type="text" formControlName="numExterior" placeholder="No. Exterior" />
+        @if (direccionForm.get('numExterior')?.invalid && direccionForm.get('numExterior')?.touched) {
+        <div class="invalid-feedback d-block">
+          Número exterior requerido
+        </div>
+        }
+      </div>
+    </div>
+
+    <div class="col-auto d-flex justify-content-end mt-auto botones-responsivos">
+      <button type="submit" class="btn btn-sm" [disabled]="direccionForm.disabled">Guardar sección</button>
+      @if (isEditMode) {
+      <button type="button" class="btn btn-outline-secondary btn-sm ms-2" (click)="editarDireccion()">
+        Editar sección
+      </button>
+      }
+    </div>
+  </form>
+
+  <!-- DATOS DEL EMPLEO -->
+  <div class="card ">
+    <h4>Documentacion y material entregado</h4>
+    <div>
+      <div class="row justify-content-center ">
+        <div class="col-lg-6 col-md-12">
+          <div class="draggable card col-lg-6 col-auto">
+            <h5>Documentacion entregada:</h5>
+            <div class="assigned-roles">
+              @for (Documento of assignedDocumentos; track Documento) {
+              <div draggable="true" (dragstart)="onDragStart($event, Documento)"
+                class="custom-checkbox draggable-role assigned-role">
+                <input type="checkbox" checked disabled /> {{ Documento.name }}
+              </div>
+              }
+              <!-- Área de drop para asignar roles -->
+              <div class="drop-area" (dragover)="onDragOver($event)" (drop)="onDrop($event, 'assigned')">
+                <p>Arrastra aquí para asignar docuemtacion</p>
+              </div>
             </div>
-          }
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-12">
+          <div class="draggable card col-lg-6 col-auto ">
+            <h5>Documentacion Faltante:</h5>
+            <div class="all-roles">
+              @for (Documento of allDocumentos; track Documento) {
+              <div draggable="true" (dragstart)="onDragStart($event, Documento)" class="custom-checkbox draggable-role">
+                <input type="checkbox" disabled /> {{ Documento.name }}
+              </div>
+              }
+              <!-- Área de drop para quitar roles -->
+              <div class="drop-area" (dragover)="onDragOver($event)" (drop)="onDrop($event, 'all')">
+                <p>Arrastra aquí para quitar docuemtacion</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row justify-content-center ">
+        <div class="col-lg-6 col-md-12">
+          <div class="draggable card col-lg-6 col-auto">
+            <h5>Material entregado:</h5>
+            <div class="assigned-roles">
+              @for (Uniform of assignedUniforms; track Uniform) {
+              <div draggable="true" (dragstart)="onDragStartUniform($event, Uniform)"
+                class="custom-checkbox draggable-role assigned-role">
+                <input type="checkbox" checked disabled /> {{ Uniform.name }}
+              </div>
+              }
+              <!-- Área de drop para asignar roles -->
+              <div class="drop-area" (dragover)="onDragOverUniform($event)" (drop)="onDropUniform($event, 'assigned')">
+                <p>Arrastra aquí para asignar docuemtacion</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-12">
+          <div class="draggable card col-lg-6 col-auto ">
+            <h5>Todo el material:</h5>
+            <div class="all-roles">
+              @for (Uniform of allUniforms; track Uniform) {
+              <div draggable="true" (dragstart)="onDragStartUniform($event, Uniform)"
+                class="custom-checkbox draggable-role">
+                <input type="checkbox" disabled /> {{ Uniform.name }}
+              </div>
+              }
+              <!-- Área de drop para quitar roles -->
+              <div class="drop-area" (dragover)="onDragOverUniform($event)" (drop)="onDropUniform($event, 'all')">
+                <p>Arrastra aquí para quitar docuemtacion</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-auto d-flex justify-content-end mt-auto  botones-responsivos">
+      <button type="submit" class="btn  btn-sm" (click)="guardarEmpleo()"
+        [disabled]="(bandera == true && isEditMode == false)||(bandera == false && isEditMode == true)">Guardar
+        sección</button>
+      @if (isEditMode) {
+      <button type="button" class="btn btn-outline-secondary btn-sm ms-2" (click)="editarEmpleo()">
+        Editar sección
+      </button>
+      }
+    </div>
+  </div>
+
+  <!-- DATOS DEL EMPLEO -->
+  <div class="card ">
+    <h4>Uniformes para el empleado</h4>
+    <div>
+
+      <div *ngFor="let producto of uniformesAgrupados" class="producto-card">
+
+        <!-- Checkbox del producto -->
+        <label class="producto-header">
+          <input type="checkbox" (change)="selectedProduct = producto">
+          <span>{{ producto.product_name }}</span>
+        </label>
+
+        <!-- Tallitas -->
+        <div *ngIf="selectedProduct === producto" class="tallas-container">
+
+          <div *ngFor="let t of producto.tallas" class="talla-item">
+            <div class="talla-info">
+              <span class="talla-nombre">{{ t.item_name }}</span>
+              <span class="talla-stock">Disponibles: <b>{{ t.cant }}</b></span>
+            </div>
+
+            <input type="number" [(ngModel)]="t.asignado" [max]="t.cant" min="0" class="talla-input"
+              (input)="validarCantidad(t)" />
+          </div>
 
         </div>
 
       </div>
-      <div
-        class="col-auto d-flex justify-content-end mt-auto  botones-responsivos">
-        <button type="submit" [disabled]="datosPersonalesForm.disabled"
-        class="btn  btn-sm">Guardar sección</button>
+      <div class="col-auto d-flex justify-content-end mt-auto  botones-responsivos">
+        <button type="submit" class="btn  btn-sm" (click)="guardarEmpleo()"
+          [disabled]="(bandera == true && isEditMode == false)||(bandera == false && isEditMode == true)">Guardar
+          sección</button>
         @if (isEditMode) {
-          <button type="button" class="btn btn-outline-secondary btn-sm ms-2"
-            (click)="editarDatosPersonales()">
-            Editar sección
-          </button>
+        <button type="button" class="btn btn-outline-secondary btn-sm ms-2" (click)="editarEmpleo()">
+          Editar sección
+        </button>
+        }
+      </div>
+    </div>
+  </div>
+  <!-- DATOS DE PAGO -->
+  <form [formGroup]="pagoForm" (ngSubmit)="guardarPago()">
+    <h4>Datos de pago</h4>
+    <div class="grid-3">
+
+      <div>
+        <input type="text" formControlName="clabe" placeholder="Clave interbancaria" />
+        @if (pagoForm.get('clabe')?.invalid && pagoForm.get('clabe')?.touched) {
+        <div class="invalid-feedback d-block">
+          CLABE inválida
+        </div>
         }
       </div>
 
-    </form>
+      <div>
+        <input type="text" formControlName="tarjeta" placeholder="Número de tarjeta" />
+        @if (pagoForm.get('tarjeta')?.invalid && pagoForm.get('tarjeta')?.touched) {
+        <div class="invalid-feedback d-block">
+          Tarjeta inválida
+        </div>
+        }
+      </div>
 
-    <!-- DIRECCIÓN DEL TRABAJADOR -->
-    <form [formGroup]="direccionForm" (ngSubmit)="guardarDireccion()">
-      <h4>Dirección del trabajador</h4>
-      <div class="grid-2">
+      <div>
+        <input type="text" formControlName="banco" placeholder="Banco" />
+        @if (pagoForm.get('banco')?.invalid && pagoForm.get('banco')?.touched) {
+        <div class="invalid-feedback d-block">
+          Banco requerido
+        </div>
+        }
+      </div>
+
+    </div>
+
+    <div class="col-auto d-flex justify-content-end mt-auto botones-responsivos">
+      <button type="submit" class="btn btn-sm" [disabled]="pagoForm.disabled">Guardar sección</button>
+      @if (isEditMode) {
+      <button type="button" class="btn btn-outline-secondary btn-sm ms-2" (click)="editarPago()">
+        Editar sección
+      </button>
+      }
+    </div>
+  </form>
+
+  <!-- FORMULARIO DE CONTACTO DE EMERGENCIA -->
+  <form [formGroup]="emergenciaForm" (ngSubmit)="guardarEmergencia()">
+    <h4>Contacto de emergencia</h4>
+    <div formArrayName="contactos">
+      @for (contacto of contactos.controls; track contacto; let i = $index) {
+      <div [formGroupName]="i" class="grid-3 mb-2">
         <div>
-          <input type="text" formControlName="codigoPostal"
-            placeholder="Código Postal" />
-            @if (direccionForm.get('codigoPostal')?.invalid && direccionForm.get('codigoPostal')?.touched) {
-              <div
-                class="invalid-feedback d-block">
-                Código postal inválido
-              </div>
-            }
+          <input type="tel" formControlName="telefono" placeholder="Teléfono" />
+          @if (contacto.get('telefono')?.invalid && contacto.get('telefono')?.touched) {
+          <div class="invalid-feedback d-block">
+            Teléfono inválido
           </div>
+          }
+        </div>
+        <div>
+          <input type="text" formControlName="nombre" placeholder="Nombre" />
+          @if (contacto.get('nombre')?.invalid && contacto.get('nombre')?.touched) {
+          <div class="invalid-feedback d-block">
+            Nombre requerido
+          </div>
+          }
+        </div>
+        <div>
+          <input type="text" formControlName="parentesco" placeholder="Parentesco" />
+          @if (contacto.get('parentesco')?.invalid && contacto.get('parentesco')?.touched) {
+          <div class="invalid-feedback d-block">
+            Parentesco requerido
+          </div>
+          }
+        </div>
+        <button type="button" (click)="eliminarContacto(i)" class="icon-btn">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </div>
+      }
+    </div>
 
-          <div>
-            <input type="text" formControlName="municipio"
-              placeholder="Municipio" />
-              @if (direccionForm.get('municipio')?.invalid && direccionForm.get('municipio')?.touched) {
-                <div
-                  class="invalid-feedback d-block">
-                  Municipio requerido
-                </div>
-              }
-            </div>
+    <button type="button" class="btn btn-link p-0 mb-2" (click)="agregarContacto()">➕ Agregar contacto</button>
 
-            <div>
-              <input type="text" formControlName="estado" placeholder="Estado" />
-              @if (direccionForm.get('estado')?.invalid && direccionForm.get('estado')?.touched) {
-                <div
-                  class="invalid-feedback d-block">
-                  Estado requerido
-                </div>
-              }
-            </div>
+    <div class="col-auto d-flex justify-content-end mt-auto botones-responsivos">
+      <button type="submit" class="btn btn-sm" [disabled]="emergenciaForm.disabled">Guardar sección</button>
+      @if (isEditMode) {
+      <button type="button" class="btn btn-outline-secondary btn-sm ms-2" (click)="editarEmergencia()">Editar
+        sección</button>
+      }
+    </div>
+  </form>
 
-            <div>
-              <input type="text" formControlName="colonia" placeholder="Colonia" />
-              @if (direccionForm.get('colonia')?.invalid && direccionForm.get('colonia')?.touched) {
-                <div
-                  class="invalid-feedback d-block">
-                  Colonia requerida
-                </div>
-              }
-            </div>
+  <!-- FORMULARIO DE BERMED -->
+  <form [formGroup]="bermedForm" (ngSubmit)="guardarBermed()">
+    <h4>Teléfonos de BERMED</h4>
+    <div formArrayName="telefonos">
+      <div *ngFor="let tel of telefonos.controls; let i = index" [formGroupName]="i" class="grid-3 mb-2">
 
-            <div>
-              <input type="text" formControlName="calle" placeholder="Calle" />
-              @if (direccionForm.get('calle')?.invalid && direccionForm.get('calle')?.touched) {
-                <div
-                  class="invalid-feedback d-block">
-                  Calle requerida
-                </div>
-              }
-            </div>
+        <div>
+          <input type="text" formControlName="modelo" placeholder="Modelo del teléfono" />
+          <div *ngIf="tel.get('modelo')?.invalid && tel.get('modelo')?.touched" class="invalid-feedback d-block">
+            Modelo requerido
+          </div>
+        </div>
 
-            <div>
-              <input type="text" formControlName="numInterior"
-                placeholder="No. Interior" />
-                @if (direccionForm.get('numInterior')?.invalid && direccionForm.get('numInterior')?.touched) {
-                  <div
-                    class="invalid-feedback d-block">
-                    Número interior requerido
-                  </div>
-                }
-              </div>
+        <div>
+          <input type="text" formControlName="plan" placeholder="Tipo de plan" />
+          <div *ngIf="tel.get('plan')?.invalid && tel.get('plan')?.touched" class="invalid-feedback d-block">
+            Tipo de plan requerido
+          </div>
+        </div>
 
-              <div>
-                <input type="text" formControlName="numExterior"
-                  placeholder="No. Exterior" />
-                  @if (direccionForm.get('numExterior')?.invalid && direccionForm.get('numExterior')?.touched) {
-                    <div
-                      class="invalid-feedback d-block">
-                      Número exterior requerido
-                    </div>
-                  }
-                </div>
-              </div>
+        <div>
+          <input type="text" formControlName="telefono" placeholder="No. Teléfono" />
+          <div *ngIf="tel.get('telefono')?.invalid && tel.get('telefono')?.touched" class="invalid-feedback d-block">
+            Teléfono inválido
+          </div>
+        </div>
 
-              <div
-                class="col-auto d-flex justify-content-end mt-auto botones-responsivos">
-                <button type="submit" class="btn btn-sm"
-                [disabled]="direccionForm.disabled">Guardar sección</button>
-                @if (isEditMode) {
-                  <button type="button" class="btn btn-outline-secondary btn-sm ms-2"
-                    (click)="editarDireccion()">
-                    Editar sección
-                  </button>
-                }
-              </div>
-            </form>
+        <button type="button" (click)="eliminarBermed(i)" class="icon-btn">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </div>
+    </div>
 
-            <!-- DATOS DEL EMPLEO -->
-            <div class="card ">
-              <h4>Documentacion y material entregado</h4>
-              <div>
-                <div class="row justify-content-center ">
-                  <div class="col-lg-6 col-md-12">
-                    <div class="draggable card col-lg-6 col-auto">
-                      <h5>Documentacion entregada:</h5>
-                      <div class="assigned-roles">
-                        @for (Documento of assignedDocumentos; track Documento) {
-                          <div draggable="true"
-                            (dragstart)="onDragStart($event, Documento)"
-                            class="custom-checkbox draggable-role assigned-role">
-                            <input type="checkbox" checked disabled /> {{ Documento.name }}
-                          </div>
-                        }
-                        <!-- Área de drop para asignar roles -->
-                        <div class="drop-area" (dragover)="onDragOver($event)"
-                          (drop)="onDrop($event, 'assigned')">
-                          <p>Arrastra aquí para asignar docuemtacion</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-lg-6 col-md-12">
-                    <div class="draggable card col-lg-6 col-auto ">
-                      <h5>Documentacion Faltante:</h5>
-                      <div class="all-roles">
-                        @for (Documento of allDocumentos; track Documento) {
-                          <div draggable="true"
-                            (dragstart)="onDragStart($event, Documento)"
-                            class="custom-checkbox draggable-role">
-                            <input type="checkbox" disabled /> {{ Documento.name }}
-                          </div>
-                        }
-                        <!-- Área de drop para quitar roles -->
-                        <div class="drop-area" (dragover)="onDragOver($event)"
-                          (drop)="onDrop($event, 'all')">
-                          <p>Arrastra aquí para quitar docuemtacion</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="row justify-content-center ">
-                  <div class="col-lg-6 col-md-12">
-                    <div class="draggable card col-lg-6 col-auto">
-                      <h5>Material entregada:</h5>
-                      <div class="assigned-roles">
-                        @for (Uniform of assignedUniforms; track Uniform) {
-                          <div draggable="true"
-                            (dragstart)="onDragStartUniform($event, Uniform)"
-                            class="custom-checkbox draggable-role assigned-role">
-                            <input type="checkbox" checked disabled /> {{ Uniform.name }}
-                          </div>
-                        }
-                        <!-- Área de drop para asignar roles -->
-                        <div class="drop-area" (dragover)="onDragOverUniform($event)"
-                          (drop)="onDropUniform($event, 'assigned')">
-                          <p>Arrastra aquí para asignar docuemtacion</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-lg-6 col-md-12">
-                    <div class="draggable card col-lg-6 col-auto ">
-                      <h5>Todo el material:</h5>
-                      <div class="all-roles">
-                        @for (Uniform of allUniforms; track Uniform) {
-                          <div draggable="true"
-                            (dragstart)="onDragStartUniform($event, Uniform)"
-                            class="custom-checkbox draggable-role">
-                            <input type="checkbox" disabled /> {{ Uniform.name }}
-                          </div>
-                        }
-                        <!-- Área de drop para quitar roles -->
-                        <div class="drop-area" (dragover)="onDragOverUniform($event)"
-                          (drop)="onDropUniform($event, 'all')">
-                          <p>Arrastra aquí para quitar docuemtacion</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="col-auto d-flex justify-content-end mt-auto  botones-responsivos">
-                <button type="submit" class="btn  btn-sm" (click)="guardarEmpleo()"
-                  [disabled]="(bandera == true && isEditMode == false)||(bandera == false && isEditMode == true)">Guardar
-                sección</button>
-                @if (isEditMode) {
-                  <button type="button" class="btn btn-outline-secondary btn-sm ms-2"
-                    (click)="editarEmpleo()">
-                    Editar sección
-                  </button>
-                }
-              </div>
-            </div>
+    <button type="button" class="btn btn-link p-0 mb-2" (click)="agregarBermed()">➕ Agregar teléfono</button>
 
-            <!-- DATOS DE PAGO -->
-            <form [formGroup]="pagoForm" (ngSubmit)="guardarPago()">
-              <h4>Datos de pago</h4>
-              <div class="grid-3">
+    <div class="col-auto d-flex justify-content-end mt-auto botones-responsivos">
+      <button type="submit" class="btn btn-sm" [disabled]="bermedForm.disabled">Guardar sección</button>
+      <button type="button" class="btn btn-outline-secondary btn-sm ms-2" *ngIf="isEditMode"
+        (click)="editarBermed()">Editar sección</button>
+    </div>
+  </form>
 
-                <div>
-                  <input type="text" formControlName="clabe"
-                    placeholder="Clave interbancaria" />
-                    @if (pagoForm.get('clabe')?.invalid && pagoForm.get('clabe')?.touched) {
-                      <div
-                        class="invalid-feedback d-block">
-                        CLABE inválida
-                      </div>
-                    }
-                  </div>
-
-                  <div>
-                    <input type="text" formControlName="tarjeta"
-                      placeholder="Número de tarjeta" />
-                      @if (pagoForm.get('tarjeta')?.invalid && pagoForm.get('tarjeta')?.touched) {
-                        <div
-                          class="invalid-feedback d-block">
-                          Tarjeta inválida
-                        </div>
-                      }
-                    </div>
-
-                    <div>
-                      <input type="text" formControlName="banco" placeholder="Banco" />
-                      @if (pagoForm.get('banco')?.invalid && pagoForm.get('banco')?.touched) {
-                        <div
-                          class="invalid-feedback d-block">
-                          Banco requerido
-                        </div>
-                      }
-                    </div>
-
-                  </div>
-
-                  <div
-                    class="col-auto d-flex justify-content-end mt-auto botones-responsivos">
-                    <button type="submit" class="btn btn-sm"
-                    [disabled]="pagoForm.disabled">Guardar sección</button>
-                    @if (isEditMode) {
-                      <button type="button" class="btn btn-outline-secondary btn-sm ms-2"
-                        (click)="editarPago()">
-                        Editar sección
-                      </button>
-                    }
-                  </div>
-                </form>
-
-                <!-- FORMULARIO DE CONTACTO DE EMERGENCIA -->
-                <form [formGroup]="emergenciaForm" (ngSubmit)="guardarEmergencia()">
-                  <h4>Contacto de emergencia</h4>
-                  <div formArrayName="contactos">
-                    @for (contacto of contactos.controls; track contacto; let i = $index) {
-                      <div
-                        [formGroupName]="i" class="grid-3 mb-2">
-                        <div>
-                          <input type="tel" formControlName="telefono" placeholder="Teléfono" />
-                          @if (contacto.get('telefono')?.invalid && contacto.get('telefono')?.touched) {
-                            <div
-                              class="invalid-feedback d-block">
-                              Teléfono inválido
-                            </div>
-                          }
-                        </div>
-                        <div>
-                          <input type="text" formControlName="nombre" placeholder="Nombre" />
-                          @if (contacto.get('nombre')?.invalid && contacto.get('nombre')?.touched) {
-                            <div
-                              class="invalid-feedback d-block">
-                              Nombre requerido
-                            </div>
-                          }
-                        </div>
-                        <div>
-                          <input type="text" formControlName="parentesco"
-                            placeholder="Parentesco" />
-                            @if (contacto.get('parentesco')?.invalid && contacto.get('parentesco')?.touched) {
-                              <div
-                                class="invalid-feedback d-block">
-                                Parentesco requerido
-                              </div>
-                            }
-                          </div>
-                          <button type="button" (click)="eliminarContacto(i)" class="icon-btn">
-                            <i class="fa-solid fa-trash"></i>
-                          </button>
-                        </div>
-                      }
-                    </div>
-
-                    <button type="button" class="btn btn-link p-0 mb-2"
-                    (click)="agregarContacto()">➕ Agregar contacto</button>
-
-                    <div
-                      class="col-auto d-flex justify-content-end mt-auto botones-responsivos">
-                      <button type="submit" class="btn btn-sm"
-                      [disabled]="emergenciaForm.disabled">Guardar sección</button>
-                      @if (isEditMode) {
-                        <button type="button" class="btn btn-outline-secondary btn-sm ms-2"
-                        (click)="editarEmergencia()">Editar sección</button>
-                      }
-                    </div>
-                  </form>
-
-                  <!-- FORMULARIO DE BERMED -->
-                  <!-- <form [formGroup]="bermedForm" (ngSubmit)="guardarBermed()">
-                  <h4>Teléfonos de BERMED</h4>
-                  <div formArrayName="telefonos">
-                    <div *ngFor="let tel of telefonos.controls; let i = index"
-                      [formGroupName]="i" class="grid-3 mb-2">
-
-                      <div>
-                        <input type="text" formControlName="modelo"
-                          placeholder="Modelo del teléfono" />
-                          <div *ngIf="tel.get('modelo')?.invalid && tel.get('modelo')?.touched"
-                            class="invalid-feedback d-block">
-                            Modelo requerido
-                          </div>
-                        </div>
-
-                        <div>
-                          <input type="text" formControlName="plan"
-                            placeholder="Tipo de plan" />
-                            <div *ngIf="tel.get('plan')?.invalid && tel.get('plan')?.touched"
-                              class="invalid-feedback d-block">
-                              Tipo de plan requerido
-                            </div>
-                          </div>
-
-                          <div>
-                            <input type="text" formControlName="telefono"
-                              placeholder="No. Teléfono" />
-                              <div
-                                *ngIf="tel.get('telefono')?.invalid && tel.get('telefono')?.touched"
-                                class="invalid-feedback d-block">
-                                Teléfono inválido
-                              </div>
-                            </div>
-
-                            <button type="button" (click)="eliminarBermed(i)" class="icon-btn">
-                              <i class="fa-solid fa-trash"></i>
-                            </button>
-                          </div>
-                        </div>
-
-                        <button type="button" class="btn btn-link p-0 mb-2"
-                        (click)="agregarBermed()">➕ Agregar teléfono</button>
-
-                        <div
-                          class="col-auto d-flex justify-content-end mt-auto botones-responsivos">
-                          <button type="submit" class="btn btn-sm"
-                          [disabled]="bermedForm.disabled">Guardar sección</button>
-                          <button type="button" class="btn btn-outline-secondary btn-sm ms-2"
-                            *ngIf="isEditMode"
-                          (click)="editarBermed()">Editar sección</button>
-                        </div>
-                      </form> -->
-
-                      <div class="col-auto d-flex justify-content-end mt-auto">
-                        <button type="submit" class="btn  btn-sm" (click)="saveAll()">Terminar y
-                        Guardar todo</button>
-                      </div>
-                    </div>
+  <div class="col-auto d-flex justify-content-end mt-auto">
+    <button type="submit" class="btn  btn-sm" (click)="saveAll()">Terminar y
+      Guardar todo</button>
+  </div>
+</div>

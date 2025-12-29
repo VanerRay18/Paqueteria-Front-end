@@ -6,30 +6,31 @@
   <div class="col-auto col-lg-12 mt-4">
     <ul class="nav nav-tabs d-flex flex-row flex-wrap" role="tablist">
       @for (tab of tabs; track tab) {
-        <li class="nav-item">
-          <a class="nav-link"
-            [class.active]="tab.id === activeTab"
-            (click)="setActiveTab(tab.id)">
-            <i [class]="tab.icon"></i>
-            {{ tab.title }}
-          </a>
-        </li>
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="tab.id === activeTab" (click)="setActiveTab(tab.id)">
+          <i [class]="tab.icon"></i>
+          {{ tab.title }}
+        </a>
+      </li>
       }
     </ul>
 
     <div class="tab-content" role="tabpanel">
-      <!-- <ng-container *ngIf="activeTab === 'base'">
-      <div class="row card2">
+      <ng-container *ngIf="activeTab === 'base'">
+        <div class="row card2">
 
-        <div class="form-floating col-auto col-lg-4 m-3 row">
-          <input type="text" class=" buscar form-control" id="busqueda"
-            placeholder="Buscar"
-            [(ngModel)]="searchTerm" name="busqueda">
-            <label for="User">&nbsp;&nbsp;<i
-            class="fa-solid fa-magnifying-glass"></i> Buscar</label>
+          <div class="form-floating col-auto col-lg-3 m-3 row">
+            <input type="text" class=" buscar form-control" id="busqueda" placeholder="Buscar" [(ngModel)]="searchTerm"
+              name="busqueda">
+            <label for="User">&nbsp;&nbsp;<i class="fa-solid fa-magnifying-glass"></i> Buscar</label>
           </div>
-          <div class="col-auto col-lg-4 mt-4">
+          <div class="col-auto col-lg-2 mt-4">
             <h5>Total de registros: {{this.totalRecords}}</h5>
+          </div>
+          <div class="col-auto col-lg-3 d-flex justify-content-end mt-auto">
+            <button type="button" class="btn btn-sm" (click)="openDateRangeSwal()">
+              DESCARGAR REPORTE
+            </button>
           </div>
           <div class="col-auto col-lg-3 d-flex justify-content-end mt-auto">
             <a [routerLink]="['/pages/RH/Registrar-Automovil/0']">
@@ -37,69 +38,64 @@
             </a>
           </div>
 
-          <div
-            class="col-auto col-lg-12 mt-4 justify-content-center align-items-center"
-            *ngIf="dataB.length > 0">
-            <app-tables
-              [headers]="headersB"
-              [data]="dataB"
-              [displayedColums]="displayedColumnsB"
-              [searchTerm]="searchTerm"
-              [maxHeight]="'630px'"
-              [itemsPerPage]="10"
-              [showActionsEdit]=true
-              (edit)="onEditCar($event.id)"
-              [showActionsDeleted]=true
-              (delete)="onDeleteCar($event)"
-              [showActionsPdf]=false
-              [showActiveCheckbox]=false
-              [showDetailsColumn]=true
-              (show)="showDetails($event)"
+          <div class="col-auto col-lg-12 mt-4 justify-content-center align-items-center" *ngIf="dataB.length > 0">
+            <app-tables [headers]="headersB" [data]="dataB" [displayedColums]="displayedColumnsB"
+              [searchTerm]="searchTerm" [maxHeight]="'630px'" [itemsPerPage]="10" [showActionsEdit]=true
+              (edit)="onEditCar($event.id)" [showActionsDeleted]=true (delete)="onDeleteCar($event)"
+              [showActionsPdf]=false [showActiveCheckbox]=false [showDetailsColumn]=true (show)="showDetails($event)"
               [isLoading]="isLoading">
             </app-tables>
           </div>
         </div>
-      </ng-container> -->
+      </ng-container>
 
       @if (activeTab === 'contrato' ) {
-        <div class="row card2">
-          <div class="form-floating col-auto col-lg-4 m-3 row">
-            <input type="text" class=" buscar form-control" id="busqueda"
-              placeholder="Buscar"
-              [(ngModel)]="searchTerm" name="busqueda">
-              <label for="User">&nbsp;&nbsp;<i
-              class="fa-solid fa-magnifying-glass"></i> Buscar</label>
-            </div>
-            <div class="col-auto col-lg-6 d-flex justify-content-end mt-auto">
-              <button type="button" class="btn btn-sm" (click)="addMaterial()">Agregar material al catalogo</button>
-            </div>
-            @if (dataC.length > 0) {
-              <div
-                class="col-auto col-lg-12 mt-4 justify-content-center align-items-center"
-                >
-                <app-tables
-                  [headers]="headersC"
-                  [data]="dataC"
-                  [displayedColums]="displayedColumnsC"
-                  [searchTerm]="searchTerm"
-                  [maxHeight]="'630px'"
-                  [itemsPerPage]="10"
-                  [showActionsEdit]=true
-                  (edit)="onEditMat($event)"
-                  [showActionsDeleted]=true
-                  (delete)="onDeleteMaterial($event)"
-                  [showActionsPdf]=false
-                  [showActiveCheckbox]=false
-                  [showDetailsColumn]=false
-                  (show)="showDetails($event)"
-                  [isLoading]="isLoading">
-                </app-tables>
-              </div>
-            }
-          </div>
+      <div class="row card2">
+        <div class="form-floating col-auto col-lg-4 m-3 row">
+          <input type="text" class=" buscar form-control" id="busqueda" placeholder="Buscar" [(ngModel)]="searchTerm"
+            name="busqueda">
+          <label for="User">&nbsp;&nbsp;<i class="fa-solid fa-magnifying-glass"></i> Buscar</label>
+        </div>
+        <div class="col-auto col-lg-6 d-flex justify-content-end mt-auto">
+          <button type="button" class="btn btn-sm" (click)="addMaterial()">Agregar material al catalogo</button>
+        </div>
+        @if (dataC.length > 0) {
+        <div class="col-auto col-lg-12 mt-4 justify-content-center align-items-center">
+          <app-tables [headers]="headersC" [data]="dataC" [displayedColums]="displayedColumnsC"
+            [searchTerm]="searchTerm" [maxHeight]="'630px'" [itemsPerPage]="10" [showActionsEdit]=true
+            (edit)="onEditMat($event)" [showActionsDeleted]=true (delete)="onDeleteMaterial($event)"
+            [showActionsPdf]=false [showActiveCheckbox]=false [showDetailsColumn]=false (show)="showDetails($event)"
+            [isLoading]="isLoading">
+          </app-tables>
+        </div>
         }
-
       </div>
-    </div>
+      }
 
+      @if (activeTab === 'uniformes' ) {
+      <div class="row card2">
+        <div class="form-floating col-auto col-lg-4 m-3 row">
+          <input type="text" class=" buscar form-control" id="busqueda" placeholder="Buscar" [(ngModel)]="searchTerm"
+            name="busqueda">
+          <label for="User">&nbsp;&nbsp;<i class="fa-solid fa-magnifying-glass"></i> Buscar</label>
+        </div>
+        <!-- <div class="col-auto col-lg-6 d-flex justify-content-end mt-auto">
+          <button type="button" class="btn btn-sm" (click)="addUniform()">Agregar uniforme al catalogo</button>
+        </div> -->
+        @if (dataU.length > 0) {
+        <div class="col-auto col-lg-12 mt-4 justify-content-center align-items-center">
+          <app-tables [headers]="headersU" [data]="dataU" [displayedColums]="displayedColumnsU"
+            [searchTerm]="searchTerm" [maxHeight]="'630px'" [itemsPerPage]="10" [showActionsEdit]=true
+            (edit)="onEditUniform($event)" [showActionsDeleted]=true (delete)="onDeleteUniform($event)"
+            [showActionsPdf]=false [showActiveCheckbox]=false [showDetailsColumn]=false (show)="showDetails($event)"
+            [isLoading]="isLoading">
+          </app-tables>
+        </div>
+
+        }
+      </div>
+      }
+
+    </div>
   </div>
+</div>

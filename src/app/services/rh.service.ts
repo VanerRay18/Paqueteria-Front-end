@@ -47,6 +47,19 @@ export class RHService {
     );
   }
 
+  getAttendanceReport(catAttendanceId: any, type: any, desde: any, hasta: any, isActive: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'catAttendanceId': catAttendanceId, 'type': type, 'desde': desde, 'hasta': hasta, 'isActive': isActive });
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/attendances/excel'}`,
+      { headers }
+    );
+  }
+
+  getUniformsByEmployee(productEmployeeId: any): Observable<ApiResponse> { 
+    return this.http.get<ApiResponse>(`${environment.baseService}${`/uniforms/employee/${productEmployeeId}`}`
+    ); 
+  }
+
+
   createAdress(data: any, employeeId: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'employeeId': employeeId });
     return this.http.post<ApiResponse>(`${environment.baseService}${'/employees/address'}`, data,
@@ -81,7 +94,7 @@ export class RHService {
   deleteFile(targetIds: number[]): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'targetIds': targetIds });
     console.log('Eliminando archivos con IDs:', targetIds);
-    return this.http.patch<ApiResponse>(`${environment.baseService}${'/files/softdelete'}`,null, { headers });
+    return this.http.patch<ApiResponse>(`${environment.baseService}${'/files/softdelete'}`, null, { headers });
 
   }
 
@@ -99,6 +112,10 @@ export class RHService {
     return this.http.post<ApiResponse>(`${environment.baseService}${'/employees/material'}`, data,
       { headers }
     );
+  }
+
+  addUniformeToEmployee(employeeId: any, productItemId: any, cant: any): Observable<ApiResponse> {
+    return this.http.post<ApiResponse>(`${environment.baseService}${`/uniforms/assigned/employee/${employeeId}/product-item/${productItemId}/cant/${cant}`}`, null);
   }
 
   SavePay(data: any, employeeId: any): Observable<ApiResponse> {

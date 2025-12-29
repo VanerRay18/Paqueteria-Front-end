@@ -49,6 +49,11 @@ export class CarsService {
     return this.http.get<ApiResponse>(`${environment.baseService}${'/cars/servicesCurrentByCarId'}`, { headers });
   }
 
+   getExcelCars(desde: any, hasta: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'desde': desde, 'hasta': hasta });
+    return this.http.get<ApiResponse>(`${environment.baseService}${'/cars/excel/odometer'}`, { headers });
+  }
+
   addService(data: any): Observable<ApiResponse> {
     return this.http.post<ApiResponse>(`${environment.baseService}${'/cars/addService'}`, data);
   }

@@ -10,10 +10,10 @@ import { OrgItem } from 'src/app/shared/interfaces/utils';
 import { DatePipe } from '@angular/common';
 
 @Component({
-    selector: 'app-delivery-packages',
-    templateUrl: './delivery-packages.component.html',
-    styleUrls: ['./delivery-packages.component.css'],
-    standalone: false
+  selector: 'app-delivery-packages',
+  templateUrl: './delivery-packages.component.html',
+  styleUrls: ['./delivery-packages.component.css'],
+  standalone: false
 })
 export class DeliveryPackagesComponent implements OnInit {
   paqueteEncontrado: any = null;
@@ -46,7 +46,7 @@ export class DeliveryPackagesComponent implements OnInit {
     private pakage: PakageService,
     private fileTransferService: FileTransferService,
     private route: ActivatedRoute,
-     private datePipe: DatePipe
+    private datePipe: DatePipe
   ) { }
 
   ngOnInit(): void {
@@ -246,14 +246,14 @@ export class DeliveryPackagesComponent implements OnInit {
             <div style="padding: 12px; border-radius: 8px; background: #f1f5f9; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
               <h4 style="margin-bottom: 8px; color: #0f172a;">Consolidado</h4>
               ${d ? `
-                <p><strong>Origen:</strong> ${d.originLocId} - ${d.shprCity}, ${d.shprState}</p>
-                <p><strong>Destino:</strong> ${d.destinationLocId} - ${d.recipCity}, ${d.recipState}</p>
-                <p><strong>Remitente:</strong> ${d.shprCoShprName}</p>
-                <p><strong>Destinatario:</strong> ${d.recipName}</p>
-                <p><strong>Tel. Remitente:</strong> ${d.shprPhone}</p>
-                <p><strong>Tel. Destinatario:</strong> ${d.recipPhone}</p>
-                <p><strong>Referencias:</strong> ${d.shprRef}</p>
-              ` : `<p>No hay información de consolidado</p>`}
+            <p><strong>Origen:</strong> ${d.senderAddr} - ${d.senderCity}, ${d.senderState}</p>
+            <p><strong>Destino:</strong> ${d.recipientAddr} - ${d.recipientCity}, ${d.recipientState}</p>
+            <p><strong>Remitente:</strong> ${d.senderName}</p>
+            <p><strong>Destinatario:</strong> ${d.recipientName}</p>
+            <p><strong>Tel. Remitente:</strong> ${d.senderPhone}</p>
+            <p><strong>Tel. Destinatario:</strong> ${d.recipientPhone}</p>
+            <p><strong>Codigo postal Destinatario:</strong> ${d.recipientPostal}</p>
+          ` : `<p>No hay información de consolidado</p>`}
             </div>
 
             <!-- Status -->
@@ -296,7 +296,7 @@ export class DeliveryPackagesComponent implements OnInit {
   }
 
   histotyPackage(paquete: any): void {
-this.pakage.getHistoryByPakage(paquete.id).subscribe((resp) => {
+    this.pakage.getHistoryByPakage(paquete.id).subscribe((resp) => {
       if (resp.success && resp.data) {
         const history = resp.data.sort((a: { tsCreated: number; }, b: { tsCreated: number; }) => a.tsCreated - b.tsCreated);
         const htmlContent = history.map((entry: { tsCreated: string | number | Date; catStatus: { name: string; config: { config: { color: string; }; }; }; description: any; }) => {
@@ -585,20 +585,20 @@ this.pakage.getHistoryByPakage(paquete.id).subscribe((resp) => {
   }
 
 
-enviarListadoDePaquetes(): void {
-  this.pakage.getCatPakageOrg().subscribe({
-    next: (response) => {
-      const organizaciones: OrgItem[] = response.data || [];
+  enviarListadoDePaquetes(): void {
+    this.pakage.getCatPakageOrg().subscribe({
+      next: (response) => {
+        const organizaciones: OrgItem[] = response.data || [];
 
-      Swal.fire({
-        title: 'Pegar listado de paquetes',
-        html: `
+        Swal.fire({
+          title: 'Pegar listado de paquetes',
+          html: `
           <div style="width: 100%; margin-bottom:10px;">
             <select id="select-org" class="swal2-input" style="margin-bottom: 10px;">
               <option value="">-- Selecciona organización --</option>
               ${organizaciones.map((org: OrgItem) =>
-                `<option value="${org.id}">${org.name}</option>`
-              ).join('')}
+            `<option value="${org.id}">${org.name}</option>`
+          ).join('')}
             </select>
           </div>
           <div style="width: 100%;">
@@ -620,55 +620,55 @@ enviarListadoDePaquetes(): void {
             </textarea>
           </div>
         `,
-        showCancelButton: true,
-        confirmButtonText: '📤 Enviar',
-        cancelButtonText: 'Cancelar',
-        preConfirm: () => {
-          const select = document.getElementById('select-org') as HTMLSelectElement;
-          const input = (document.getElementById('inputPaquetes') as HTMLTextAreaElement).value;
+          showCancelButton: true,
+          confirmButtonText: '📤 Enviar',
+          cancelButtonText: 'Cancelar',
+          preConfirm: () => {
+            const select = document.getElementById('select-org') as HTMLSelectElement;
+            const input = (document.getElementById('inputPaquetes') as HTMLTextAreaElement).value;
 
-          if (!select.value) {
-            Swal.showValidationMessage('⚠️ Debes seleccionar una organización');
-            return;
-          }
-          if (!input.trim()) {
-            Swal.showValidationMessage('⚠️ Debes ingresar al menos un número de paquete');
-            return;
-          }
-
-          return { orgId: select.value, listado: input };
-        }
-      }).then(result => {
-        if (result.isConfirmed && result.value) {
-          const { orgId, listado } = result.value;
-          const listadoArr = listado.trim().split(/\s+/); // dividir por espacios, saltos de línea, etc.
-
-          // Loading mientras se envía
-          Swal.fire({
-            title: 'Enviando paquetes...',
-            allowOutsideClick: false,
-            didOpen: () => Swal.showLoading()
-          });
-
-          this.pakage.SentListPackageDelivery(listadoArr, this.deliveryId, orgId).subscribe({
-            next: (res) => {
-              this.getData(this.page, this.size);
-              Swal.fire('✅ Éxito', 'Los paquetes fueron enviados correctamente.', 'success');
-            },
-            error: (error) => {
-              const msg = error?.error?.message || 'Ocurrió un error al enviar los paquetes.';
-              Swal.fire('❌ Error', msg, 'error');
+            if (!select.value) {
+              Swal.showValidationMessage('⚠️ Debes seleccionar una organización');
+              return;
             }
-          });
-        }
-      });
-    },
-    error: (err) => {
-      console.error('Error al obtener organizaciones:', err);
-      Swal.fire('Error', 'No se pudieron cargar las organizaciones.', 'error');
-    }
-  });
-}
+            if (!input.trim()) {
+              Swal.showValidationMessage('⚠️ Debes ingresar al menos un número de paquete');
+              return;
+            }
+
+            return { orgId: select.value, listado: input };
+          }
+        }).then(result => {
+          if (result.isConfirmed && result.value) {
+            const { orgId, listado } = result.value;
+            const listadoArr = listado.trim().split(/\s+/); // dividir por espacios, saltos de línea, etc.
+
+            // Loading mientras se envía
+            Swal.fire({
+              title: 'Enviando paquetes...',
+              allowOutsideClick: false,
+              didOpen: () => Swal.showLoading()
+            });
+
+            this.pakage.SentListPackageDelivery(listadoArr, this.deliveryId, orgId).subscribe({
+              next: (res) => {
+                this.getData(this.page, this.size);
+                Swal.fire('✅ Éxito', 'Los paquetes fueron enviados correctamente.', 'success');
+              },
+              error: (error) => {
+                const msg = error?.error?.message || 'Ocurrió un error al enviar los paquetes.';
+                Swal.fire('❌ Error', msg, 'error');
+              }
+            });
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error al obtener organizaciones:', err);
+        Swal.fire('Error', 'No se pudieron cargar las organizaciones.', 'error');
+      }
+    });
+  }
 
 
   macheoPaquetes(): void {

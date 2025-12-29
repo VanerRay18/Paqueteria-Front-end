@@ -10,10 +10,10 @@ import { saveAs } from 'file-saver';
 
 
 @Component({
-    selector: 'app-graphs-assistance',
-    templateUrl: './graphs-assistance.component.html',
-    styleUrls: ['./graphs-assistance.component.css'],
-    standalone: false
+  selector: 'app-graphs-assistance',
+  templateUrl: './graphs-assistance.component.html',
+  styleUrls: ['./graphs-assistance.component.css'],
+  standalone: false
 })
 export class GraphsAssistanceComponent implements OnInit {
   searchTerm: string = '';
@@ -27,7 +27,7 @@ export class GraphsAssistanceComponent implements OnInit {
   constructor(
     private rh: RHService
   ) {
-   (pdfMake as any).vfs = (pdfFonts as any).pdfMake.vfs;
+    (pdfMake as any).vfs = (pdfFonts as any).pdfMake.vfs;
   }
 
   ngOnInit(): void {
@@ -1107,6 +1107,147 @@ export class GraphsAssistanceComponent implements OnInit {
     const dataBlob: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
     saveAs(dataBlob, `reporte_asistencias_${nombreEmpleado}_${fechaHoy}.xlsx`);
   }
+
+
+  descargarReporte() {
+    Swal.fire({
+      title: 'Generar Reporte de Asistencias',
+      html: `
+      <div style="display: flex; flex-direction: column; gap: 12px; text-align: left;">
+        <label>📅 Fecha desde:</label>
+        <input type="date" id="fechaDesde" class="swal2-input">
+        
+        <label>📅 Fecha hasta:</label>
+        <input type="date" id="fechaHasta" class="swal2-input">
+
+        <label>📋 Tipo de Reporte:</label>
+        <select id="tipoReporte" class="swal2-input">
+          <option value="2">Faltas</option>
+          <option value="1">Asistencias</option>
+          <option value="5">Retardos</option>
+        </select>
+
+        <label>👥 ¿Qué empleados?</label>
+        <select id="empleados" class="swal2-input">
+          <option value="true">Solo activos</option>
+          <option value="false">Todos</option>
+        </select>
+      </div>
+    `,
+      confirmButtonText: 'Descargar',
+      cancelButtonText: 'Cancelar',
+      showCancelButton: true,
+      preConfirm: () => {
+        const fechaDesde = (document.getElementById('fechaDesde') as HTMLInputElement).value;
+        const fechaHasta = (document.getElementById('fechaHasta') as HTMLInputElement).value;
+        const tipoReporte = Number((document.getElementById('tipoReporte') as HTMLSelectElement).value);
+        const isActive = (document.getElementById('empleados') as HTMLSelectElement).value === 'true';
+
+        if (!fechaDesde || !fechaHasta) {
+          Swal.showValidationMessage('⚠️ Debes seleccionar ambas fechas');
+          return false;
+        }
+
+        return { fechaDesde, fechaHasta, tipoReporte, isActive };
+      }
+    }).then(result => {
+      if (result.isConfirmed) {
+        const { fechaDesde, fechaHasta, tipoReporte, isActive } = result.value;
+
+        // ⚠️ Mapeo entre tipoReporte y categoría (catAttendanceId)
+        const catAttendanceId = this.mapCatAttendanceId(tipoReporte);
+
+        this.rh.getAttendanceReport(catAttendanceId, tipoReporte, fechaDesde, fechaHasta, String(isActive))
+          .subscribe({
+            next: (response: ApiResponse) => {
+              // Cierra el loading antes de generar el Excel (o después, como prefieras)
+              Swal.close();
+
+              // Genera el Excel
+              this.generarExcelAsistencias(response.data);
+
+              // Mensaje de éxito
+              Swal.fire({
+                icon: 'success',
+                title: '✅ Listo',
+                text: 'El reporte se ha generado correctamente.'
+              });
+            },
+            error: (err) => {
+              Swal.close();
+              Swal.fire({
+                icon: 'error',
+                title: 'Error al generar el reporte',
+                text: err?.message || 'Intenta nuevamente.'
+              });
+            },
+            complete: () => {
+              // Opcional: garantizar cierre del loading si algo no lo cerró
+              Swal.close();
+            }
+          });
+
+        // Antes de la llamada, dispara el loading:
+        Swal.fire({
+          title: 'Generando Excel...',
+          html: 'Por favor espera unos segundos.',
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+      }
+    });
+
+  }
+
+  // Mapeo para que entiendas fácilmente la relación:
+  mapCatAttendanceId(tipo: number) {
+    switch (tipo) {
+      case 2: return 9; // Faltas → categoría 9
+      case 1: return 1; // Asistencias → categoría 1
+      case 5: return 2; // Retardos → categoría 2
+      default: return 1;
+    }
+  }
+
+  generarExcelAsistencias(responseData: any[]) {
+    if (!responseData || responseData.length === 0) {
+      Swal.fire('Sin datos', 'No hay registros para generar el Excel', 'warning');
+      return;
+    }
+
+    // ✅ Transformar los datos al formato deseado
+    const excelData = responseData.map((item: any) => ({
+      Nombre: `${item.name} ${item.first_surname} ${item.second_surname}`,
+      CURP: item.curp,
+      Token: item.token,
+      Puesto: item.puesto,
+      Contratación: item.contratacion,
+      Tipo: item.tipo, // ASISTENCIAS, FALTAS, RETARDOS
+      Movimiento: item.is_in, // Entrada o Salida
+      Hora: item.hora,
+      Fecha: new Date(item.fecha).toLocaleDateString(), // Convertimos timestamp a fecha legible
+      '¿Retardo?': item.is_late || 'No',
+      '¿Justificante?': item.is_justificant || 'No'
+    }));
+
+    // ✅ Crear hoja Excel
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Asistencias');
+
+    // ✅ Convertir a archivo y descargar
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+
+    saveAs(blob, `asistencias_${new Date().toISOString().split('T')[0]}.xlsx`);
+
+    Swal.fire('✅ Listo', 'El archivo Excel se generó correctamente.', 'success');
+  }
+
+
 
 
 }

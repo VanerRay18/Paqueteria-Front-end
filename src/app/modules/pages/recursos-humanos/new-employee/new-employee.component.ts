@@ -8,12 +8,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FileTransferService } from 'src/app/services/file-transfer.service';
 import { take } from 'rxjs/operators';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
+import { TabMaterialService } from 'src/app/services/tab-material.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
-    selector: 'app-new-employee',
-    templateUrl: './new-employee.component.html',
-    styleUrls: ['./new-employee.component.css'],
-    standalone: false
+  selector: 'app-new-employee',
+  templateUrl: './new-employee.component.html',
+  styleUrls: ['./new-employee.component.css'],
+  standalone: false
 })
 export class NewEmployeeComponent implements OnInit {
 
@@ -53,6 +55,8 @@ export class NewEmployeeComponent implements OnInit {
   fotoAntiguaId: number | null = null;   // El id de la foto actual (si la hay)
   fotoAntigua: any;
   bandera: boolean = false;
+  uniformesAgrupados: any[] = [];
+  selectedProduct: any = null;
 
 
   diasSemana = [
@@ -72,7 +76,8 @@ export class NewEmployeeComponent implements OnInit {
     private rh: RHService,
     private router: Router,
     private route: ActivatedRoute,
-    private fileTransferService: FileTransferService
+    private fileTransferService: FileTransferService,
+    private tabMaterial: TabMaterialService
   ) {
 
   }
@@ -84,9 +89,46 @@ export class NewEmployeeComponent implements OnInit {
       this.employeeIdPatch = id
       this.isEditMode = true;
       this.loadEmployeeData(this.employeeIdPatch);
+
     }
 
     this.getData();
+
+    this.tabMaterial.getUniformes().subscribe(resp => {
+      const data = resp.data;
+
+      const agrupado = data.reduce((acc: {
+        [x: string]: {
+          product_name: any;
+          cat_uniform_product_id: any;
+          tallas: {
+            item_name: any; cant: any; cat_uniform_item_id: any; asignado: number; // cantidad asignada por el usuario
+          }[];
+        };
+      }, item: { cat_uniform_product_id: any; product_name: any; item_name: any; cant: any; cat_uniform_item_id: any; }) => {
+
+        const prodId = item.cat_uniform_product_id;
+
+        if (!acc[prodId]) {
+          acc[prodId] = {
+            product_name: item.product_name,
+            cat_uniform_product_id: prodId,
+            tallas: []
+          };
+        }
+
+        acc[prodId].tallas.push({
+          item_name: item.item_name,
+          cant: item.cant,
+          cat_uniform_item_id: item.cat_uniform_item_id,
+          asignado: 0 // cantidad asignada por el usuario
+        });
+
+        return acc;
+      }, {});
+
+      this.uniformesAgrupados = Object.values(agrupado);
+    });
 
   }
 
@@ -106,6 +148,16 @@ export class NewEmployeeComponent implements OnInit {
       });
 
   }
+
+  validarCantidad(talla: any) {
+    if (talla.asignado > talla.cant) {
+      talla.asignado = talla.cant;
+    }
+    if (talla.asignado < 0) {
+      talla.asignado = 0;
+    }
+  }
+
 
   nombreCompletoValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value as string;
@@ -219,7 +271,7 @@ export class NewEmployeeComponent implements OnInit {
   // 2️⃣ Método para cargar datos existentes y llenar los formularios
   loadEmployeeData(id: number) {
     this.rh.getEmployeeById(id).subscribe((resp: ApiResponse) => {
-      // console.log('Datos del empleado:', resp.data);
+      console.log('Datos del empleado:', resp.data);
       const e = resp.data.dataUser;
       // console.log('Datos del empleado:', resp.data);
       const personalesTieneDatos = e && Object.values(e).some(value => !!value);
@@ -352,6 +404,28 @@ export class NewEmployeeComponent implements OnInit {
 
       // ✅ Marcar como "editando" si hay al menos un uniforme
       this.datosUniformesCargados = unis.length > 0;
+
+      // 🔧 SINCRONIZAR uniformes ya asignados con uniformesAgrupados
+      if (Array.isArray(unis) && this.uniformesAgrupados.length > 0) {
+
+        unis.forEach((u: any) => {
+          this.uniformesAgrupados.forEach(producto => {
+            producto.tallas.forEach((talla: any) => {
+
+              // 🔑 Ajusta estos nombres si tu backend usa otros
+              if (
+                talla.cat_uniform_item_id === u.catUniformItemId ||
+                talla.cat_uniform_item_id === u.cat_uniform_item_id
+              ) {
+                talla.asignado = u.cant ?? u.quantity ?? 0;
+              }
+
+            });
+          });
+        });
+
+      }
+
 
     });
   }
@@ -567,46 +641,85 @@ export class NewEmployeeComponent implements OnInit {
     }
   }
 
-  guardarEmpleo() {
-    const documents = this.Documentos;
-    const uniforms = this.uniforms;
+guardarEmpleo() {
+  const documents = this.Documentos;
+  const idEmpleado = this.employeeIdPatch || this.employeeId;
 
-    const idEmpleado = this.employeeIdPatch || this.employeeId;
-
-    if (!idEmpleado) {
-      Swal.fire('Error', 'No se pudo determinar el ID del empleado.', 'error');
-      return;
-    }
-
-    this.rh.SaveDocuments(documents, idEmpleado).subscribe({
-      next: () => {
-        Swal.fire('Documentos guardados', 'Se guardaron correctamente.', 'success');
-        this.isEditDocumentos = false;
-        this.bandera = false;
-      },
-      error: (err) => {
-        Swal.fire('Error', 'Ocurrió un error al guardar los documentos.', 'error');
-        console.error(err);
-      }
-    });
-
-    if (!idEmpleado) {
-      Swal.fire('Error', 'No se pudo determinar el ID del empleado.', 'error');
-      return;
-    }
-
-    this.rh.SaveUniforms(uniforms, idEmpleado).subscribe({
-      next: () => {
-        Swal.fire('Uniformes guardados', 'Se guardaron correctamente.', 'success');
-        this.isEditUniformes = false;
-        this.bandera = false;
-      },
-      error: (err) => {
-        Swal.fire('Error', 'Ocurrió un error al guardar los uniformes.', 'error');
-        console.error(err);
-      }
-    });
+  if (!idEmpleado) {
+    Swal.fire('Error', 'No se pudo determinar el ID del empleado.', 'error');
+    return;
   }
+
+  // =========================
+  // 📄 GUARDAR DOCUMENTOS
+  // =========================
+  this.rh.SaveDocuments(documents, idEmpleado).subscribe({
+    next: () => {
+      Swal.fire('Documentos guardados', 'Se guardaron correctamente.', 'success');
+      this.isEditDocumentos = false;
+      this.bandera = false;
+    },
+    error: (err) => {
+      Swal.fire('Error', 'Ocurrió un error al guardar los documentos.', 'error');
+      console.error(err);
+    }
+  });
+
+  const uniformsToSave: {
+    productItemId: any;
+    cant: number;
+  }[] = [];
+
+  this.uniformesAgrupados.forEach(producto => {
+    producto.tallas.forEach((talla: any) => {
+      if (talla.asignado && talla.asignado > 0) {
+        uniformsToSave.push({
+          productItemId: talla.cat_uniform_item_id,
+          cant: talla.asignado
+        });
+      }
+    });
+  });
+
+  if (uniformsToSave.length === 0) {
+    console.warn('No hay uniformes para guardar');
+    return;
+  }
+
+  // =========================
+  // ⏳ SWAL DE CARGA
+  // =========================
+  Swal.fire({
+    title: 'Guardando uniformes...',
+    text: 'Por favor espera',
+    allowOutsideClick: false,
+    didOpen: () => Swal.showLoading()
+  });
+
+  // =========================
+  // 🚀 GUARDAR UNO POR UNO
+  // =========================
+  const requests = uniformsToSave.map(u =>
+    this.rh.addUniformeToEmployee(
+      idEmpleado,
+      u.productItemId,
+      u.cant
+    )
+  );
+
+  forkJoin(requests).subscribe({
+    next: () => {
+      Swal.fire('Uniformes guardados', 'Se guardaron correctamente.', 'success');
+      this.isEditUniformes = false;
+      this.bandera = false;
+    },
+    error: (err) => {
+      Swal.fire('Error', 'Ocurrió un error al guardar los uniformes.', 'error');
+      console.error(err);
+    }
+  });
+}
+
 
 
   editarEmpleo() {
@@ -778,6 +891,7 @@ export class NewEmployeeComponent implements OnInit {
         this.assignedUniforms = this.assignedUniforms.filter(r => r.id !== Uniform.id);
         this.uniforms = this.uniforms.filter(id => id !== Uniform.id); // Remueve el ID del arreglo uniforms
         this.allUniforms.push(Uniform);
+        console.log("unifmes", this.uniforms);
       }
       this.draggedUniforms = null;
     }

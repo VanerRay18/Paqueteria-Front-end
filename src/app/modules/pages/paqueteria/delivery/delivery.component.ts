@@ -7,10 +7,10 @@ import { OrgItem } from 'src/app/shared/interfaces/utils';
 import Swal from 'sweetalert2';
 
 @Component({
-    selector: 'app-delivery',
-    templateUrl: './delivery.component.html',
-    styleUrls: ['./delivery.component.css'],
-    standalone: false
+  selector: 'app-delivery',
+  templateUrl: './delivery.component.html',
+  styleUrls: ['./delivery.component.css'],
+  standalone: false
 })
 export class DeliveryComponent implements OnInit {
   searchGuia: string = '';
@@ -395,6 +395,8 @@ export class DeliveryComponent implements OnInit {
       <input type="number" id="km" class="swal2-input" placeholder="Kilómetros">
       <input type="number" step="0.1" id="litros" class="swal2-input" placeholder="Litros">
       <input type="number" step="0.1" id="costo" class="swal2-input" placeholder="Costo">
+      <input type="text" step="0.1" id="estacion" class="swal2-input" placeholder="Estación">
+      <input type="text" id="ruta" class="swal2-input" placeholder="Ruta">
       <textarea id="comentarios" class="swal2-textarea" placeholder="Comentarios"></textarea>
     `,
       focusConfirm: false,
@@ -405,9 +407,11 @@ export class DeliveryComponent implements OnInit {
         const odometro = (document.getElementById('km') as HTMLInputElement).value;
         const litros = (document.getElementById('litros') as HTMLInputElement).value;
         const precio = (document.getElementById('costo') as HTMLInputElement).value;
+        const estacion = (document.getElementById('estacion') as HTMLInputElement).value;
+        const ruta = (document.getElementById('ruta') as HTMLInputElement).value;
         const comentarios = (document.getElementById('comentarios') as HTMLTextAreaElement).value;
 
-        if (!odometro || !litros || !precio) {
+        if (!odometro || !litros || !precio || !estacion || !ruta) {
           Swal.showValidationMessage('Todos los campos excepto comentarios son obligatorios');
           return false;
         }
@@ -422,6 +426,8 @@ export class DeliveryComponent implements OnInit {
           odometro: Number(odometro),
           litros: parseFloat(litros),
           precio: parseFloat(precio),
+          estacion,
+          ruta,
           comentarios
         };
       }

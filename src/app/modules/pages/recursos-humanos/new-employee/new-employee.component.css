@@ -426,3 +426,82 @@ input.ng-invalid.ng-touched {
 .switch input:checked + .slider::before {
   transform: translateX(26px);
 }
+
+.producto-card {
+  background: #ffffff;
+  border-radius: 15px;
+  padding: 20px;  
+  border: 1px solid #ccc;
+}
+
+.producto-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.producto-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #333;
+}
+
+.producto-header input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.tallas-container {
+  margin-top: 15px;
+  padding-left: 5px;
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.talla-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8f9ff;
+  padding: 12px 15px;
+  border-radius: 12px;
+  border: 1px solid #e1ebff;
+}
+
+.talla-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.talla-nombre {
+  font-size: 16px;
+  font-weight: bold;
+  color: #3643ad;
+}
+
+.talla-stock {
+  font-size: 13px;
+  color: #666;
+}
+
+.talla-input {
+  width: 80px;
+  padding: 5px 8px;
+  font-size: 15px;
+  border-radius: 8px;
+  border: 1px solid #b8c0ff;
+  outline: none;
+  transition: 0.2s ease;
+}
+
+.talla-input:focus {
+  border-color: #4254ff;
+  box-shadow: 0 0 5px rgba(92, 108, 255, 0.4);
+}
