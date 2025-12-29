@@ -562,30 +562,53 @@ export class SearchDeliveryComponent implements OnInit {
         }
 
         // Procesamos los datos y exportamos a Excel
-        const excelData = resp.data.map((pkg: any) => {
-          const c = pkg.consolidado || {};
-          return {
-            Tracking: c.trackingNo || '',
-            Origen: c.originLocId || '',
-            Destino: c.destinationLocId || '',
-            Remitente: c.shprCoShprName || '',
-            DirRemitente: c.shprAddr || '',
-            CiudadRemitente: c.shprCity || '',
-            EstadoRemitente: c.shprState || '',
-            TelefonoRemitente: c.shprPhone || '',
-            Destinatario: c.recipName || '',
-            DirDestinatario: c.recipAddr || '',
-            CiudadDestinatario: c.recipCity || '',
-            EstadoDestinatario: c.recipState || '',
-            TelefonoDestinatario: c.recipPhone || '',
-            FechaCompromiso: c.commitDate ? `${c.commitDate[0]}-${c.commitDate[1]}-${c.commitDate[2]}` : '',
-            HoraCompromiso: c.commitTime || '',
-            Servicio: c.service || '',
-            DEX: pkg.dex || '',
-            Estado: pkg.status?.name || '',
-            Costo: pkg.costLoad || ''
-          };
-        });
+const excelData = resp.data.map((pkg: any) => {
+  const c = (pkg.consolidado && typeof pkg.consolidado === 'object') ? pkg.consolidado : null;
+  const d = (pkg.delivery && typeof pkg.delivery === 'object') ? pkg.delivery : null;
+
+  const car = d?.car ?? null;
+  const emp = d?.employee ?? null;
+
+  const nombreEmpleado = emp
+    ? `${emp.name ?? ''} ${emp.firstSurname ?? ''} ${emp.secondSurname ?? ''}`.replace(/\s+/g, ' ').trim()
+    : '';
+
+  return {
+    // --- Consolidado (todo) ---
+    'ID Consolidado': c?.id ?? '',
+    'Tracking': c?.trackingNo ?? '',
+    'Nombre destinatario': c?.recipName ?? '',
+    'Dirección destinatario': c?.recipAddr ?? '',
+    'Ciudad destinatario': c?.recipCity ?? '',
+    'Código postal destinatario': c?.recipPostal ?? '',
+    'Servicio': c?.service ?? '',
+    'Fecha compromiso': Array.isArray(c?.commitDate)
+      ? `${c.commitDate[0]}-${String(c.commitDate[1]).padStart(2, '0')}-${String(c.commitDate[2]).padStart(2, '0')}`
+      : '',
+    'Teléfono destinatario': c?.recipPhone ?? '',
+    'No. Consolidado': c?.consolidadoNo ?? '',
+
+    // --- Del paquete (nivel raíz) ---
+    'Guía': pkg.guia ?? '',
+    'Organización': pkg.nameOrg ?? '',
+    'Estatus': pkg.status?.name ?? '',
+    'Total entregas': pkg.totalEntregas ?? 0,
+    'Total rutas': pkg.totalRutas ?? 0,
+
+    'Es costo': pkg.isCost ? 'Sí' : 'No',
+    'Costo': pkg.isCost ? (pkg.costLoad ?? '') : '--',
+    'DEX': pkg.dex ?? '',
+
+    // --- Delivery (solo si existe; si no existe quedan vacíos) ---
+    'Placa': car?.placa ?? '',
+    'Marca': car?.marca ?? '',
+    'Modelo': car?.modelo ?? '',
+    'Color vehículo': car?.color ?? '',
+    'VIN': car?.vin ?? '',
+
+    'Conductor': nombreEmpleado,
+  };
+});
 
         const worksheet = XLSX.utils.json_to_sheet(excelData);
         const workbook = XLSX.utils.book_new();
