@@ -400,26 +400,30 @@
 
         <!-- Checkbox del producto -->
         <label class="producto-header">
-          <input type="checkbox" (change)="selectedProduct = producto">
+          <input type="checkbox" [(ngModel)]="producto.seleccionado" (change)="selectedProduct = producto">
           <span>{{ producto.product_name }}</span>
         </label>
 
         <!-- Tallitas -->
-        <div *ngIf="selectedProduct === producto" class="tallas-container">
+        <div *ngIf="producto.seleccionado" class="tallas-container">
 
           <div *ngFor="let t of producto.tallas" class="talla-item">
+
             <div class="talla-info">
               <span class="talla-nombre">{{ t.item_name }}</span>
-              <span class="talla-stock">Disponibles: <b>{{ t.cant }}</b></span>
+              <span class="talla-stock">
+                Asignados: <b>{{ t.cant }}</b>
+              </span>
             </div>
 
-            <input type="number" [(ngModel)]="t.asignado" [max]="t.cant" min="0" class="talla-input"
-              (input)="validarCantidad(t)" />
+            <input type="number" [(ngModel)]="t.asignado" [max]="t.cant" min="0" class="talla-input" disabled />
+
           </div>
 
         </div>
 
       </div>
+
       <div class="col-auto d-flex justify-content-end mt-auto  botones-responsivos">
         <button type="submit" class="btn  btn-sm" (click)="guardarEmpleo()"
           [disabled]="(bandera == true && isEditMode == false)||(bandera == false && isEditMode == true)">Guardar

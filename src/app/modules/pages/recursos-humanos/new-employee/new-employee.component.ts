@@ -104,6 +104,7 @@ export class NewEmployeeComponent implements OnInit {
           tallas: {
             item_name: any; cant: any; cat_uniform_item_id: any; asignado: number; // cantidad asignada por el usuario
           }[];
+          seleccionado: boolean;
         };
       }, item: { cat_uniform_product_id: any; product_name: any; item_name: any; cant: any; cat_uniform_item_id: any; }) => {
 
@@ -113,7 +114,8 @@ export class NewEmployeeComponent implements OnInit {
           acc[prodId] = {
             product_name: item.product_name,
             cat_uniform_product_id: prodId,
-            tallas: []
+            tallas: [],
+            seleccionado: false // 👈 CLAVE
           };
         }
 
@@ -128,6 +130,9 @@ export class NewEmployeeComponent implements OnInit {
       }, {});
 
       this.uniformesAgrupados = Object.values(agrupado);
+      if (this.employeeIdPatch) {
+        this.cargarUniformesEmpleado(this.employeeIdPatch);
+      }
     });
 
   }
@@ -268,10 +273,31 @@ export class NewEmployeeComponent implements OnInit {
     target.src = 'assets/not_found_package.png';
   }
 
+  cargarUniformesEmpleado(id: number) {
+ this.rh.getUniformsByEmployee(id).subscribe(resp => {
+    const asignados = resp.data || [];
+
+    asignados.forEach((u: any) => {
+      this.uniformesAgrupados.forEach(producto => {
+        producto.tallas.forEach((talla: any) => {
+          if (talla.cat_uniform_item_id === u.cat_uniform_item_id) {
+            talla.asignado = u.cant;
+
+            // 🔥 auto seleccionar producto
+            producto.seleccionado = true;
+          }
+        });
+      });
+    });
+
+    this.datosUniformesCargados = asignados.length > 0;
+  });
+  }
+
   // 2️⃣ Método para cargar datos existentes y llenar los formularios
   loadEmployeeData(id: number) {
     this.rh.getEmployeeById(id).subscribe((resp: ApiResponse) => {
-      console.log('Datos del empleado:', resp.data);
+      //console.log('Datos del empleado:', resp.data);
       const e = resp.data.dataUser;
       // console.log('Datos del empleado:', resp.data);
       const personalesTieneDatos = e && Object.values(e).some(value => !!value);
@@ -394,40 +420,30 @@ export class NewEmployeeComponent implements OnInit {
 
       // ✅ Marcar como "editando" si hay al menos un documento
       this.datosDocumentosCargados = docs.length > 0;
-
-
-      // 👕 Uniformes entregados
-      const unis = resp.data.catEmployeeMaterials || [];
-      this.assignedUniforms = unis;
-      this.uniforms = unis.map((u: any) => u.id);
-      this.allUniforms = this.allUniforms.filter(u => !this.uniforms.includes(u.id));
-
-      // ✅ Marcar como "editando" si hay al menos un uniforme
-      this.datosUniformesCargados = unis.length > 0;
-
-      // 🔧 SINCRONIZAR uniformes ya asignados con uniformesAgrupados
-      if (Array.isArray(unis) && this.uniformesAgrupados.length > 0) {
-
-        unis.forEach((u: any) => {
-          this.uniformesAgrupados.forEach(producto => {
-            producto.tallas.forEach((talla: any) => {
-
-              // 🔑 Ajusta estos nombres si tu backend usa otros
-              if (
-                talla.cat_uniform_item_id === u.catUniformItemId ||
-                talla.cat_uniform_item_id === u.cat_uniform_item_id
-              ) {
-                talla.asignado = u.cant ?? u.quantity ?? 0;
-              }
-
-            });
-          });
-        });
-
-      }
-
-
     });
+
+     this.rh.getUniformsByEmployee(id).subscribe(resp => {
+    const asignados = resp.data || [];
+
+    asignados.forEach((u: any) => {
+      this.uniformesAgrupados.forEach(producto => {
+        producto.tallas.forEach((talla: any) => {
+          if (talla.cat_uniform_item_id === u.cat_uniform_item_id) {
+            talla.asignado = u.cant;
+
+            // 🔥 auto seleccionar producto
+            producto.seleccionado = true;
+          }
+        });
+      });
+    });
+
+    this.datosUniformesCargados = asignados.length > 0;
+  });
+
+
+
+
   }
 
   crearBermed(): FormGroup {
@@ -641,84 +657,84 @@ export class NewEmployeeComponent implements OnInit {
     }
   }
 
-guardarEmpleo() {
-  const documents = this.Documentos;
-  const idEmpleado = this.employeeIdPatch || this.employeeId;
+  guardarEmpleo() {
+    const documents = this.Documentos;
+    const idEmpleado = this.employeeIdPatch || this.employeeId;
 
-  if (!idEmpleado) {
-    Swal.fire('Error', 'No se pudo determinar el ID del empleado.', 'error');
-    return;
-  }
-
-  // =========================
-  // 📄 GUARDAR DOCUMENTOS
-  // =========================
-  this.rh.SaveDocuments(documents, idEmpleado).subscribe({
-    next: () => {
-      Swal.fire('Documentos guardados', 'Se guardaron correctamente.', 'success');
-      this.isEditDocumentos = false;
-      this.bandera = false;
-    },
-    error: (err) => {
-      Swal.fire('Error', 'Ocurrió un error al guardar los documentos.', 'error');
-      console.error(err);
+    if (!idEmpleado) {
+      Swal.fire('Error', 'No se pudo determinar el ID del empleado.', 'error');
+      return;
     }
-  });
 
-  const uniformsToSave: {
-    productItemId: any;
-    cant: number;
-  }[] = [];
-
-  this.uniformesAgrupados.forEach(producto => {
-    producto.tallas.forEach((talla: any) => {
-      if (talla.asignado && talla.asignado > 0) {
-        uniformsToSave.push({
-          productItemId: talla.cat_uniform_item_id,
-          cant: talla.asignado
-        });
+    // =========================
+    // 📄 GUARDAR DOCUMENTOS
+    // =========================
+    this.rh.SaveDocuments(documents, idEmpleado).subscribe({
+      next: () => {
+        Swal.fire('Documentos guardados', 'Se guardaron correctamente.', 'success');
+        this.isEditDocumentos = false;
+        this.bandera = false;
+      },
+      error: (err) => {
+        Swal.fire('Error', 'Ocurrió un error al guardar los documentos.', 'error');
+        console.error(err);
       }
     });
-  });
 
-  if (uniformsToSave.length === 0) {
-    console.warn('No hay uniformes para guardar');
-    return;
-  }
+    const uniformsToSave: {
+      productItemId: any;
+      cant: number;
+    }[] = [];
 
-  // =========================
-  // ⏳ SWAL DE CARGA
-  // =========================
-  Swal.fire({
-    title: 'Guardando uniformes...',
-    text: 'Por favor espera',
-    allowOutsideClick: false,
-    didOpen: () => Swal.showLoading()
-  });
+    this.uniformesAgrupados.forEach(producto => {
+      producto.tallas.forEach((talla: any) => {
+        if (talla.asignado && talla.asignado > 0) {
+          uniformsToSave.push({
+            productItemId: talla.cat_uniform_item_id,
+            cant: talla.asignado
+          });
+        }
+      });
+    });
 
-  // =========================
-  // 🚀 GUARDAR UNO POR UNO
-  // =========================
-  const requests = uniformsToSave.map(u =>
-    this.rh.addUniformeToEmployee(
-      idEmpleado,
-      u.productItemId,
-      u.cant
-    )
-  );
-
-  forkJoin(requests).subscribe({
-    next: () => {
-      Swal.fire('Uniformes guardados', 'Se guardaron correctamente.', 'success');
-      this.isEditUniformes = false;
-      this.bandera = false;
-    },
-    error: (err) => {
-      Swal.fire('Error', 'Ocurrió un error al guardar los uniformes.', 'error');
-      console.error(err);
+    if (uniformsToSave.length === 0) {
+      console.warn('No hay uniformes para guardar');
+      return;
     }
-  });
-}
+
+    // =========================
+    // ⏳ SWAL DE CARGA
+    // =========================
+    Swal.fire({
+      title: 'Guardando uniformes...',
+      text: 'Por favor espera',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
+
+    // =========================
+    // 🚀 GUARDAR UNO POR UNO
+    // =========================
+    const requests = uniformsToSave.map(u =>
+      this.rh.addUniformeToEmployee(
+        idEmpleado,
+        u.productItemId,
+        u.cant
+      )
+    );
+
+    forkJoin(requests).subscribe({
+      next: () => {
+        Swal.fire('Uniformes guardados', 'Se guardaron correctamente.', 'success');
+        this.isEditUniformes = false;
+        this.bandera = false;
+      },
+      error: (err) => {
+        Swal.fire('Error', 'Ocurrió un error al guardar los uniformes.', 'error');
+        console.error(err);
+      }
+    });
+  }
 
 
 
