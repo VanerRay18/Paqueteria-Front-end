@@ -8,7 +8,42 @@ h1 {
   width: 100%;
   padding: 0 20px;
 }
+.vehicle-card {
+  position: relative; /* necesario para que el botón absoluto se ancle a la card */
+}
 
+.trash-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+
+  border: 1px solid #ddd;
+  background: #fff;
+  color: #a00000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  z-index: 2;
+
+  transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.trash-btn:hover {
+  background-color: #fff0f0;
+  border-color: #f0b6b6;
+  transform: scale(1.05);
+}
+
+.trash-btn:active {
+  transform: scale(0.98);
+}
 .card {
   background-color: #ffffff;
   border-radius: 10px;

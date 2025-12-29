@@ -39,6 +39,7 @@ export class PakageService {
     return this.http.get<ApiResponse>(`${environment.baseService}${'/package/delivery/informationCars'}`, { headers });
   }
 
+
   getPackagesDeliveryById(deliveryId: any, page: any, size: any): Observable<ApiResponse> {
     let headers = new HttpHeaders({ 'deliveryId': deliveryId, 'page': page, 'size': size });
     return this.http.get<ApiResponse>(`${environment.baseService}${'/package/delivery'}`, { headers });
@@ -104,6 +105,12 @@ export class PakageService {
   SentListPackageDelivery(data: any, deliveryId: any, packageOrgId: any): Observable<ApiResponse> {//envio de lista de paquetes
     let headers = new HttpHeaders({ 'deliveryId': deliveryId, 'packageOrgId': packageOrgId });
     return this.http.post<ApiResponse>(`${environment.baseService}${'/package/delivery/packagesList'}`, data,
+      { headers });
+  }
+
+  setResetDelivery(deliveryId: any): Observable<ApiResponse> {
+    let headers = new HttpHeaders({ 'deliveryId': deliveryId });
+    return this.http.patch<ApiResponse>(`${environment.baseService}${'/package/delivery/reset'}`, null,
       { headers });
   }
 

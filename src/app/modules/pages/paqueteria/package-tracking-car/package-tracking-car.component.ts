@@ -45,6 +45,60 @@ export class PackageTrackingCarComponent implements OnInit {
 
     target.src = 'assets/not_found_package.png';
   }
+
+eliminarVehiculo(vehicle: any) {
+  Swal.fire({
+    title: '¿Estás seguro?',
+    text: '¿Seguro que deseas resetear esta ruta?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, resetear',
+    cancelButtonText: 'No, cancelar',
+    reverseButtons: true,
+    confirmButtonColor: '#a00000',
+  }).then((result) => {
+    if (!result.isConfirmed) return;
+
+    // Swal de cargando
+    Swal.fire({
+      title: 'Reseteando ruta...',
+      text: 'Por favor espera',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
+    this.Pk.setResetDelivery(vehicle.id).subscribe({
+      next: () => {
+        this.getData(this.page, this.size);
+
+        Swal.close(); // cierra loading
+
+        Swal.fire({
+          title: 'Listo',
+          text: 'La ruta fue reseteada.',
+          icon: 'success',
+          timer: 1200,
+          showConfirmButton: false,
+        });
+      },
+      error: (err) => {
+        console.error('Error al resetear ruta', err);
+
+        Swal.close(); // cierra loading
+
+        Swal.fire({
+          title: 'Error',
+          text: 'No se pudo resetear la ruta. Intenta nuevamente.',
+          icon: 'error',
+          confirmButtonText: 'OK',
+        });
+      },
+    });
+  });
+}
   getData(page: any, size: any): void {
     this.isLoading = true;
     this.vehicleCards = []; // Limpiar los datos previos
