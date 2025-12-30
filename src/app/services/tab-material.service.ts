@@ -63,7 +63,7 @@ export class TabMaterialService {
   }
 
   //uniformes
-  getUniformes(): Observable<ApiResponse> {
+  getUniformes(): Observable<any> {
     return this.http.get<ApiResponse>(`${environment.baseService}${'/uniforms/inventory'}`);
   }
 

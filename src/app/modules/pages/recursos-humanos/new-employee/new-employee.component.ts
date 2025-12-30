@@ -10,6 +10,9 @@ import { take } from 'rxjs/operators';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 import { TabMaterialService } from 'src/app/services/tab-material.service';
 import { forkJoin } from 'rxjs';
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 @Component({
   selector: 'app-new-employee',
@@ -94,46 +97,53 @@ export class NewEmployeeComponent implements OnInit {
 
     this.getData();
 
-    this.tabMaterial.getUniformes().subscribe(resp => {
-      const data = resp.data;
+this.tabMaterial.getUniformes().subscribe(resp => {
+  const data = resp.data;
 
-      const agrupado = data.reduce((acc: {
-        [x: string]: {
-          product_name: any;
-          cat_uniform_product_id: any;
-          tallas: {
-            item_name: any; cant: any; cat_uniform_item_id: any; asignado: number; // cantidad asignada por el usuario
-          }[];
-          seleccionado: boolean;
-        };
-      }, item: { cat_uniform_product_id: any; product_name: any; item_name: any; cant: any; cat_uniform_item_id: any; }) => {
+  const categoriasMap: any = {};
 
-        const prodId = item.cat_uniform_product_id;
+  data.forEach((item: any) => {
+    const categoria = item.category_name;
+    const productoId = item.cat_uniform_product_id;
 
-        if (!acc[prodId]) {
-          acc[prodId] = {
-            product_name: item.product_name,
-            cat_uniform_product_id: prodId,
-            tallas: [],
-            seleccionado: false // 👈 CLAVE
-          };
-        }
+    // 1️⃣ Categoría
+    if (!categoriasMap[categoria]) {
+      categoriasMap[categoria] = {
+        category_name: categoria,
+        productos: {}
+      };
+    }
 
-        acc[prodId].tallas.push({
-          item_name: item.item_name,
-          cant: item.cant,
-          cat_uniform_item_id: item.cat_uniform_item_id,
-          asignado: 0 // cantidad asignada por el usuario
-        });
+    // 2️⃣ Producto dentro de la categoría
+    if (!categoriasMap[categoria].productos[productoId]) {
+      categoriasMap[categoria].productos[productoId] = {
+        product_name: item.product_name,
+        cat_uniform_product_id: productoId,
+        seleccionado: false,
+        tallas: []
+      };
+    }
 
-        return acc;
-      }, {});
-
-      this.uniformesAgrupados = Object.values(agrupado);
-      if (this.employeeIdPatch) {
-        this.cargarUniformesEmpleado(this.employeeIdPatch);
-      }
+    // 3️⃣ Talla
+    categoriasMap[categoria].productos[productoId].tallas.push({
+      item_name: item.item_name,
+      cant: item.cant,
+      cat_uniform_item_id: item.cat_uniform_item_id,
+      asignado: 0
     });
+  });
+
+  // 🔥 Convertimos a array final
+  this.uniformesAgrupados = Object.values(categoriasMap).map((cat: any) => ({
+    category_name: cat.category_name,
+    productos: Object.values(cat.productos)
+  }));
+
+  // Cargar uniformes del empleado DESPUÉS
+  if (this.employeeIdPatch) {
+    this.cargarUniformesEmpleado(this.employeeIdPatch);
+  }
+});
 
   }
 
@@ -273,26 +283,174 @@ export class NewEmployeeComponent implements OnInit {
     target.src = 'assets/not_found_package.png';
   }
 
-  cargarUniformesEmpleado(id: number) {
- this.rh.getUniformsByEmployee(id).subscribe(resp => {
+cargarUniformesEmpleado(id: number) {
+  this.rh.getUniformsByEmployee(id).subscribe(resp => {
     const asignados = resp.data || [];
 
     asignados.forEach((u: any) => {
-      this.uniformesAgrupados.forEach(producto => {
-        producto.tallas.forEach((talla: any) => {
-          if (talla.cat_uniform_item_id === u.cat_uniform_item_id) {
-            talla.asignado = u.cant;
+      this.uniformesAgrupados.forEach(categoria => {
+        categoria.productos.forEach((producto: any) => {
 
-            // 🔥 auto seleccionar producto
-            producto.seleccionado = true;
+          if (producto.cat_uniform_product_id === u.cat_uniform_product_id) {
+
+            producto.tallas.forEach((talla: any) => {
+              if (talla.cat_uniform_item_id === u.cat_uniform_item_id) {
+                talla.asignado = u.cant;
+                producto.seleccionado = true;
+              }
+            });
+
           }
+
         });
       });
     });
 
     this.datosUniformesCargados = asignados.length > 0;
   });
+}
+
+
+  showLoadingSwal(mensaje = 'Generando reporte...') {
+    Swal.fire({
+      title: mensaje,
+      text: 'Por favor espera',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
   }
+
+  report() {
+
+  this.showLoadingSwal('Generando reportes...');
+
+    this.rh.getEmployeeById(this.employeeIdPatch).subscribe(resp => {
+      this.reportEmpleadoExcel(resp);
+      this.reportEmpleadoPDF(resp);
+      Swal.close();
+            Swal.fire({
+        icon: 'success',
+        title: 'Reportes generados',
+        text: 'Excel y PDF descargados correctamente',
+        timer: 2500,
+        showConfirmButton: false
+      });
+    });
+  }
+
+  reportEmpleadoExcel(resp: any) {
+
+    const d = resp.data;
+
+    const e = d.dataUser;
+    const dir = d.address;
+    const pago = d.clabes;
+    const emp = d.employments;
+    const job = d.jobs;
+    const seguro = d.seguros;
+
+    const contactos = d.emergencyContacts || [];
+    const docs = d.catDocuments || [];
+
+    const rows = [
+      { CAMPO: 'Nombre completo', VALOR: `${e.name} ${e.firstSurname} ${e.secondSurname}` },
+      { CAMPO: 'RFC', VALOR: e.rfc },
+      { CAMPO: 'CURP', VALOR: e.curp },
+      { CAMPO: 'Teléfono', VALOR: e.phone },
+      { CAMPO: 'Fecha nacimiento', VALOR: new Date(e.nacimiento).toLocaleDateString() },
+      { CAMPO: 'Fecha inicio', VALOR: new Date(e.date_start).toLocaleDateString() },
+      { CAMPO: 'Puesto', VALOR: emp?.name },
+      { CAMPO: 'Contratación', VALOR: job?.name },
+      { CAMPO: 'Seguro', VALOR: seguro?.name },
+      { CAMPO: 'Activo', VALOR: e.active ? 'Sí' : 'No' },
+      { CAMPO: 'Usa checador', VALOR: e.isAttendance ? 'Sí' : 'No' },
+      { CAMPO: 'Horario entrada', VALOR: e.entrada?.join(':') },
+      { CAMPO: 'Horario salida', VALOR: e.salida?.join(':') },
+
+      { CAMPO: '', VALOR: '' },
+      { CAMPO: 'DIRECCIÓN', VALOR: '' },
+
+      { CAMPO: 'Calle', VALOR: dir?.calle },
+      { CAMPO: 'Colonia', VALOR: dir?.colonia },
+      { CAMPO: 'Municipio', VALOR: dir?.municipio },
+      { CAMPO: 'Estado', VALOR: dir?.estado },
+      { CAMPO: 'CP', VALOR: dir?.cp },
+      { CAMPO: 'Exterior', VALOR: dir?.exterior },
+      { CAMPO: 'Interior', VALOR: dir?.interior },
+
+      { CAMPO: '', VALOR: '' },
+      { CAMPO: 'PAGO', VALOR: '' },
+
+      { CAMPO: 'Banco', VALOR: pago?.banco },
+      { CAMPO: 'CLABE', VALOR: pago?.clabe },
+      { CAMPO: 'Interbancaria', VALOR: pago?.interbancaria },
+
+      { CAMPO: '', VALOR: '' },
+      { CAMPO: 'CONTACTOS DE EMERGENCIA', VALOR: '' },
+
+      ...contactos.map((c: any, i: number) => ({
+        CAMPO: `Contacto ${i + 1}`,
+        VALOR: `${c.name} - ${c.number} (${c.relationship})`
+      })),
+
+      { CAMPO: '', VALOR: '' },
+      { CAMPO: 'DOCUMENTOS', VALOR: '' },
+
+      ...docs.map((d: any) => ({
+        CAMPO: 'Documento',
+        VALOR: d.name
+      }))
+    ];
+
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(rows);
+
+    ws['!cols'] = [{ wch: 35 }, { wch: 60 }];
+
+    XLSX.utils.book_append_sheet(wb, ws, 'Empleado');
+    XLSX.writeFile(wb, `empleado_${e.id}.xlsx`);
+  }
+
+  reportEmpleadoPDF(resp: any) {
+
+    const d = resp.data;
+    const e = d.dataUser;
+
+    const doc = new jsPDF();
+
+    doc.setFontSize(16);
+    doc.text('REPORTE DEL EMPLEADO', 14, 15);
+
+    autoTable(doc, {
+      startY: 25,
+      head: [['Campo', 'Valor']],
+      body: [
+        ['Nombre', `${e.name} ${e.firstSurname} ${e.secondSurname}`],
+        ['RFC', e.rfc],
+        ['CURP', e.curp],
+        ['Teléfono', e.phone],
+        ['Nacimiento', new Date(e.nacimiento).toLocaleDateString()],
+        ['Inicio', new Date(e.date_start).toLocaleDateString()],
+        ['Activo', e.active ? 'Sí' : 'No'],
+        ['Usa checador', e.isAttendance ? 'Sí' : 'No'],
+        ['Horario', `${e.entrada?.join(':')} - ${e.salida?.join(':')}`],
+      ],
+      theme: 'grid'
+    });
+
+    autoTable(doc, {
+      margin: { top: 10 },
+      head: [['Documentos entregados']],
+      body: (d.catDocuments || []).map((x: any) => [x.name]),
+      theme: 'striped'
+    });
+
+    doc.save(`empleado_${e.id}.pdf`);
+  }
+
 
   // 2️⃣ Método para cargar datos existentes y llenar los formularios
   loadEmployeeData(id: number) {
@@ -422,18 +580,24 @@ export class NewEmployeeComponent implements OnInit {
       this.datosDocumentosCargados = docs.length > 0;
     });
 
-     this.rh.getUniformsByEmployee(id).subscribe(resp => {
+  this.rh.getUniformsByEmployee(id).subscribe(resp => {
     const asignados = resp.data || [];
 
     asignados.forEach((u: any) => {
-      this.uniformesAgrupados.forEach(producto => {
-        producto.tallas.forEach((talla: any) => {
-          if (talla.cat_uniform_item_id === u.cat_uniform_item_id) {
-            talla.asignado = u.cant;
+      this.uniformesAgrupados.forEach(categoria => {
+        categoria.productos.forEach((producto: any) => {
 
-            // 🔥 auto seleccionar producto
-            producto.seleccionado = true;
+          if (producto.cat_uniform_product_id === u.cat_uniform_product_id) {
+
+            producto.tallas.forEach((talla: any) => {
+              if (talla.cat_uniform_item_id === u.cat_uniform_item_id) {
+                talla.asignado = u.cant;
+                producto.seleccionado = true;
+              }
+            });
+
           }
+
         });
       });
     });

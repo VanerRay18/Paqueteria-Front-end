@@ -2,6 +2,9 @@
   <div class="titulos col-auto col-lg-8  row  mt-4 md-3">
     <h1>Alta de trabajadores</h1>
   </div>
+  <div class="col-auto d-flex justify-content-end mt-auto">
+    <button type="submit" class="btn  btn-sm" (click)="report()">Descargar informacion</button>
+  </div>
   <!-- DATOS PERSONALES -->
   <form [formGroup]="datosPersonalesForm" (ngSubmit)="guardarDatosPersonales()">
     <h4>Datos generales</h4>
@@ -392,50 +395,55 @@
   </div>
 
   <!-- DATOS DEL EMPLEO -->
-  <div class="card ">
-    <h4>Uniformes para el empleado</h4>
-    <div>
+<div class="card">
+  <h4>Uniformes para el empleado</h4>
 
-      <div *ngFor="let producto of uniformesAgrupados" class="producto-card">
+  <!-- CONTENEDOR CON SCROLL -->
+  <div class="uniformes-scroll">
 
-        <!-- Checkbox del producto -->
-        <label class="producto-header">
-          <input type="checkbox" [(ngModel)]="producto.seleccionado" (change)="selectedProduct = producto">
-          <span>{{ producto.product_name }}</span>
-        </label>
+<div *ngFor="let categoria of uniformesAgrupados" class="mb-3">
 
-        <!-- Tallitas -->
-        <div *ngIf="producto.seleccionado" class="tallas-container">
+  <h5 class="categoria-title">
+    {{ categoria.category_name }}
+  </h5>
 
-          <div *ngFor="let t of producto.tallas" class="talla-item">
+  <div *ngFor="let producto of categoria.productos" class="producto-card">
 
-            <div class="talla-info">
-              <span class="talla-nombre">{{ t.item_name }}</span>
-              <span class="talla-stock">
-                Asignados: <b>{{ t.cant }}</b>
-              </span>
-            </div>
+    <label class="producto-header">
+      <input type="checkbox" [(ngModel)]="producto.seleccionado">
+      <span>{{ producto.product_name }}</span>
+    </label>
 
-            <input type="number" [(ngModel)]="t.asignado" [max]="t.cant" min="0" class="talla-input" disabled />
-
-          </div>
-
-        </div>
-
-      </div>
-
-      <div class="col-auto d-flex justify-content-end mt-auto  botones-responsivos">
-        <button type="submit" class="btn  btn-sm" (click)="guardarEmpleo()"
-          [disabled]="(bandera == true && isEditMode == false)||(bandera == false && isEditMode == true)">Guardar
-          sección</button>
-        @if (isEditMode) {
-        <button type="button" class="btn btn-outline-secondary btn-sm ms-2" (click)="editarEmpleo()">
-          Editar sección
-        </button>
-        }
+    <div *ngIf="producto.seleccionado" class="tallas-container">
+      <div *ngFor="let t of producto.tallas" class="talla-item">
+        <span>{{ t.item_name }}</span>
+        <input type="number"
+               [(ngModel)]="t.asignado"
+               [max]="t.cant"
+               min="0">
       </div>
     </div>
+
   </div>
+</div>
+
+  </div>
+
+  <!-- BOTONES -->
+  <div class="d-flex justify-content-end mt-3">
+    <button type="submit" class="btn btn-sm" [disabled]="(bandera == true && isEditMode == false)||(bandera == false && isEditMode == true)" (click)="guardarEmpleo()">
+      Guardar sección
+    </button>
+
+    @if (isEditMode) {
+      <button type="button" class="btn btn-outline-secondary btn-sm ms-2"
+              (click)="editarEmpleo()">
+        Editar sección
+      </button>
+    }
+  </div>
+</div>
+
   <!-- DATOS DE PAGO -->
   <form [formGroup]="pagoForm" (ngSubmit)="guardarPago()">
     <h4>Datos de pago</h4>

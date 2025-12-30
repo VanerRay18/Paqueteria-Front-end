@@ -772,6 +772,118 @@ export class InventoryComponent {
     });
   }
 
+reportExcel() {
+
+  Swal.fire({
+    title: 'Generando Excel...',
+    text: 'Por favor espera',
+    allowOutsideClick: false,
+    didOpen: () => Swal.showLoading()
+  });
+
+  this.tabMaterial.getUniformes().subscribe({
+    next: (resp: any) => {
+
+      const data = resp.data || [];
+
+      const CATEGORY_MAP: Record<string, string> = {
+        'TALLAS DAMA': 'DAMA',
+        'TALLAS CABALLERO': 'CAB',
+        'TALLA ZAPATO': 'ZAP',
+        'TALLAS PANTALÓN': 'PAN'
+      };
+
+      const DAMA = ['CH', 'M', 'G', 'EXG'];
+      const CAB  = ['CH', 'M', 'G', 'EXG'];
+      const ZAP  = ['22', '23', '24', '25.5'];
+      const PAN  = ['30', '32', '34', '36', '38', '40', '42', '44'];
+
+      const productos = Array.from(
+        new Set(data.map((d: any) => d.product_name))
+      );
+
+      const rows: any[] = [];
+
+      productos.forEach(producto => {
+
+        const row: any = { PRODUCTO: producto };
+
+        DAMA.forEach(t => row[`DAMA_${t}`] = '');
+        CAB.forEach(t  => row[`CAB_${t}`]  = '');
+        ZAP.forEach(t  => row[`ZAP_${t}`]  = '');
+        PAN.forEach(t  => row[`PAN_${t}`]  = '');
+
+        data
+          .filter((d: any) => d.product_name === producto)
+          .forEach((d: any) => {
+            const prefix = CATEGORY_MAP[d.category_name];
+            if (!prefix) return;
+
+            const key = `${prefix}_${d.item_name}`;
+            if (row.hasOwnProperty(key)) {
+              row[key] = d.cant;
+            }
+          });
+
+        rows.push(row);
+      });
+
+      // ==========================
+      // ✅ CREACIÓN CORRECTA DE HOJA
+      // ==========================
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet([]);
+
+      // Encabezados
+      XLSX.utils.sheet_add_aoa(ws, [
+        [
+          'PRODUCTO',
+          'TALLAS DAMA', '', '', '',
+          'TALLA ZAPATO', '', '', '',
+          'TALLAS CABALLERO', '', '', '',
+          'TALLAS PANTALÓN', '', '', '', '', '', '', ''
+        ],
+        [
+          '',
+          ...DAMA,
+          ...ZAP,
+          ...CAB,
+          ...PAN
+        ]
+      ]);
+
+      // Datos (👇 AQUÍ ESTÁ LA CLAVE)
+      XLSX.utils.sheet_add_json(ws, rows, {
+        skipHeader: true,
+        origin: 'A3'
+      });
+
+      ws['!merges'] = [
+        { s: { r: 0, c: 1 }, e: { r: 0, c: 4 } },
+        { s: { r: 0, c: 5 }, e: { r: 0, c: 8 } },
+        { s: { r: 0, c: 9 }, e: { r: 0, c: 12 } },
+        { s: { r: 0, c: 13 }, e: { r: 0, c: 20 } }
+      ];
+
+      ws['!cols'] = [
+        { wch: 30 },
+        ...Array(20).fill({ wch: 10 })
+      ];
+
+      XLSX.utils.book_append_sheet(wb, ws, 'Inventario');
+      XLSX.writeFile(wb, 'reporte_inventario.xlsx');
+
+      Swal.close();
+    },
+
+    error: (err) => {
+      Swal.fire('Error', 'No se pudo generar el Excel', 'error');
+      console.error(err);
+    }
+  });
+}
+
+
 
   addUniform() {
     // Swal.fire({

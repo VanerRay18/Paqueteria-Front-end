@@ -505,3 +505,80 @@ input.ng-invalid.ng-touched {
   border-color: #4254ff;
   box-shadow: 0 0 5px rgba(92, 108, 255, 0.4);
 }
+
+/* CONTENEDOR CON SCROLL */
+.uniformes-scroll {
+  max-height: 420px;    
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+/* Scroll bonito */
+.uniformes-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.uniformes-scroll::-webkit-scrollbar-thumb {
+  background-color: #c5c5c5;
+  border-radius: 10px;
+}
+
+.uniformes-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* CARD DE PRODUCTO */
+.producto-card {
+  background: #f9f9fb;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+  border: 1px solid #e1e1e8;
+}
+
+/* HEADER */
+.producto-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* NOMBRE */
+.producto-nombre {
+  flex: 1;
+}
+
+/* BADGE DE CATEGORÍA */
+.badge-categoria {
+  font-size: 12px;
+  padding: 4px 8px;
+  background: #e7f0ff;
+  color: #1e5ad7;
+  border-radius: 20px;
+}
+
+/* TALLAS */
+.tallas-container {
+  margin-top: 10px;
+  padding-left: 20px;
+  border-left: 2px solid #e1e1e8;
+}
+
+.talla-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.talla-info {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+}
+
+.talla-input {
+  width: 70px;
+}
